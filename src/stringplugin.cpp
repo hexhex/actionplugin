@@ -37,9 +37,12 @@ public:
 
         Tuple out;
 
-        out.push_back(std::string(in1 + in2));
+        //
+        // call Term::Term with second argument true to get a quoted string!
+        //
+        out.push_back(Term(std::string(in1 + in2), 1));
 
-        std::cout << "tuple: " << out << std::endl;
+        //std::cout << "tuple: " << out << std::endl;
 
         //
         // fill the answer object...
