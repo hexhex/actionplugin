@@ -18,9 +18,7 @@ public:
     ConcatAtom()
     {
         addInputConstant();
-
         addInputConstant();
-
         setOutputArity(1);
     }
 
@@ -31,9 +29,7 @@ public:
         std::string in1, in2;
 
         in1 = query.getInputTuple()[0].getUnquotedString();
-
         in2 = query.getInputTuple()[1].getUnquotedString();
-
 
         Tuple out;
 
@@ -42,21 +38,41 @@ public:
         //
         out.push_back(Term(std::string(in1 + in2), 1));
 
-        //std::cout << "tuple: " << out << std::endl;
-
-        //
-        // fill the answer object...
-        //
-
         answer.addTuple(out);
     }
+};
 
 
-private:
+class strstrAtom : public PluginAtom
+{
+public:
 
-    //
-    // some other user-defined member functions...
-    //
+    strstrAtom()
+    {
+        addInputConstant();
+        addInputConstant();
+        setOutputArity(0);
+    }
+
+    virtual void
+    retrieve(const Query& query, Answer& answer) throw (PluginError)
+    {
+
+        std::string in1, in2;
+
+        in1 = query.getInputTuple()[0].getUnquotedString();
+        in2 = query.getInputTuple()[1].getUnquotedString();
+
+        std::transform(in1.begin(), in1.end(), in1.begin(), (int(*)(int))std::tolower);
+        std::transform(in2.begin(), in2.end(), in2.begin(), (int(*)(int))std::tolower);
+
+        Tuple out;
+
+        std::string::size_type pos = in1.find(in2, 0);
+
+        if (pos != std::string::npos)
+            answer.addTuple(out);
+    }
 };
 
 
@@ -74,14 +90,8 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
-        //
-        // these strings will be the external atoms' names in the program
-        //
         a["concat"] = new ConcatAtom;
-
-        //
-        // repeat this for each atom you defined!
-        //
+        a["strstr"] = new strstrAtom;
     }
 };
 
