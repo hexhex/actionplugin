@@ -8,9 +8,34 @@
 #include <string>
 
 
-//
-// each atom has to be derived from PluginAtom
-//
+class CmpAtom : public PluginAtom
+{
+public:
+
+    CmpAtom()
+    {
+        addInputConstant();
+        addInputConstant();
+        setOutputArity(0);
+    }
+
+    virtual void
+    retrieve(const Query& query, Answer& answer) throw (PluginError)
+    {
+
+        std::string in1, in2;
+
+        in1 = query.getInputTuple()[0].getUnquotedString();
+        in2 = query.getInputTuple()[1].getUnquotedString();
+
+        Tuple out;
+
+        if (in1 < in2)
+            answer.addTuple(out);
+    }
+};
+
+
 class ConcatAtom : public PluginAtom
 {
 public:
@@ -90,9 +115,16 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
+        a["cmp"] = new CmpAtom;
         a["concat"] = new ConcatAtom;
         a["strstr"] = new strstrAtom;
     }
+
+    virtual void
+    setOptions(std::vector<std::string>& options)
+    {
+    }
+
 };
 
 
