@@ -6,6 +6,54 @@
 
 
 #include <string>
+#include <sstream>
+
+
+class ShaAtom : public PluginAtom
+{
+public:
+
+    ShaAtom()
+    {
+        addInputConstant();
+        setOutputArity(1);
+    }
+
+    virtual void
+    retrieve(const Query& query, Answer& answer) throw (PluginError)
+    {
+        if (!query.getInputTuple()[0].isString())
+            throw PluginError("Wrong input argument type");
+
+        std::string in = query.getInputTuple()[0].getUnquotedString();
+
+        FILE *pp;
+        char VBUFF[1024];
+
+        std::string execstr("echo \"" + in + "\" | sha1sum | cut -d\" \" -f1");
+
+        std::stringstream result;
+
+        if ((pp = popen(execstr.c_str(), "r")) == NULL)
+            throw PluginError("sha1sum system call failed");
+
+        fgets(VBUFF, 1024, pp);
+
+        result << VBUFF;
+
+        pclose(pp);
+
+        std::string res(result.str());
+
+        res.erase(res.size() - 1);
+
+        Tuple out;
+
+        out.push_back(Term(res, 1));
+
+        answer.addTuple(out);
+    }
+};
 
 
 class SplitAtom : public PluginAtom
@@ -171,6 +219,7 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
+        a["sha"] = new ShaAtom;
         a["split"] = new SplitAtom;
         a["cmp"] = new CmpAtom;
         a["concat"] = new ConcatAtom;
