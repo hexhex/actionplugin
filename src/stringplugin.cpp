@@ -56,7 +56,7 @@ public:
 
         if (pos < components.size())
         {
-            out.push_back(Term(components.at(pos)));
+            out.push_back(Term(components.at(pos), 1));
         }
 
         answer.addTuple(out);
