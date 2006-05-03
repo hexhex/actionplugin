@@ -8,6 +8,62 @@
 #include <string>
 
 
+class SplitAtom : public PluginAtom
+{
+public:
+
+    SplitAtom()
+    {
+        addInputConstant();
+        addInputConstant();
+        addInputConstant();
+        setOutputArity(1);
+    }
+
+    virtual void
+    retrieve(const Query& query, Answer& answer) throw (PluginError)
+    {
+
+        if (!query.getInputTuple()[0].isString())
+            throw PluginError("Wrong input argument type");
+
+        std::string str = query.getInputTuple()[0].getUnquotedString();
+
+        if (!query.getInputTuple()[1].isString())
+            throw PluginError("Wrong input argument type");
+
+        std::string sep = query.getInputTuple()[1].getUnquotedString();
+
+        if (!query.getInputTuple()[2].isInt())
+            throw PluginError("Wrong input argument type");
+        
+        unsigned pos = query.getInputTuple()[2].getInt();
+
+        std::vector<std::string> components;
+        
+        std::string::size_type start = 0;
+        std::string::size_type end = 0;
+
+        while ((end = str.find(sep, start)) != std::string::npos)
+        {
+            components.push_back(str.substr(start, end - start));
+            start = end + sep.size();
+        }
+
+        components.push_back(str.substr(start));
+
+        Tuple out;
+
+        if (pos < components.size())
+        {
+            out.push_back(Term(components.at(pos)));
+        }
+
+        answer.addTuple(out);
+    }
+};
+
+
 class CmpAtom : public PluginAtom
 {
 public:
@@ -115,6 +171,7 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
+        a["split"] = new SplitAtom;
         a["cmp"] = new CmpAtom;
         a["concat"] = new ConcatAtom;
         a["strstr"] = new strstrAtom;
