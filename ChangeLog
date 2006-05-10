@@ -1,0 +1,9 @@
+2006-05-10  Roman Schindlauer  <roman@kr.tuwien.ac.at>
+
+	* src/stringplugin.cpp: Reworked all methods, validating the type of
+	input terms. Allowed integer input for &concat, &strstr, &split, &cmp.
+
+	* ChangeLog: Added.
+
+	Fixes bug: #18
+

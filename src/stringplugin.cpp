@@ -15,7 +15,11 @@ public:
 
     ShaAtom()
     {
+        //
+        // input string
+        //
         addInputConstant();
+        
         setOutputArity(1);
     }
 
@@ -62,25 +66,42 @@ public:
 
     SplitAtom()
     {
+        //
+        // string to split
+        //
         addInputConstant();
+
+        //
+        // delimiter (string or int)
+        //
         addInputConstant();
+
+        //
+        // which position to return (int)
+        //
         addInputConstant();
+
         setOutputArity(1);
     }
 
     virtual void
     retrieve(const Query& query, Answer& answer) throw (PluginError)
     {
-
         if (!query.getInputTuple()[0].isString())
             throw PluginError("Wrong input argument type");
 
         std::string str = query.getInputTuple()[0].getUnquotedString();
 
-        if (!query.getInputTuple()[1].isString())
+        std::stringstream ss;
+        
+        if (query.getInputTuple()[1].isInt())
+            ss << query.getInputTuple()[1].getInt();
+        else if (query.getInputTuple()[1].isString())
+            ss << query.getInputTuple()[1].getUnquotedString();
+        else
             throw PluginError("Wrong input argument type");
 
-        std::string sep = query.getInputTuple()[1].getUnquotedString();
+        std::string sep(ss.str());
 
         if (!query.getInputTuple()[2].isInt())
             throw PluginError("Wrong input argument type");
@@ -118,8 +139,16 @@ public:
 
     CmpAtom()
     {
+        //
+        // first string or int
+        //
         addInputConstant();
+
+        //
+        // second string or int
+        //
         addInputConstant();
+
         setOutputArity(0);
     }
 
@@ -127,14 +156,23 @@ public:
     retrieve(const Query& query, Answer& answer) throw (PluginError)
     {
 
-        std::string in1, in2;
+        std::stringstream in1, in2;
 
-        in1 = query.getInputTuple()[0].getUnquotedString();
-        in2 = query.getInputTuple()[1].getUnquotedString();
+        Term s1 = query.getInputTuple()[0];
+        Term s2 = query.getInputTuple()[1];
+
+        bool smaller = false;
+
+        if (s1.isInt() && s2.isInt())
+            smaller = (s1.getInt() < s2.getInt());
+        else if (s1.isString() && s2.isString())
+            smaller = (s1.getUnquotedString() < s2.getUnquotedString());
+        else
+            throw PluginError("Wrong input argument type");
 
         Tuple out;
 
-        if (in1 < in2)
+        if (smaller)
             answer.addTuple(out);
     }
 };
@@ -146,8 +184,16 @@ public:
 
     ConcatAtom()
     {
+        //
+        // first string or int
+        //
         addInputConstant();
+
+        //
+        // second string or int
+        //
         addInputConstant();
+        
         setOutputArity(1);
     }
 
@@ -155,17 +201,33 @@ public:
     retrieve(const Query& query, Answer& answer) throw (PluginError)
     {
 
-        std::string in1, in2;
+        std::stringstream in1, in2;
 
-        in1 = query.getInputTuple()[0].getUnquotedString();
-        in2 = query.getInputTuple()[1].getUnquotedString();
+        Term s1 = query.getInputTuple()[0];
+        Term s2 = query.getInputTuple()[1];
 
+        bool smaller = false;
+
+        if (s1.isInt())
+            in1 << s1.getInt();
+        else if (s1.isString())
+            in1 << s1.getUnquotedString();
+        else
+            throw PluginError("Wrong input argument type");
+        
+        if (s2.isInt())
+            in2 << s2.getInt();
+        else if (s2.isString())
+            in2 << s2.getUnquotedString();
+        else
+            throw PluginError("Wrong input argument type");
+        
         Tuple out;
 
         //
         // call Term::Term with second argument true to get a quoted string!
         //
-        out.push_back(Term(std::string(in1 + in2), 1));
+        out.push_back(Term(std::string(in1.str() + in2.str()), 1));
 
         answer.addTuple(out);
     }
@@ -178,19 +240,42 @@ public:
 
     strstrAtom()
     {
+        //
+        // haystack
+        // 
         addInputConstant();
+
+        //
+        // needle
+        //
         addInputConstant();
+
         setOutputArity(0);
     }
 
     virtual void
     retrieve(const Query& query, Answer& answer) throw (PluginError)
     {
+        std::string in1;
 
-        std::string in1, in2;
+        std::stringstream inss;
 
-        in1 = query.getInputTuple()[0].getUnquotedString();
-        in2 = query.getInputTuple()[1].getUnquotedString();
+        Term s1 = query.getInputTuple()[0];
+        Term s2 = query.getInputTuple()[1];
+
+        if (!s1.isString())
+            throw PluginError("Wrong input argument type");
+
+        in1 = s1.getUnquotedString();
+
+        if (s2.isString())
+            inss << s2.getUnquotedString();
+        else if (s2.isInt())
+            inss << s2;
+        else
+            throw PluginError("Wrong input argument type");
+
+        std::string in2(inss.str());
 
         std::transform(in1.begin(), in1.end(), in1.begin(), (int(*)(int))std::tolower);
         std::transform(in2.begin(), in2.end(), in2.begin(), (int(*)(int))std::tolower);
