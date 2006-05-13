@@ -304,7 +304,7 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
-        a["sha"] = new ShaAtom;
+        a["sha1sum"] = new ShaAtom;
         a["split"] = new SplitAtom;
         a["cmp"] = new CmpAtom;
         a["concat"] = new ConcatAtom;
