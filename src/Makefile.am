@@ -18,11 +18,4 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	$(DLVHEX_CFLAGS)
 
-#
-# replace 'plugin' on the left side as above and
-# add other needed libs to linker flags
-#
-libdlvhexstring_la_LDFLAGS = $(DLVHEX_LIBS)
-
-
 

@@ -1,3 +1,8 @@
+2006-07-17  Roman Schindlauer  <roman@kr.tuwien.ac.at>
+
+	* src/Makefile.am: removed linking with libdlvhexbase.
+
+
 2006-05-13  Roman Schindlauer  <roman@kr.tuwien.ac.at>
 
 	* src/stringplugin.cpp: Renamed 'sha' atom to 'sha1sum'.
