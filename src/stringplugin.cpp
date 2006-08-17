@@ -331,6 +331,7 @@ extern "C"
 StringPlugin*
 PLUGINIMPORTFUNCTION()
 {
+    theStringPlugin.setVersion(1,0,0);
     return &theStringPlugin;
 }
 

@@ -18,4 +18,4 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	$(DLVHEX_CFLAGS)
 
-
+libdlvhexstring_la_LDFLAGS = -avoid-version -module
