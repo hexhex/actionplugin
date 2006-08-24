@@ -19,3 +19,13 @@ AM_CPPFLAGS = \
 	$(DLVHEX_CFLAGS)
 
 libdlvhexstring_la_LDFLAGS = -avoid-version -module
+
+
+libdlvhexstring-static.la: $(libdlvhexstring_la_OBJECTS)
+	$(CXXLINK) -avoid-version -module -rpath $(plugindir) $(libdlvhexstring_la_OBJECTS)
+
+install-static: libdlvhexstring-static.la
+	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexstring-static.la $(DESTDIR)$(plugindir)/libdlvhexstring-static.la
+
+uninstall-static:
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(plugindir)/libdlvhexstring-static.la
