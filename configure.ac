@@ -1,11 +1,14 @@
-
 AC_PREREQ([2.59])
-
-#
-# insert proper strings here
-#
-AC_INIT([dlvhex-stringplugin],[0.1],[my@email.com])
+AC_INIT([dlvhex-stringplugin],[0.1.0],[roman@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
+
+MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
+MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\2,"`
+MICRO=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\3,"`
+
+AC_DEFINE_UNQUOTED([STRINGPLUGIN_MAJOR], [$MAJOR], [Major version number of the string-plugin])
+AC_DEFINE_UNQUOTED([STRINGPLUGIN_MINOR], [$MINOR], [Minor version number of the string-plugin])
+AC_DEFINE_UNQUOTED([STRINGPLUGIN_MICRO], [$MICRO], [Micro version number of the string-plugin])
 
 AM_INIT_AUTOMAKE
 
@@ -22,6 +25,7 @@ AC_HEADER_STDBOOL
 AC_C_CONST
 
 # Checks for library functions.
+AC_LIBTOOL_DLOPEN # we build a module library
 AC_PROG_LIBTOOL
 
 #
@@ -31,7 +35,7 @@ AC_PROG_LIBTOOL
 #
 # of course we need dlvhex itself!
 #
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 0.1])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.1])
 
 #
 # where the plugin will be installed by default.

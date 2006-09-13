@@ -312,7 +312,7 @@ public:
     }
 
     virtual void
-    setOptions(std::vector<std::string>& options)
+    setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out)
     {
     }
 
@@ -331,7 +331,9 @@ extern "C"
 StringPlugin*
 PLUGINIMPORTFUNCTION()
 {
-    theStringPlugin.setVersion(0,1,0);
+    theStringPlugin.setVersion(STRINGPLUGIN_MAJOR,
+                               STRINGPLUGIN_MINOR,
+                               STRINGPLUGIN_MICRO);
     return &theStringPlugin;
 }
 
