@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([dlvhex-stringplugin],[0.1.0],[roman@kr.tuwien.ac.at])
+AC_INIT([dlvhex-stringplugin],[0.2.0],[roman@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
 
 MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
