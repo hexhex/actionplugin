@@ -26,6 +26,7 @@ AC_C_CONST
 
 # Checks for library functions.
 AC_LIBTOOL_DLOPEN # we build a module library
+AC_DISABLE_STATIC # we don't need a static library
 AC_PROG_LIBTOOL
 
 #

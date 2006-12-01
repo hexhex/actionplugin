@@ -1,3 +1,7 @@
+2006-12-01  set REAL_NAME environment variable  <set EMAIL_ADDRESS environment variable>
+
+	* configure.ac: Turn off building of static library.
+
 2006-09-13  Roman Schindlauer  <roman@kr.tuwien.ac.at>
 
 	* configure.ac: Added version number macros.
