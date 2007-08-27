@@ -185,14 +185,9 @@ public:
     ConcatAtom()
     {
         //
-        // first string or int
+        // arbitrary list of strings or ints
         //
-        addInputConstant();
-
-        //
-        // second string or int
-        //
-        addInputConstant();
+        addInputTuple();
         
         setOutputArity(1);
     }
@@ -201,33 +196,28 @@ public:
     retrieve(const Query& query, Answer& answer) throw (PluginError)
     {
 
-        std::stringstream in1, in2;
+	Tuple parms = query.getInputTuple();
 
-        Term s1 = query.getInputTuple()[0];
-        Term s2 = query.getInputTuple()[1];
+	Tuple::size_type arity = parms.size();
 
-        bool smaller = false;
+        std::stringstream concatstream;
 
-        if (s1.isInt())
-            in1 << s1.getInt();
-        else if (s1.isString())
-            in1 << s1.getUnquotedString();
-        else
+	for (Tuple::size_type t = 0; t < arity; t++)
+	{
+          if (parms[t].isInt())
+            concatstream << parms[t].getInt();
+          else if (parms[t].isString())
+            concatstream << parms[t].getUnquotedString(); 
+          else
             throw PluginError("Wrong input argument type");
-        
-        if (s2.isInt())
-            in2 << s2.getInt();
-        else if (s2.isString())
-            in2 << s2.getUnquotedString();
-        else
-            throw PluginError("Wrong input argument type");
+        }
         
         Tuple out;
 
         //
         // call Term::Term with second argument true to get a quoted string!
         //
-        out.push_back(Term(std::string(in1.str() + in2.str()), 1));
+        out.push_back(Term(std::string(concatstream.str()), 1));
 
         answer.addTuple(out);
     }

@@ -1,3 +1,7 @@
+2007-08-27  Axel Polleres <axel@polleres.net>
+        * src/stringplugin.cpp: Generalized '&concat' atom to accept an 
+        aribtrary number of input params.
+
 2006-12-01  Roman Schindlauer  <roman@kr.tuwien.ac.at>
 
 	* configure.ac: Bumped version to 0.2.0
