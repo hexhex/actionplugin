@@ -8,6 +8,8 @@
 #include <string>
 #include <sstream>
 
+namespace dlvhex {
+  namespace string {
 
 class ShaAtom : public PluginAtom
 {
@@ -294,11 +296,17 @@ public:
     virtual void
     getAtoms(AtomFunctionMap& a)
     {
-        a["sha1sum"] = new ShaAtom;
-        a["split"] = new SplitAtom;
-        a["cmp"] = new CmpAtom;
-        a["concat"] = new ConcatAtom;
-        a["strstr"] = new strstrAtom;
+      boost::shared_ptr<PluginAtom> shaatom(new ShaAtom);
+      boost::shared_ptr<PluginAtom> splitatom(new SplitAtom);
+      boost::shared_ptr<PluginAtom> cmpatom(new CmpAtom);
+      boost::shared_ptr<PluginAtom> concatatom(new ConcatAtom);
+      boost::shared_ptr<PluginAtom> strstratom(new strstrAtom);
+
+        a["sha1sum"] = shaatom;
+        a["split"] = splitatom;
+        a["cmp"] = cmpatom;
+        a["concat"] = concatatom;
+        a["strstr"] = strstratom;
     }
 
     virtual void
@@ -314,17 +322,20 @@ public:
 //
 StringPlugin theStringPlugin;
 
+  } // namespace string
+} // namespace dlvhex
+
 //
 // and let it be loaded by dlvhex!
 //
 extern "C"
-StringPlugin*
+dlvhex::string::StringPlugin*
 PLUGINIMPORTFUNCTION()
 {
-    theStringPlugin.setVersion(STRINGPLUGIN_MAJOR,
-                               STRINGPLUGIN_MINOR,
-                               STRINGPLUGIN_MICRO);
-    return &theStringPlugin;
+  dlvhex::string::theStringPlugin.setVersion(STRINGPLUGIN_MAJOR,
+					     STRINGPLUGIN_MINOR,
+					     STRINGPLUGIN_MICRO);
+  return &dlvhex::string::theStringPlugin;
 }
 
 
