@@ -1,3 +1,20 @@
+2008-01-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/stringplugin.cpp: Adapt to new dlvhex plugin API.
+
+	* configure.ac: Bump version to 0.3.0.
+	Fix boost searching.
+
+	* bootstrap.sh: Use autoreconf.
+
+	* m4/boost.m4: New file.
+
+	* README: New file.
+
+	* NEWS: New file.
+
+	* AUTHORS: New file.
+
 2007-08-27  Axel Polleres <axel@polleres.net>
         * src/stringplugin.cpp: Generalized '&concat' atom to accept an 
         aribtrary number of input params.
