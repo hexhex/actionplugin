@@ -332,6 +332,7 @@ extern "C"
 dlvhex::string::StringPlugin*
 PLUGINIMPORTFUNCTION()
 {
+  dlvhex::string::theStringPlugin.setPluginName(PACKAGE_TARNAME);
   dlvhex::string::theStringPlugin.setVersion(STRINGPLUGIN_MAJOR,
 					     STRINGPLUGIN_MINOR,
 					     STRINGPLUGIN_MICRO);
