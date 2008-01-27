@@ -1,3 +1,7 @@
+2008-01-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/stringplugin.cpp: Set plugin name to PACKAGE_TARNAME.
+
 2008-01-09  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/stringplugin.cpp: Adapt to new dlvhex plugin API.
