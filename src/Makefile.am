@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = foreign
+AUTOMAKE_OPTIONS = gnu
 
 #
 # replace 'plugin' on the right side by your plugin's name
@@ -16,6 +16,7 @@ libdlvhexstring_la_SOURCES = stringplugin.cpp
 #
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
+	$(BOOST_CPPFLAGS) \
 	$(DLVHEX_CFLAGS)
 
 libdlvhexstring_la_LDFLAGS = -avoid-version -module
