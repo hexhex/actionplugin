@@ -1,3 +1,12 @@
+2008-02-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* Makefile.am (AUTOMAKE_OPTIONS): Set to gnu.
+
+	* configure.ac: Integrate new boost searching macros.
+	* src/Makefile.am: Likewise.
+
+	* m4/boost.m4: Use boost.m4 from http://repo.or.cz/w/boost.m4.git.
+
 2008-01-27  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/stringplugin.cpp: Set plugin name to PACKAGE_TARNAME.
