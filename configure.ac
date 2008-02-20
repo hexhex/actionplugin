@@ -1,4 +1,4 @@
-AC_PREREQ([2.59])
+AC_PREREQ([2.61])
 AC_INIT([dlvhex-stringplugin],[0.3.0],[roman@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
 
