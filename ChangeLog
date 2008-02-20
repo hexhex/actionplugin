@@ -1,3 +1,9 @@
+2008-02-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac: Require autoconf >= 2.61.
+
+	* Makefile.am: Require automake >= 1.10.
+
 2008-02-12  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* Makefile.am (AUTOMAKE_OPTIONS): Set to gnu.
