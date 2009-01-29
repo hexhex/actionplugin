@@ -31,7 +31,7 @@ public:
         if (!query.getInputTuple()[0].isString())
             throw PluginError("Wrong input argument type");
 
-        std::string in = query.getInputTuple()[0].getUnquotedString();
+        const std::string& in = query.getInputTuple()[0].getUnquotedString();
 
         FILE *pp;
         char VBUFF[1024];
@@ -62,77 +62,91 @@ public:
 };
 
 
-class SplitAtom : public PluginAtom
-{
-public:
-
-    SplitAtom()
+    class SplitAtom : public PluginAtom
     {
+    public:
+      
+      SplitAtom()
+      {
         //
         // string to split
         //
         addInputConstant();
-
+	
         //
         // delimiter (string or int)
         //
         addInputConstant();
-
+	
         //
         // which position to return (int)
         //
         addInputConstant();
-
+	
         setOutputArity(1);
-    }
+      }
 
-    virtual void
-    retrieve(const Query& query, Answer& answer) throw (PluginError)
-    {
-        if (!query.getInputTuple()[0].isString())
-            throw PluginError("Wrong input argument type");
+      virtual void
+      retrieve(const Query& query, Answer& answer) throw (PluginError)
+      {        
+	const Term& t0 = query.getInputTuple()[0];
+	const Term& t1 = query.getInputTuple()[1];
+	const Term& t2 = query.getInputTuple()[2];
 
-        std::string str = query.getInputTuple()[0].getUnquotedString();
+	if (!t0.isString())
+	  throw PluginError("Wrong input type for argument 0");
 
+        if (!t2.isInt())
+	  throw PluginError("Wrong input type for argument 2");
+
+	
+        const std::string& str = t0.getUnquotedString();
+	
         std::stringstream ss;
-        
-        if (query.getInputTuple()[1].isInt())
-            ss << query.getInputTuple()[1].getInt();
-        else if (query.getInputTuple()[1].isString())
-            ss << query.getInputTuple()[1].getUnquotedString();
-        else
-            throw PluginError("Wrong input argument type");
+
+        if (t1.isString())
+	  ss << t1.getUnquotedString();
+        else if (t1.isInt())
+	  ss << t1.getInt();
+	else
+	  throw PluginError("Wrong input type for argument 1");
 
         std::string sep(ss.str());
-
-        if (!query.getInputTuple()[2].isInt())
-            throw PluginError("Wrong input argument type");
         
-        unsigned pos = query.getInputTuple()[2].getInt();
-
-        std::vector<std::string> components;
+        Tuple out;
         
         std::string::size_type start = 0;
         std::string::size_type end = 0;
 
+	unsigned cnt = 0;
+        unsigned pos = t2.getInt();
+	
         while ((end = str.find(sep, start)) != std::string::npos)
-        {
-            components.push_back(str.substr(start, end - start));
-            start = end + sep.size();
-        }
+	  {
+	    // the pos'th match is our output tuple
+	    if (cnt == pos) 
+	      {
+		out.push_back(Term(str.substr(start, end - start), true));
+		break;
+	      }
 
-        components.push_back(str.substr(start));
-
-        Tuple out;
-
-        if (pos < components.size())
-        {
-            out.push_back(Term(components.at(pos), 1));
-        }
-
+	    start = end + sep.size();
+	    ++cnt;
+	  }
+	
+	// if we couldn't find anything, just return input string
+        if (out.empty() && cnt < pos)
+	  {
+	    out.push_back(t0);
+	  }
+	else if (out.empty() && cnt == pos) // add the remainder
+	  {
+	    out.push_back(Term(str.substr(start), true));
+	  }
+	
         answer.addTuple(out);
-    }
-};
+      }
+    };
 
 
 class CmpAtom : public PluginAtom
