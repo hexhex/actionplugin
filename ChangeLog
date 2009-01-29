@@ -1,3 +1,9 @@
+2009-01-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/stringplugin.cpp (SplitAtom::retrieve): Fix bug if position
+	is bigger then maximum number of string-splits.
+	Optimize string splitting.
+
 2008-02-20  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* configure.ac: Require autoconf >= 2.61.
