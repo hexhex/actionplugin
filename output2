@@ -1,0 +1,120 @@
+../../include/dlvhex/ActionAtom.h: In copy constructor ‘dlvhex::ActionAtom::ActionAtom(const dlvhex::ActionAtom&)’:
+../../include/dlvhex/ActionAtom.h:229: warning: ‘dlvhex::ActionAtom::precedence’ will be initialized after
+../../include/dlvhex/ActionAtom.h:225: warning:   ‘unsigned int dlvhex::ActionAtom::line’
+ActionAtom.cpp:51: warning:   when initialized here
+../../include/dlvhex/ActionAtom.h: In constructor ‘dlvhex::ActionAtom::ActionAtom(const std::string&, const std::string&, const dlvhex::Term&, const dlvhex::Tuple&, unsigned int)’:
+../../include/dlvhex/ActionAtom.h:229: warning: ‘dlvhex::ActionAtom::precedence’ will be initialized after
+../../include/dlvhex/ActionAtom.h:225: warning:   ‘unsigned int dlvhex::ActionAtom::line’
+ActionAtom.cpp:68: warning:   when initialized here
+ActionAtom.cpp: At global scope:
+ActionAtom.cpp:266: warning: unused parameter ‘atom2’
+In file included from /usr/include/c++/4.3/ext/hash_set:64,
+                 from /usr/include/boost/graph/adjacency_list.hpp:22,
+                 from BoostComponentFinder.cpp:41:
+/usr/include/c++/4.3/backward/backward_warning.h:33:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+In file included from DependencyGraph.cpp:37:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from FixpointModelGenerator.cpp:44:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from GraphProcessor.cpp:44:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from GuessCheckModelGenerator.cpp:41:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from OrdinaryModelGenerator.cpp:42:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from ProgramCtx.cpp:36:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:99: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:116: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:123: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:158: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:165: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:172: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:190: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:208: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:226: warning: type qualifiers ignored on function return type
+ProgramCtx.cpp:244: warning: type qualifiers ignored on function return type
+In file included from State.cpp:39:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type
+In file included from dlvhex.cpp:56:
+../../include/dlvhex/ProgramCtx.h:113: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:120: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:126: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:141: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:144: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:148: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:154: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:161: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:168: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:175: warning: type qualifiers ignored on function return type
+../../include/dlvhex/ProgramCtx.h:178: warning: type qualifiers ignored on function return type

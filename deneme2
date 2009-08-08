@@ -1,0 +1,15 @@
+p v q.
+m v n.
+k v l.
+ozan(a).
+ozan(b).
+ozan(c).
+selen.
+erdem :- bozan, selen, husam.
+basol :- selen.
+#husamettin[cozan]{b,1} :- p.
+#factolarakaction[selen]{b,4} :- q.
+#ikinciaction[selen]{c,2} :- p.
+#ucuncuaction[selen]{c}.
+#dorduncuaction[selen]{c,5}.
+#besinciaction[selen]{c,1}.

@@ -1,0 +1,5 @@
+ozan1.
+ozan2.
+#atom[ozan1]{b,1}.
+#atom[ozan1]{b,1} :- ozan1.
+#atom[ozan1]{b,1} :- ozan2.

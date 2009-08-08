@@ -1,0 +1,15 @@
+
+employee(a). employee(b). employee(c). employee(d). employee(e).
+know(a,b). know(b,c). know(c,d). know(d,e).
+
+            same_skill(a,b).
+            married(c,d).
+
+            member(X,p1) v member(X,p2) :- employee(X).
+            :~ member(X,P), member(Y,P), X != Y, not know(X,Y). [1:1]
+            :~ member(X,P), member(Y,P), X != Y, married(X,Y). [1:2]
+            :~ member(X,P), member(Y,P), X != Y, same_skill(X,Y). [1:2]
+#fact[selen0]{b,2}.
+#fact2[selen]{c,5}.
+#fact_condition1[selen2]{b,3} :- member(a,p2).
+#fact_condition2[selen3]{c,3} :- member(a,p1).

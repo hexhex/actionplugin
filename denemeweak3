@@ -1,0 +1,9 @@
+#tekfact[ozan]{b,1}[:1].
+#tekfact2[ozan]{b,1}[1:].
+#tekfact3{b,1}.
+#tekfact4{b}[1:].
+
+
+erdem.
+#selen[ozan]{b,1}[1:1] :- erdem.
+

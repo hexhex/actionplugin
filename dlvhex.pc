@@ -1,0 +1,14 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+pkglibdir=${libdir}/dlvhex
+sysplugindir=${pkglibdir}/plugins
+userplugindir=.dlvhex/plugins
+
+Name: dlvhex
+Description: HEX-Program Reasoner
+Version: 1.7.0
+Libs: -L${pkglibdir} -ldlvhexbase -laspsolver
+Cflags: -I${includedir}
+

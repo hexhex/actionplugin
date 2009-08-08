@@ -1,0 +1,9 @@
+evening.
+fuel(high).
+
+
+#robot[turnAlarm,on]{c,2} :- evening.
+#robot[turnAlarm,off]{c,2} :- morning.
+
+#robot[move,all]{b,1} :- fuel(high).
+#robot[move,right]{b,1} v #robot[move,left]{b,1} :- fuel(low).
