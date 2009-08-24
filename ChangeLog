@@ -1,3 +1,23 @@
+2009-08-24  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	* m4/boost.m4: Updating to version currently used in dlvhex trunk.
+
+	* examples/tests/stringplugintests.test: Adding examples, also used
+	as testcases with the test script which is currently used in dlvhex.
+	* examples/tests/run-dlvhex-tests.sh: Likewise.
+	* configure.ac: Likewise.
+	* Makefile.am: Likewise.
+	* examples/cmp.hex: Likewise.
+	* examples/concat.hex: Likewise.
+	* examples/sha1sum.hex: Likewise.
+	* examples/split.hex: Likewise.
+	* examples/strstr.hex: Likewise.
+	* examples/tests/cmp.out: Likewise.
+	* examples/tests/concat.out: Likewise.
+	* examples/tests/sha1sum.out: Likewise.
+	* examples/tests/split.out: Likewise.
+	* examples/tests/strstr.out: Likewise.
+
 2009-01-29  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/stringplugin.cpp (SplitAtom::retrieve): Fix bug if position

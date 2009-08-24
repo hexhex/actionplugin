@@ -1,0 +1,3 @@
+stringpair("ab","cd").
+
+fullstring(Full) :- &concat[P,F](Full), stringpair(P,F).

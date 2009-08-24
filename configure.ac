@@ -75,6 +75,7 @@ AC_SUBST([plugindir])
 AC_CONFIG_FILES([
            Makefile 
            src/Makefile
+           examples/Makefile
 ])
 
 AC_OUTPUT
