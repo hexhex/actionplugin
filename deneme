@@ -1,8 +1,0 @@
-ozan(a).
-ozan(b).
-ozan(c).
-selen.
-erdem :- bozan, selen, husam.
-basol :- selen.
-#husamettin[cozan]{b,N} :- ozan(a),#count{X:ozan(X)}=N.
-#factolarakaction[selen]{b}.

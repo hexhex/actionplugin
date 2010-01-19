@@ -1,4 +1,0 @@
-selen.
-ozan.
-
-#robot[move,left]{b,1}[2:2] :- ozan, selen.
