@@ -1,3 +1,0 @@
-axel-ex.hex tests/axel-ex.out
-foaf.hex tests/foaf.out --filter=foaf
-sr.hex tests/sr.out

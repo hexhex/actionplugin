@@ -1,1 +1,0 @@
-{objects("<http://www.ex.org/mydatatype>"), objects("'asasddasadfsadasf'^^<http://www.ex.org/mydatatype>"), objects("'hallo'@DE"), objects("'3'^^<http://www.w3.org/2001/XMLSchema#integer>"), objects("'1.2'^^<http://www.w3.org/2001/XMLSchema#decimal>"), objects("'asdasd'")}
