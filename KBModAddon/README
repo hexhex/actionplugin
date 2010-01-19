@@ -1,0 +1,73 @@
+-*- outline -*-
+
+This is the dlvhex-rdfplugin, a plugin for 'dlvhex'.
+
+This file contains information on compiling and installing and using the 
+rdfplugin.
+
+* Dependencies
+dlvhex-rdfplugin depends on the following:
+
+** dlvhex
+http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
+
+** raptor RDF parser library
+http://librdf.org/raptor/
+
+* Building the dlvhex-rdfplugin
+
+** Prerequisites
+
+*** dlvhex
+See dlvhex installation instructions at:
+http://con.fusion.at/dlvhex/download.php
+
+*** raptor
+See raptor installation instructions at:
+http://librdf.org/raptor/INSTALL.html
+
+** Building
+
+The typical procedure to build is:
+
+./configure
+make
+make install
+
+Some more information for each step follows:
+
+*** Configuration
+
+`./configure --enable-userinstall' will instal the plugin to the users home
+folder i.e.`~/.dlvhex/plugins'. By default the plugin will be installed
+in the DLVPATH/lib/dlvhex/plugins.
+
+General configuration options and explanation of related environment variables
+can be found using
+`./configure --help'
+
+** Usage
+
+This plugin has only one atom, namely `rdf' which has the following syntax:
+
+&rdf["source_uri"](S,P,O)
+
+The (S,P,O) represents the rdf triple. The triples returned have a specific syntax
+according the type of the rdf component that is returned:
+
+------------------------------------------------------
+LITERAL ::= STR | STR "^^" URI | STR "@" LANGTAG
+
+STR :== "'" STRVAL "'"
+
+URI :== "<" URIVAL ">"
+
+LANGTAG :== NCNAME
+
+BNODE :== "#genid_" URI "_genid" DIGIT+
+------------------------------------------------------
+
+a(S,P,O):-&rdf["www.example.com/foaf"](S,P,O).
+
+Some more examples can be found in the examples folder.
+

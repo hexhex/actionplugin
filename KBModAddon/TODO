@@ -1,0 +1,5 @@
+-*- org -*-
+
+* TODO add &sparql extatom
+Either call sparql-plugin, or use librasqal.
+* DONE move the Bnode prefix "genid" to a variable

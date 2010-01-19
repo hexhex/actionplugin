@@ -1,0 +1,9 @@
+New action plugin
+--This line, and those below, will be ignored--
+
+M    include/Makefile.am
+M    src/Makefile.am
+M    configure.ac
+M    TODO
+M    NEWS
+M    examples/Makefile.am
