@@ -66,8 +66,6 @@ namespace dlvhex {
   void
   ActionPlugin::getAtoms(AtomFunctionMap& a)
   {
-  //  boost::shared_ptr<PluginAtom> robot(new ActionAtom(*this));
-  //  a["robot"] = robot;
   }
 
 ActionPlugin theActionPlugin;
