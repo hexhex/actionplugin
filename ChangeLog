@@ -1,3 +1,8 @@
+2010-04-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/stringplugin.cpp: Include cstdio for gcc4.4.
+	(ShaAtom::retrieve): Check return value of fgets.
+
 2009-09-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* m4/boost.m4: Fix for autoconf 2.64 (see also
@@ -65,8 +70,9 @@
 
 	* AUTHORS: New file.
 
-2007-08-27  Axel Polleres <axel@polleres.net>
-        * src/stringplugin.cpp: Generalized '&concat' atom to accept an 
+2007-08-27  Axel Polleres  <axel@polleres.net>
+
+        * src/stringplugin.cpp: Generalized '&concat' atom to accept an
         aribtrary number of input params.
 
 2006-12-01  Roman Schindlauer  <roman@kr.tuwien.ac.at>
@@ -84,7 +90,6 @@
 	* src/stringplugin.cpp (PLUGINIMPORTFUNCTION): Set version number from
 	macros.
 	Update setOptions() parameters.
-
 
 2006-08-18  Roman Schindlauer  <roman@kr.tuwien.ac.at>
 
@@ -110,5 +115,4 @@
 
 	* ChangeLog: Added.
 
-	Fixes bug: #18
-
+	Fixes bug: #18.
