@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = gnu
-
 plugin_LTLIBRARIES = libdlvhexaction.la
 
 # install those libraries into $pkglibdir/lib

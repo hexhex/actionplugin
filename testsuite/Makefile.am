@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = foreign
-
 EXTRA_DIST = run-tests.sh
 
 TESTS = run-tests.sh

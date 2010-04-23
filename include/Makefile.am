@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = gnu
-
 ozanincludedir= $(includedir)/dlvhex
 
 noinst_HEADERS = \
