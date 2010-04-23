@@ -1,3 +1,7 @@
+2010-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* src/Makefile.am (AUTOMAKE_OPTIONS): Remove.
+
 2010-04-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/stringplugin.cpp: Include cstdio for gcc4.4.
