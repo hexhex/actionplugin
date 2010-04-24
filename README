@@ -9,11 +9,10 @@ rdfplugin.
 dlvhex-actionplugin depends on the following:
 
 ** dlvhex
-http://www.kr.tuwien.ac.at/staff/roman/dlvhex/
+http://www.kr.tuwien.ac.at/research/systems/dlvhex/
 
-** Boost Libraries v1.35
-
-http://sourceforge.net/projects/boost/files/boost/1.35.0/
+** Boost Libraries
+http://www.boost.org/
 
 * Building the dlvhex-actionplugin
 
@@ -21,11 +20,11 @@ http://sourceforge.net/projects/boost/files/boost/1.35.0/
 
 *** dlvhex
 See dlvhex installation instructions at:
-http://con.fusion.at/dlvhex/download.php
+http://www.kr.tuwien.ac.at/research/systems/dlvhex/download.html
 
-*** Boost Libraries v1.35
+*** Boost Libraries
 See Boost Libraries installation instructions at:
-http://sourceforge.net/projects/boost/files/boost/1.35.0/
+http://www.boost.org/
 
 ** Building
 
