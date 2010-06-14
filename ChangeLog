@@ -1,3 +1,7 @@
+2010-06-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* configure.ac (AC_PREREQ): Require autoconf >= 2.61.
+
 2010-04-24  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* TODO: Fix content.
