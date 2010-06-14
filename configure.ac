@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.61)
+AC_PREREQ([2.61])
 AC_INIT([dlvhex-actionplugin],[0.1.0],[selenbasol@su.sabanciuniv.edu])
 AC_CONFIG_SRCDIR([src/ActionPlugin.cpp])
 AC_CONFIG_HEADER([include/config.h])
