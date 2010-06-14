@@ -1,3 +1,10 @@
+2010-06-14  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* m4/boost.m4: Updating to version currently used in dlvhex trunk.
+
+	* configure.ac (AC_PREREQ): Require autoconf >= 2.61.
+	(AC_INIT): Bump version to 1.7.0.
+
 2010-04-23  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* src/Makefile.am (AUTOMAKE_OPTIONS): Remove.
