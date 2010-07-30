@@ -55,6 +55,7 @@ namespace aa {
 		index=line.find('%');
 		if (index!=std::string::npos)
 		{
+			// @bug: this kills strings with % inside (e.g., as in examples/tests/example_group_meeting)
 			in+=line.substr(0, index);
 		}
 		else
