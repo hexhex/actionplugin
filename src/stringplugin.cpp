@@ -16,7 +16,7 @@ namespace dlvhex {
     class ShaAtom : public PluginAtom
     {
 		public:
-			ShaAtom() : PluginAtom("", 0)
+			ShaAtom() : PluginAtom("Sha", 0)
 			{
 				//
 				// input string
@@ -30,14 +30,14 @@ namespace dlvhex {
 			retrieve(const Query& query, Answer& answer) throw (PluginError)
 			{
 				Registry &registry = *getRegistry();
-				std::string termsymbol = registry.getTermStringByID(query.input[0]);
+				const Term& term = registry.terms.getByID(query.input[0]);
 
-				if ((termsymbol.at(0) != '"') || (termsymbol.at(termsymbol.length()-1) != '"'))
+				if ((term.symbol.at(0) != '"') || (term.symbol.at(term.symbol.length()-1) != '"'))
 				{
 					throw PluginError("Wrong input argument type");
 				}
 	
-				const std::string& in = termsymbol.substr(1, (termsymbol.length()-2));
+				const std::string& in = term.symbol.substr(1, (term.symbol.length()-2));
 	
 				FILE *pp;
 				char VBUFF[1024];
@@ -76,7 +76,7 @@ namespace dlvhex {
     {
 		public:
       
-			SplitAtom() : PluginAtom("", 0)
+			SplitAtom() : PluginAtom("Split", 0)
 			{
 				//
 				// string to split
@@ -100,32 +100,32 @@ namespace dlvhex {
 			retrieve(const Query& query, Answer& answer) throw (PluginError)
 			{        
 				Registry &registry = *getRegistry();
-				const std::string t0symbol = registry.getTermStringByID(query.input[0]);
-				const std::string t1symbol = registry.getTermStringByID(query.input[1]);
-				const std::string t2symbol = registry.getTermStringByID(query.input[2]);
+				const Term& t0 = registry.terms.getByID(query.input[0]);
+				const Term& t1 = registry.terms.getByID(query.input[1]);
+				const Term& t2 = registry.terms.getByID(query.input[2]);
 
-				if ((t0symbol.at(0) != '"') || (t0symbol.at(t0symbol.length()-1) != '"'))
+				if ((t0.symbol.at(0) != '"') || (t0.symbol.at(t0.symbol.length()-1) != '"'))
 				{
 					throw PluginError("Wrong input type for argument 0");
 				}
 
 				int t1intval, t2intval;
 				
-				if (t2intval = strtol(t2symbol.c_str(), NULL, 10) != 0)
+				if (t2intval = strtol(t2.symbol.c_str(), NULL, 10) != 0)
 				{
 					throw PluginError("Wrong input type for argument 2");
 				}
 
 	
-				const std::string& str = t0symbol.substr(1, (t0symbol.length() - 2));
+				const std::string& str = t0.symbol.substr(1, (t0.symbol.length() - 2));
 	
 				std::stringstream ss;
 
-				if ((t1symbol.at(0) != '"') || (t1symbol.at(t1symbol.length() - 1) != '"'))
+				if ((t1.symbol.at(0) != '"') || (t1.symbol.at(t1.symbol.length() - 1) != '"'))
 				{
-					ss << t1symbol.substr(1, (t1symbol.length() - 2));
+					ss << t1.symbol.substr(1, (t1.symbol.length() - 2));
 				}
-				else if (t1intval = strtol(t1symbol.c_str(), NULL, 10) != 0)
+				else if (t1intval = strtol(t1.symbol.c_str(), NULL, 10) != 0)
 				{
 					ss << t1intval;
 				}
@@ -178,7 +178,7 @@ namespace dlvhex {
 	{
 	     public:
       
-			CmpAtom() : PluginAtom("", 0)
+			CmpAtom() : PluginAtom("CmpAtom", 0)
 			{
 				//
 				// first string or int
@@ -235,7 +235,7 @@ namespace dlvhex {
     {
 		public:
       
-			ConcatAtom() : PluginAtom("", 0)
+			ConcatAtom() : PluginAtom("Concat", 0)
 			{
 				//
 				// arbitrary list of strings or ints
