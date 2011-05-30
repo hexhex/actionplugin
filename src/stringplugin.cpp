@@ -16,7 +16,7 @@ namespace dlvhex {
     class ShaAtom : public PluginAtom
     {
 		public:
-			ShaAtom() : PluginAtom("Sha", 0)
+			ShaAtom() : PluginAtom("sha", 0)
 			{
 				//
 				// input string
@@ -76,7 +76,7 @@ namespace dlvhex {
     {
 		public:
       
-			SplitAtom() : PluginAtom("Split", 0)
+			SplitAtom() : PluginAtom("split", 0)
 			{
 				//
 				// string to split
@@ -149,7 +149,7 @@ namespace dlvhex {
 					// the pos'th match is our output tuple
 					if (cnt == pos) 
 					{
-						Term term(ID::SUBKIND_TERM_CONSTANT, str.substr(start, end - start));
+						Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, str.substr(start, end - start));
 						out.push_back(registry.storeTerm(term));
 						break;
 					}
@@ -165,7 +165,7 @@ namespace dlvhex {
 				}
 				else if (out.empty() && cnt == pos) // add the remainder
 				{
-					Term term(ID::SUBKIND_TERM_CONSTANT, str.substr(start));
+					Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, str.substr(start));
 					out.push_back(registry.storeTerm(term));
 				}
 	
@@ -178,7 +178,7 @@ namespace dlvhex {
 	{
 	     public:
       
-			CmpAtom() : PluginAtom("CmpAtom", 0)
+			CmpAtom() : PluginAtom("cmp", 0)
 			{
 				//
 				// first string or int
@@ -235,7 +235,7 @@ namespace dlvhex {
     {
 		public:
       
-			ConcatAtom() : PluginAtom("Concat", 0)
+			ConcatAtom() : PluginAtom("concat", 0)
 			{
 				//
 				// arbitrary list of strings or ints
@@ -254,6 +254,7 @@ namespace dlvhex {
 	
 				std::stringstream concatstream;
 	
+        concatstream << '"';
 				for (int t = 0; t < arity; t++)
 				{
 					const Term &term = registry.terms.getByID(query.input[t]);
@@ -272,13 +273,16 @@ namespace dlvhex {
 						throw PluginError("Wrong input argument type");
 					}
 				}
+        concatstream << '"';
         
 				Tuple out;
 				
 				//
 				// call Term::Term with second argument true to get a quoted string!
 				//
-				Term term(ID::SUBKIND_TERM_CONSTANT, std::string(concatstream.str()));
+				Term term(
+            ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT,
+            std::string(concatstream.str()));
 				out.push_back(registry.storeTerm(term));
 	
 				answer.get().push_back(out);
