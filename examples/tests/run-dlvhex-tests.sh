@@ -47,7 +47,7 @@ do
 	fi
 
 	# run dlvhex with specified parameters and program
-	$DLVHEX  $PARAMETERS $ADDPARM $HEXPROGRAM | egrep -v "^$" > $TMPFILE
+	$DLVHEX --verbose=255 $PARAMETERS $ADDPARM $HEXPROGRAM | egrep -v "^$" > $TMPFILE
 
 	if cmp -s $TMPFILE $ANSWERSETS
 	then
