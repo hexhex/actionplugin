@@ -1,3 +1,8 @@
+2011-06-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
+
+	* m4/boost.m4: Remove.
+	* bootstrap.sh: Likewise.
+
 2010-06-22  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	Release version 1.7.0.
