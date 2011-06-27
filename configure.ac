@@ -64,8 +64,8 @@ BOOST_TOKENIZER
 
 AC_ARG_ENABLE(userinstall, 
              [  --enable-userinstall    Install plugin into home directory],
-             [plugindir=$HOME/`pkg-config dlvhex --variable=userplugindir`],
-             [plugindir=`pkg-config dlvhex --variable=sysplugindir`]
+             [plugindir=$HOME/`$PKG_CONFIG dlvhex --variable=userplugindir`],
+             [plugindir=`$PKG_CONFIG dlvhex --variable=sysplugindir`]
              )
 AC_SUBST([plugindir])
 
