@@ -16,7 +16,7 @@ namespace dlvhex {
     class ShaAtom : public PluginAtom
     {
 		public:
-			ShaAtom() : PluginAtom("sha1sum", 0)
+			ShaAtom() : PluginAtom("sha1sum", 1)
 			{
 				//
 				// input string
@@ -32,13 +32,13 @@ namespace dlvhex {
 				Registry &registry = *getRegistry();
 				const Term& term = registry.terms.getByID(query.input[0]);
 
-				if ((term.symbol.at(0) != '"') || (term.symbol.at(term.symbol.length()-1) != '"'))
+				if (!term.isString())
 				{
 					throw PluginError("Wrong input argument type");
 				}
 	
-				const std::string& in = term.symbol.substr(1, (term.symbol.length()-2));
-	
+				const std::string& in = term.getUnquotedString();
+				
 				FILE *pp;
 				char VBUFF[1024];
 				
@@ -65,7 +65,7 @@ namespace dlvhex {
 				res.erase(res.size() - 1);
 	
 				Tuple out;
-				Term newterm(ID::SUBKIND_TERM_CONSTANT, res);
+				Term newterm(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, '"'+res+'"'); // sabine modified here
 				out.push_back(registry.storeTerm(newterm));
 				answer.get().push_back(out); 
 			}
@@ -76,7 +76,7 @@ namespace dlvhex {
     {
 		public:
       
-			SplitAtom() : PluginAtom("split", 0)
+			SplitAtom() : PluginAtom("split", 1)
 			{
 				//
 				// string to split
@@ -104,30 +104,37 @@ namespace dlvhex {
 				const Term& t1 = registry.terms.getByID(query.input[1]);
 				const Term& t2 = registry.terms.getByID(query.input[2]);
 
-				if ((t0.symbol.at(0) != '"') || (t0.symbol.at(t0.symbol.length()-1) != '"'))
+				//if ((t0.symbol.at(0) != '"') || (t0.symbol.at(t0.symbol.length()-1) != '"'))
+				if (!t0.isString())
 				{
 					throw PluginError("Wrong input type for argument 0");
 				}
 
 				int t1intval, t2intval;
 				
-				if (t2intval = strtol(t2.symbol.c_str(), NULL, 10) != 0)
+				//if (t2intval = strtol(t2.symbol.c_str(), NULL, 10) != 0)
+				if (t2.isInt())
 				{
 					throw PluginError("Wrong input type for argument 2");
 				}
 
 	
-				const std::string& str = t0.symbol.substr(1, (t0.symbol.length() - 2));
+				//const std::string& str = t0.symbol.substr(1, (t0.symbol.length() - 2));
+				const std::string &str = t0.getUnquotedString();
 	
 				std::stringstream ss;
 
-				if ((t1.symbol.at(0) != '"') || (t1.symbol.at(t1.symbol.length() - 1) != '"'))
+				//if ((t1.symbol.at(0) != '"') || (t1.symbol.at(t1.symbol.length() - 1) != '"'))
+				if (t1.isString())
 				{
-					ss << t1.symbol.substr(1, (t1.symbol.length() - 2));
+					//ss << t1.symbol.substr(1, (t1.symbol.length() - 2));
+					ss << t1.getUnquotedString();
 				}
-				else if (t1intval = strtol(t1.symbol.c_str(), NULL, 10) != 0)
+				//else if (t1intval = strtol(t1.symbol.c_str(), NULL, 10) != 0)
+				else if (t1.isInt())
 				{
-					ss << t1intval;
+					//ss << t1intval;
+					ss << t1.getInt();
 				}
 				else
 				{
@@ -142,7 +149,8 @@ namespace dlvhex {
 				std::string::size_type end = 0;
 
 				unsigned cnt = 0;
-				unsigned pos = t2intval;
+				//unsigned pos = t2intval;
+				unsigned pos = t2.getInt();
 	
 				while ((end = str.find(sep, start)) != std::string::npos)
 				{
@@ -178,7 +186,7 @@ namespace dlvhex {
 	{
 	     public:
       
-			CmpAtom() : PluginAtom("cmp", 0)
+			CmpAtom() : PluginAtom("cmp", 1)
 			{
 				//
 				// first string or int
@@ -235,7 +243,7 @@ namespace dlvhex {
     {
 		public:
       
-			ConcatAtom() : PluginAtom("concat", 0)
+			ConcatAtom() : PluginAtom("concat", 1)
 			{
 				//
 				// arbitrary list of strings or ints
@@ -254,7 +262,7 @@ namespace dlvhex {
 	
 				std::stringstream concatstream;
 	
-        concatstream << '"';
+				concatstream << '"';
 				for (int t = 0; t < arity; t++)
 				{
 					const Term &term = registry.terms.getByID(query.input[t]);
@@ -273,18 +281,15 @@ namespace dlvhex {
 						throw PluginError("Wrong input argument type");
 					}
 				}
-        concatstream << '"';
+				concatstream << '"';
         
 				Tuple out;
 				
 				//
 				// call Term::Term with second argument true to get a quoted string!
 				//
-				Term term(
-            ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT,
-            std::string(concatstream.str()));
+				Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, std::string(concatstream.str()));
 				out.push_back(registry.storeTerm(term));
-	
 				answer.get().push_back(out);
 			}
 	};
@@ -294,7 +299,7 @@ namespace dlvhex {
     {
 		public:
       
-			strstrAtom() : PluginAtom("strstr", 0)
+			strstrAtom() : PluginAtom("strstr", 1)
 			{
 				//
 				// haystack
@@ -388,6 +393,7 @@ namespace dlvhex {
 			virtual void
 			setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out)
 			{
+				
 			}
       
 	};
