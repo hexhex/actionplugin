@@ -16,7 +16,7 @@ namespace dlvhex {
     class ShaAtom : public PluginAtom
     {
 		public:
-			ShaAtom() : PluginAtom("sha", 0)
+			ShaAtom() : PluginAtom("sha1sum", 0)
 			{
 				//
 				// input string
