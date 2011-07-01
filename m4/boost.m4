@@ -1,1 +1,1 @@
-../dlvhex-common/boost.m4
+../dlvhex-common/m4/boost.m4

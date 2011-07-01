@@ -1,1 +1,1 @@
-../dlvhex-common/doxygen.m4
+../dlvhex-common/m4/doxygen.m4
