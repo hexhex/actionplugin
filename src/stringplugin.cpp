@@ -65,7 +65,7 @@ namespace dlvhex {
 				res.erase(res.size() - 1);
 	
 				Tuple out;
-				Term newterm(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, '"'+res+'"'); // sabine modified here
+				Term newterm(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, '"'+res+'"');
 				out.push_back(registry.storeTerm(newterm));
 				answer.get().push_back(out); 
 			}
@@ -101,46 +101,32 @@ namespace dlvhex {
 			{        
 				Registry &registry = *getRegistry();
 				const Term& t0 = registry.terms.getByID(query.input[0]);
-				const Term& t1 = registry.terms.getByID(query.input[1]);
-				const Term& t2 = registry.terms.getByID(query.input[2]);
+				ID delimiter = query.input[1];
+				ID position = query.input[2];
 
-				//if ((t0.symbol.at(0) != '"') || (t0.symbol.at(t0.symbol.length()-1) != '"'))
 				if (!t0.isString())
 				{
 					throw PluginError("Wrong input type for argument 0");
 				}
-
-				int t1intval, t2intval;
 				
-				//if (t2intval = strtol(t2.symbol.c_str(), NULL, 10) != 0)
-				if (t2.isInt())
-				{
-					throw PluginError("Wrong input type for argument 2");
-				}
-
-	
-				//const std::string& str = t0.symbol.substr(1, (t0.symbol.length() - 2));
 				const std::string &str = t0.getUnquotedString();
-	
+				
 				std::stringstream ss;
-
-				//if ((t1.symbol.at(0) != '"') || (t1.symbol.at(t1.symbol.length() - 1) != '"'))
-				if (t1.isString())
+				
+				if (delimiter.isIntegerTerm())
 				{
-					//ss << t1.symbol.substr(1, (t1.symbol.length() - 2));
-					ss << t1.getUnquotedString();
+					ss << delimiter.address;
 				}
-				//else if (t1intval = strtol(t1.symbol.c_str(), NULL, 10) != 0)
-				else if (t1.isInt())
+				else if (delimiter.isConstantTerm())
 				{
-					//ss << t1intval;
-					ss << t1.getInt();
+					Term t1 = registry.terms.getByID(delimiter);
+					ss << t1.getUnquotedString();
 				}
 				else
 				{
 					throw PluginError("Wrong input type for argument 1");
 				}
-
+				
 				std::string sep(ss.str());
         
 				Tuple out;
@@ -149,15 +135,21 @@ namespace dlvhex {
 				std::string::size_type end = 0;
 
 				unsigned cnt = 0;
-				//unsigned pos = t2intval;
-				unsigned pos = t2.getInt();
+				
+				//if (position.kind != ID::SUBKIND_TERM_INTEGER)
+				if (!position.isIntegerTerm())
+				{
+					throw PluginError("Wrong input type for argument 2");
+				}
+				unsigned pos = position.address;
 	
 				while ((end = str.find(sep, start)) != std::string::npos)
 				{
 					// the pos'th match is our output tuple
 					if (cnt == pos) 
 					{
-						Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, str.substr(start, end - start));
+						std::string s = str.substr(start, end - start);
+						Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, s);
 						out.push_back(registry.storeTerm(term));
 						break;
 					}
