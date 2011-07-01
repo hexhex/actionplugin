@@ -24,7 +24,7 @@ esac
 
 # Checks for programs.
 AC_PROG_CXX
-AC_PROG_CC
+AC_LANG([C++])
 
 # Checks for header files.
 AC_HEADER_DIRENT
@@ -46,7 +46,26 @@ AC_PROG_LIBTOOL
 #
 # of course we need dlvhex itself!
 #
-PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 1.7])
+PKG_CHECK_MODULES([DLVHEX], [dlvhex >= 2.0])
+_PKG_CONFIG([DLVHEX_USERPLUGINDIR], [variable=userplugindir], [dlvhex >= 2.0])
+_PKG_CONFIG([DLVHEX_SYSPLUGINDIR], [variable=sysplugindir], [dlvhex >= 2.0])
+DLVHEX_USERPLUGINDIR=$pkg_cv_DLVHEX_USERPLUGINDIR
+DLVHEX_SYSPLUGINDIR=$pkg_cv_DLVHEX_SYSPLUGINDIR
+
+AC_CHECK_HEADER([dlvhex/OnlineModelBuilder.hpp],,[AC_MSG_ERROR([Cannot find dlvhex headers!])])
+
+# where the plugin will be installed by default.
+# running configure will take sysplugindir from dlvhex.pc,
+# running configure --enable-userinstall will take homeplugindir.
+AC_ARG_ENABLE(userinstall, 
+             [  --enable-userinstall    Install plugin into home directory],
+             [plugindir=$HOME/$DLVHEX_USERPLUGINDIR],
+             [plugindir=$DLVHEX_SYSPLUGINDIR]
+             )
+AC_SUBST([plugindir])
+if test "x$plugindir" == "x"; then
+	AC_MSG_ERROR([Cannot determine nonempty value for plugindir!])
+fi
 
 
 # checking for boost libs
@@ -54,20 +73,6 @@ BOOST_REQUIRE([1.41.0])
 BOOST_SMART_PTR
 BOOST_STRING_ALGO
 BOOST_TOKENIZER
-
-
-#
-# where the plugin will be installed by default.
-# running configure will take sysplugindir from dlvhex.pc,
-# running configure --enable-userinstall will take homeplugindir.
-#
-
-AC_ARG_ENABLE(userinstall, 
-             [  --enable-userinstall    Install plugin into home directory],
-             [plugindir=$HOME/`$PKG_CONFIG dlvhex --variable=userplugindir`],
-             [plugindir=`$PKG_CONFIG dlvhex --variable=sysplugindir`]
-             )
-AC_SUBST([plugindir])
 
 #
 # all needed makefiles
@@ -80,3 +85,21 @@ AC_CONFIG_FILES([
 
 AC_OUTPUT
 
+dnl output configuration
+cat <<EOF
+ 
+$PACKAGE_TARNAME $PACKAGE_VERSION configuration:
+
+ - Compiler settings
+ CC: $CC
+ CXX: $CXX
+ CFLAGS: $CFLAGS
+ CPPFLAGS: $CPPFLAGS
+ CXXFLAGS: $CXXFLAGS
+ LDFLAGS: $LDFLAGS
+ 
+ - Path settings
+ prefix: $prefix
+ plugindir: $plugindir
+
+EOF
