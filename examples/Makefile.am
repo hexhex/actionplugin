@@ -11,7 +11,7 @@ EXTRA_DIST = \
   tests/sha1sum.out
 
 TESTS = ../testsuite/run-dlvhex-tests.sh
-TESTS_ENVIRONMENT = DLVHEX=dlvhex TOPSRCDIR=/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex-stringplugin/branches/release2x TOPBUILDDIR=/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex/branches/dlvhex-refactoring PARAMETERS="-s --plugindir=/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex-stringplugin/branches/release2x/src --verbose=255"
+TESTS_ENVIRONMENT = TOP_SRCDIR=/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex-stringplugin/branches/release2x DLVHEX="/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex/branches/dlvhex-refactoring/src/dlvhex/dlvhex -s --plugindir=/Users/sabovits/Studium/Informatik_BSc/Projektpraktikum/dlvhex/dlvhex-stringplugin/branches/release2x/src --verbose=255"
 
 #TESTS_ENVIRONMENT = DLVHEX=dlvhex TESTDIR=$(top_srcdir)/examples/tests PARAMETERS="-s --plugindir=$(top_builddir)/src"
 
