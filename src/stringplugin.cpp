@@ -149,7 +149,7 @@ namespace dlvhex {
 					if (cnt == pos) 
 					{
 						std::string s = str.substr(start, end - start);
-						Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, s);
+						Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, '"' + s + '"');
 						out.push_back(registry.storeTerm(term));
 						break;
 					}
@@ -165,7 +165,7 @@ namespace dlvhex {
 				}
 				else if (out.empty() && cnt == pos) // add the remainder
 				{
-					Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, str.substr(start));
+					Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, '"' + str.substr(start) + '"');
 					out.push_back(registry.storeTerm(term));
 				}
 	
