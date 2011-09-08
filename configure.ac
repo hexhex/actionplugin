@@ -1,5 +1,5 @@
 AC_PREREQ([2.61])
-AC_INIT([dlvhex-stringplugin],[1.7.0],[roman@kr.tuwien.ac.at])
+AC_INIT([dlvhex-stringplugin],[2.0.0],[roman@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
 
 MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
@@ -52,7 +52,10 @@ _PKG_CONFIG([DLVHEX_SYSPLUGINDIR], [variable=sysplugindir], [dlvhex >= 2.0])
 DLVHEX_USERPLUGINDIR=$pkg_cv_DLVHEX_USERPLUGINDIR
 DLVHEX_SYSPLUGINDIR=$pkg_cv_DLVHEX_SYSPLUGINDIR
 
+SAVE_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $DLVHEX_CFLAGS"
 AC_CHECK_HEADER([dlvhex/OnlineModelBuilder.hpp],,[AC_MSG_ERROR([Cannot find dlvhex headers!])])
+CPPFLAGS="$SAFE_CPPFLAGS"
 
 # where the plugin will be installed by default.
 # running configure will take sysplugindir from dlvhex.pc,
@@ -97,9 +100,12 @@ $PACKAGE_TARNAME $PACKAGE_VERSION configuration:
  CPPFLAGS: $CPPFLAGS
  CXXFLAGS: $CXXFLAGS
  LDFLAGS: $LDFLAGS
+
+ - from pkg-config
+ DLVHEX_CFLAGS: $DLVHEX_CFLAGS
+ DLVHEX_LIBS: $DLVHEX_LIBS
  
  - Path settings
  prefix: $prefix
  plugindir: $plugindir
-
 EOF
