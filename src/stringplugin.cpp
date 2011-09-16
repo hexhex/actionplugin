@@ -10,6 +10,7 @@
 #include <sstream>
 #include <cstdio>
 
+
 namespace dlvhex {
   namespace string {
 
@@ -32,7 +33,7 @@ namespace dlvhex {
 				Registry &registry = *getRegistry();
 				const Term& term = registry.terms.getByID(query.input[0]);
 
-				if (!term.isString())
+				if (!term.isQuotedString())
 				{
 					throw PluginError("Wrong input argument type");
 				}
@@ -104,7 +105,7 @@ namespace dlvhex {
 				ID delimiter = query.input[1];
 				ID position = query.input[2];
 
-				if (!t0.isString())
+				if (!t0.isQuotedString())
 				{
 					throw PluginError("Wrong input type for argument 0");
 				}
@@ -136,7 +137,6 @@ namespace dlvhex {
 
 				unsigned cnt = 0;
 				
-				//if (position.kind != ID::SUBKIND_TERM_INTEGER)
 				if (!position.isIntegerTerm())
 				{
 					throw PluginError("Wrong input type for argument 2");
@@ -197,24 +197,22 @@ namespace dlvhex {
 			retrieve(const Query& query, Answer& answer) throw (PluginError)
 			{	
 				Registry &registry = *getRegistry();
-				std::stringstream in1, in2;
 	
-				const Term& s1 = registry.terms.getByID(query.input[0]);
-				const Term& s2 = registry.terms.getByID(query.input[1]);
+				ID s1 = query.input[0];
+				ID s2 = query.input[1];
 	
 				bool smaller = false;
-	
-				int s1intval, s2intval; 
-				
-				if ( ((s1intval = strtol(s1.symbol.c_str(), NULL, 10)) != 0) 
-				  && ((s2intval = strtol(s2.symbol.c_str(), NULL, 10)) != 0) )
+								
+				if (s1.isIntegerTerm() && s2.isIntegerTerm())
 				{
-					smaller = (s1intval < s2intval);
+					smaller = s1.address < s2.address;
 				}
-				else if ((s1.symbol.at(0) == '"') && (s1.symbol.at(s1.symbol.length() - 1) == '"') 
-					  && (s2.symbol.at(0) == '"') && (s2.symbol.at(s2.symbol.length() - 1) == '"') )
+				else if (s1.isConstantTerm() && s2.isConstantTerm())
 				{
-					smaller = (s1.symbol.substr(1, s1.symbol.length() - 2) < s2.symbol.substr(1, s2.symbol.length() - 2));
+					const Term& t1 = registry.terms.getByID(s1);
+					const Term& t2 = registry.terms.getByID(s2);
+					
+					smaller = t1.getUnquotedString() < t2.getUnquotedString();
 				}
 				else
 				{
@@ -257,16 +255,16 @@ namespace dlvhex {
 				concatstream << '"';
 				for (int t = 0; t < arity; t++)
 				{
-					const Term &term = registry.terms.getByID(query.input[t]);
-					int intval;
-					if ((intval = strtol(term.symbol.c_str(), NULL, 10)) != 0)
+					ID id = query.input[t];
+					
+					if (id.isConstantTerm())
 					{
-						concatstream << intval;
+						const Term &term = registry.terms.getByID(id);
+						concatstream << term.getUnquotedString();
 					}
-					else if ((term.symbol.at(0) == '"') 
-							 && (term.symbol.at(term.symbol.length() - 1) == '"'))
+					else if (id.isIntegerTerm())
 					{
-						concatstream << term.symbol.substr(1, term.symbol.length() - 2); 
+						concatstream << id.address;
 					}
 					else
 					{
@@ -317,17 +315,18 @@ namespace dlvhex {
 				const Term& s1 = registry.terms.getByID(query.input[0]);
 				const Term& s2 = registry.terms.getByID(query.input[1]);
 	
-				if ((s1.symbol.at(0) != '"') || (s1.symbol.at(s1.symbol.length() - 1) != '"'))
+				if (!s1.isQuotedString())
 				{
 					throw PluginError("Wrong input argument type");
 				}
 
-				in1 = s1.symbol.substr(1, s1.symbol.length() - 2);
+				in1 = s1.getUnquotedString();
+				
 				int s2intval;
 				
-				if ((s2.symbol.at(0) == '"') && (s2.symbol.at(s2.symbol.length() - 1) == '"'))
+				if (s2.isQuotedString())
 				{
-					inss << s2.symbol.substr(1, s2.symbol.length() - 2);
+					inss << s2.getUnquotedString();
 				}
 				else if ((s2intval = strtol(s2.symbol.c_str(), NULL, 10)) != 0)
 				{
