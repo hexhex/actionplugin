@@ -8,7 +8,8 @@ EXTRA_DIST = \
   tests/strstr.out \
   tests/split.out \
   tests/sha1sum.out \
-  ../testsuite/run-dlvhex-tests.sh
+  ../testsuite/run-dlvhex-tests.sh \
+  ../testsuite/answerset_compare.py
 
 TESTS = $(top_srcdir)/testsuite/run-dlvhex-tests.sh
 
