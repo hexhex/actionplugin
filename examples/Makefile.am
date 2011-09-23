@@ -7,9 +7,8 @@ EXTRA_DIST = \
   tests/concat.out \
   tests/strstr.out \
   tests/split.out \
-  tests/sha1sum.out
-
-DIST_SOURCES = ../testsuite/run-dlvhex-tests.sh
+  tests/sha1sum.out \
+  ../testsuite/run-dlvhex-tests.sh
 
 TESTS = $(top_srcdir)/testsuite/run-dlvhex-tests.sh
 

@@ -381,10 +381,10 @@ namespace dlvhex {
 				return ret;
 			}
       
-			virtual void
-			setOptions(bool doHelp, std::vector<std::string>& argv, std::ostream& out)
+			virtual void 
+			processOptions(std::list<const char*>& pluginOptions, ProgramCtx& ctx)
 			{
-				
+			
 			}
       
 	};
