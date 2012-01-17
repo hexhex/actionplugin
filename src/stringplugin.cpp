@@ -399,15 +399,10 @@ namespace dlvhex {
 } // namespace dlvhex
 
 //
-// and let it be loaded by dlvhex!
+// let it be loaded by dlvhex!
 //
-//extern "C"
-//dlvhex::string::StringPlugin*
-//PLUGINIMPORTFUNCTION()
-//{
-//	setNameVersion(PACKAGE_TARNAME, STRINGPLUGIN_MAJOR, STRINGPLUGIN_MINOR, STRINGPLUGIN_MICRO);
-//	return &dlvhex::string::theStringPlugin;
-//}
+
+IMPLEMENT_PLUGINVERSIONFUNCTION(STRINGPLUGIN_MAJOR,STRINGPLUGIN_MINOR,STRINGPLUGIN_MICRO);
 
 // return plain C type s.t. all compilers and linkers will like this code
 extern "C"

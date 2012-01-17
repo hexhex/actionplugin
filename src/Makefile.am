@@ -1,13 +1,13 @@
 #
 # replace 'plugin' on the right side by your plugin's name
 #
-plugin_LTLIBRARIES = libdlvhexstring.la
+plugin_LTLIBRARIES = libdlvhexplugin-string.la
 
 #
 # replace 'plugin' on the left side as above and
 # add all sources of your plugin
 #
-libdlvhexstring_la_SOURCES = stringplugin.cpp
+libdlvhexplugin_string_la_SOURCES = stringplugin.cpp
 
 #
 # extend compiler flags by CFLAGS of other needed libraries
@@ -17,14 +17,14 @@ AM_CPPFLAGS = \
 	$(BOOST_CPPFLAGS) \
 	$(DLVHEX_CFLAGS)
 
-libdlvhexstring_la_LDFLAGS = -avoid-version -module
+libdlvhexplugin_string_la_LDFLAGS = -avoid-version -module
 
 
-libdlvhexstring-static.la: $(libdlvhexstring_la_OBJECTS)
-	$(CXXLINK) -avoid-version -module -rpath $(plugindir) $(libdlvhexstring_la_OBJECTS)
+libdlvhexplugin-string-static.la: $(libdlvhexplugin_string_la_OBJECTS)
+	$(CXXLINK) -avoid-version -module -rpath $(plugindir) $(libdlvhexplugin_string_la_OBJECTS)
 
-install-static: libdlvhexstring-static.la
-	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexstring-static.la $(DESTDIR)$(plugindir)/libdlvhexstring-static.la
+install-static: libdlvhexplugin-string-static.la
+	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexplugin-string-static.la $(DESTDIR)$(plugindir)/libdlvhexplugin-string-static.la
 
 uninstall-static:
-	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(plugindir)/libdlvhexstring-static.la
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(plugindir)/libdlvhexplugin-string-static.la
