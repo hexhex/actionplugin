@@ -2,9 +2,9 @@
 //
 // this include is necessary
 //
-#include "dlvhex/PluginInterface.h"
-#include "dlvhex/Term.hpp"
-#include "dlvhex/Registry.hpp"
+#include "dlvhex2/PluginInterface.h"
+#include "dlvhex2/Term.hpp"
+#include "dlvhex2/Registry.hpp"
 
 #include <string>
 #include <sstream>
