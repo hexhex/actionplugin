@@ -2,9 +2,14 @@
 //
 // this include is necessary
 //
-#include "dlvhex2/PluginInterface.h"
-#include "dlvhex2/Term.hpp"
-#include "dlvhex2/Registry.hpp"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+#include <dlvhex2/PluginInterface.h>
+#include <dlvhex2/Term.hpp>
+#include <dlvhex2/Registry.hpp>
 
 #include <string>
 #include <sstream>
