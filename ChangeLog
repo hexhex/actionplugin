@@ -1,3 +1,9 @@
+2012-01-19  Peter Schueller  <ps@kr.tuwien.ac.at>
+
+	Porting TODO sabine changes to dlvhex 2.
+
+	* configure.ac: Using dlvhex2.m4 for configuration.
+
 2011-06-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
 	* m4/boost.m4: Remove.

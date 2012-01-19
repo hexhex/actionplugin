@@ -1,7 +1,7 @@
 AC_PREREQ([2.61])
 AC_INIT([dlvhex-stringplugin],[2.0.0],[roman@kr.tuwien.ac.at])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
-AM_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 
 MAJOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\1,"`
 MINOR=`echo $PACKAGE_VERSION | sed "s,^\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\),\2,"`
@@ -44,32 +44,14 @@ AC_PROG_LIBTOOL
 # check for other libraries here
 #
 
-#
-# of course we need dlvhex itself!
-#
-AC_ARG_WITH([dlvhex2],
-   [AS_HELP_STRING([--with-dlvhex2=DIR],
-                   [prefix of where you installed dlvhex2 >= 2.0])])
-if test "x$with_dlvhex2" != "x"; then
-  export PKG_CONFIG_PATH="${with_dlvhex2}lib/pkgconfig/"
-  AC_SUBST([DISTCHECK_CONFIGURE_FLAGS],
-           ["$DISTCHECK_CONFIGURE_FLAGS --with-dlvhex2=${with_dlvhex2}"])
-fi
-PKG_CHECK_MODULES([DLVHEX], [dlvhex2 >= 2.0])
-_PKG_CONFIG([DLVHEX_USERPLUGINDIR], [variable=userplugindir], [dlvhex2 >= 2.0])
-_PKG_CONFIG([DLVHEX_SYSPLUGINDIR], [variable=sysplugindir], [dlvhex2 >= 2.0])
-_PKG_CONFIG([DLVHEX_BINDIR], [variable=bindir], [dlvhex2 >= 2.0])
-DLVHEX_USERPLUGINDIR=$pkg_cv_DLVHEX_USERPLUGINDIR
-DLVHEX_SYSPLUGINDIR=$pkg_cv_DLVHEX_SYSPLUGINDIR
-DLVHEX_BINDIR=$pkg_cv_DLVHEX_BINDIR
-AC_SUBST(DLVHEX_USERPLUGINDIR)
-AC_SUBST(DLVHEX_SYSPLUGINDIR)
-AC_SUBST(DLVHEX_BINDIR)
+# check for dlvhex, sets various variables
+DLVHEX2_REQUIRE([2.0.0])
 
-SAVE_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $DLVHEX_CFLAGS"
-AC_CHECK_HEADER([dlvhex2/OnlineModelBuilder.hpp],,[AC_MSG_ERROR([Cannot find dlvhex2 headers!])])
-CPPFLAGS="$SAFE_CPPFLAGS"
+# checking for boost libs
+BOOST_REQUIRE([1.41.0])
+BOOST_SMART_PTR
+BOOST_STRING_ALGO
+BOOST_TOKENIZER
 
 # where the plugin will be installed by default.
 # running configure will take sysplugindir from dlvhex.pc,
@@ -83,13 +65,6 @@ AC_SUBST([plugindir])
 if test "x$plugindir" == "x"; then
 	AC_MSG_ERROR([Cannot determine nonempty value for plugindir!])
 fi
-
-
-# checking for boost libs
-BOOST_REQUIRE([1.41.0])
-BOOST_SMART_PTR
-BOOST_STRING_ALGO
-BOOST_TOKENIZER
 
 #
 # all needed makefiles
