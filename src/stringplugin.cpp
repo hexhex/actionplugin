@@ -369,7 +369,7 @@ namespace dlvhex {
       
 			StringPlugin() 
 			{
-				setNameVersion(PACKAGE_TARNAME, STRINGPLUGIN_MAJOR, STRINGPLUGIN_MINOR, STRINGPLUGIN_MICRO);
+				setNameVersion(PACKAGE_TARNAME,STRINGPLUGIN_VERSION_MAJOR,STRINGPLUGIN_VERSION_MINOR,STRINGPLUGIN_VERSION_MICRO);
 			}
 		
 			virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx&) const
@@ -407,7 +407,7 @@ namespace dlvhex {
 // let it be loaded by dlvhex!
 //
 
-IMPLEMENT_PLUGINVERSIONFUNCTION(STRINGPLUGIN_MAJOR,STRINGPLUGIN_MINOR,STRINGPLUGIN_MICRO);
+IMPLEMENT_PLUGINABIVERSIONFUNCTION
 
 // return plain C type s.t. all compilers and linkers will like this code
 extern "C"
