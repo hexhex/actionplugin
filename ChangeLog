@@ -2,7 +2,8 @@
 
 	Porting TODO sabine changes to dlvhex 2.
 
-	* configure.ac: Using dlvhex2.m4 for configuration.
+	* configure.ac: Using dlvhex.m4 for configuration.
+	* m4/dlvhex.m4: Likewise.
 
 2011-06-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
