@@ -1,5 +1,5 @@
 AC_PREREQ([2.61])
-AC_INIT([dlvhex-stringplugin],[2.0.0],[roman@kr.tuwien.ac.at])
+AC_INIT([dlvhex-stringplugin],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/stringplugin.cpp])
 AC_CONFIG_HEADERS([src/config.h])
 

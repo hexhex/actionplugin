@@ -1,9 +1,17 @@
-2012-01-19  Peter Schueller  <ps@kr.tuwien.ac.at>
+2012-XX-YY  Peter Schueller  <ps@kr.tuwien.ac.at>
 
-	Porting TODO sabine changes to dlvhex 2.
+	Release version 2.0.0.
+
+2012-01-19  Peter Schueller  <ps@kr.tuwien.ac.at>
 
 	* configure.ac: Using dlvhex.m4 for configuration.
 	* m4/dlvhex.m4: Likewise.
+	* NEWS: Update.
+	* AUTHORS: Update.
+
+2011-09-23  Sabine Laszakovits  <sabine.laszakovits@gmail.com>
+
+	Porting to dlvhex 2.0.0.
 
 2011-06-13  Thomas Krennwallner  <tkren@kr.tuwien.ac.at>
 
