@@ -1,7 +1,12 @@
-EXTRA_DIST = run-tests.sh
+EXTRA_DIST = \
+  run-dlvhex-tests.sh \
+  answerset_compare.py
 
-TESTS = run-tests.sh
+TESTS = run-dlvhex-tests.sh
 
-#TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples PARAMETERS='-s -p $(top_srcdir)/src/.libs'
-TESTS_ENVIRONMENT = EXAMPLES=$(top_srcdir)/examples PARAMETERS='-s'
-
+TESTS_ENVIRONMENT = \
+  TOP_SRCDIR=$(top_srcdir) \
+  DLVHEX="$(DLVHEX_BINDIR)/dlvhex2 -s --plugindir=$(top_builddir)/src " \
+  EXAMPLESDIR=$(top_srcdir)/examples \
+  TESTDIR=$(top_srcdir)/examples/tests/stringplugintests.test \
+  OUTDIR=$(top_srcdir)/examples/tests
