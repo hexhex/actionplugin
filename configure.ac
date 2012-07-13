@@ -1,11 +1,11 @@
 AC_PREREQ([2.61])
-AC_INIT([dlvhex-stringplugin],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
-AC_CONFIG_SRCDIR([src/stringplugin.cpp])
-AC_CONFIG_HEADERS([src/config.h])
+AC_INIT([dlvhex-actionplugin],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
+AC_CONFIG_SRCDIR([src/ActionPlugin.cpp])
+AC_CONFIG_HEADERS([include/config.h])
 
 # for documentation of the versioning scheme see
 # https://sourceforge.net/apps/trac/dlvhex/wiki/LibraryVersions
-DLVHEX_DEFINE_VERSION([STRINGPLUGIN],[$PACKAGE_VERSION])
+DLVHEX_DEFINE_VERSION([ACTIONPLUGIN],[$PACKAGE_VERSION])
 DLVHEX_DEFINE_VERSION([DLVHEX_ABI],[7.0.0])
 
 AM_INIT_AUTOMAKE
@@ -69,6 +69,7 @@ fi
 AC_CONFIG_FILES([
            Makefile 
            src/Makefile
+           include/Makefile
            examples/Makefile
            testsuite/Makefile
 ])
