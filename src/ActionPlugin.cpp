@@ -551,23 +551,44 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx)
 	reg->registerUserAuxPrinter(negAuxPrinter);
 }
 
+
+//
+// now instantiate the plugin
+//
+ActionPlugin theActionPlugin;
+
+
 DLVHEX_NAMESPACE_END
 
-// this would be the code to use this plugin as a "real" plugin in a .so file
-// but we directly use it in dlvhex.cpp
-#if 0
-ActionPlugin theActionPlugin;
+//
+// let it be loaded by dlvhex!
+//
+IMPLEMENT_PLUGINABIVERSIONFUNCTION
+
 
 // return plain C type s.t. all compilers and linkers will like this code
 extern "C"
 void * PLUGINIMPORTFUNCTION()
 {
-	return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
+  return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
 }
 
-#endif
-/* vim: set noet sw=2 ts=2 tw=80: */
 
-// Local Variables:
-// mode: C++
-// End:
+//// this would be the code to use this plugin as a "real" plugin in a .so file
+//// but we directly use it in dlvhex.cpp
+//#if 0
+//ActionPlugin theActionPlugin;
+//
+//// return plain C type s.t. all compilers and linkers will like this code
+//extern "C"
+//void * PLUGINIMPORTFUNCTION()
+//{
+//	return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
+//}
+//
+//#endif
+///* vim: set noet sw=2 ts=2 tw=80: */
+//
+//// Local Variables:
+//// mode: C++
+//// End:
