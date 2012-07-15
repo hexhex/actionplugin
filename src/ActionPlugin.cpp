@@ -127,11 +127,11 @@ public:
 
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
-	struct stronglyNegatedPrefixAtom:
-		SemanticActionBase<ActionPluginParserModuleSemantics, ID, stronglyNegatedPrefixAtom>
+	struct actionPrefixAtom:
+		SemanticActionBase<ActionPluginParserModuleSemantics, ID, actionPrefixAtom>
 	{
-		stronglyNegatedPrefixAtom(ActionPluginParserModuleSemantics& mgr):
-			stronglyNegatedPrefixAtom::base_type(mgr)
+		actionPrefixAtom(ActionPluginParserModuleSemantics& mgr):
+			actionPrefixAtom::base_type(mgr)
 		{
 		}
 	};
@@ -140,7 +140,7 @@ public:
 // create semantic handler for above semantic action
 // (needs to be in globally specializable struct space)
 template<>
-struct sem<ActionPluginParserModuleSemantics::stronglyNegatedPrefixAtom>
+struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom>
 {
   void createAtom(RegistryPtr reg, OrdinaryAtom& atom, ID& target)
   {
@@ -248,18 +248,20 @@ struct ActionPluginParserModuleGrammarBase:
 		sem(sem)
 	{
 		typedef ActionPluginParserModuleSemantics Sem;
-		stronglyNegatedPrefixAtom
+		actionPrefixAtom
 			= (
-					qi::lit('-') >> Base::classicalAtomPredicate >>
-					-(qi::lit('(') > -Base::terms >> qi::lit(')')) > qi::eps
-				) [ Sem::stronglyNegatedPrefixAtom(sem) ];
+					qi::lit('#') >> Base::classicalAtomPredicate >>
+					qi::lit('[') >> -Base::terms >> qi::lit(']') >>
+					qi::lit('{') >> (qi::lit('b') | qi::lit('c') | qi::lit("c_p")) >> -(qi::lit(',') >> Base::term) >> qi::lit('}') >>
+					-(qi::lit('[') >> -(Base::term) >> qi::lit(':') >> -(Base::term) >> qi::lit(']'))
+				) [ Sem::actionPrefixAtom(sem) ];
 
 		#ifdef BOOST_SPIRIT_DEBUG
-		BOOST_SPIRIT_DEBUG_NODE(stronglyNegatedPrefixAtom);
+		BOOST_SPIRIT_DEBUG_NODE(actionPrefixAtom);
 		#endif
 	}
 
-	qi::rule<Iterator, ID(), Skipper> stronglyNegatedPrefixAtom;
+	qi::rule<Iterator, ID(), Skipper> actionPrefixAtom;
 };
 
 struct ActionPluginParserModuleGrammar:
@@ -274,7 +276,7 @@ struct ActionPluginParserModuleGrammar:
 
   ActionPluginParserModuleGrammar(ActionPluginParserModuleSemantics& sem):
     GrammarBase(sem),
-    QiBase(GrammarBase::stronglyNegatedPrefixAtom)
+    QiBase(GrammarBase::actionPrefixAtom)
   {
   }
 };
@@ -322,8 +324,6 @@ ActionPlugin::createParserModules(ProgramCtx& ctx)
 	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
 	if( ctxdata.enabled )
 	{
-		ret.push_back(HexParserModulePtr(
-					new ActionPluginParserModule<HexParserModule::BODYATOM>(ctx)));
 		ret.push_back(HexParserModulePtr(
 					new ActionPluginParserModule<HexParserModule::HEADATOM>(ctx)));
 	}
@@ -440,6 +440,7 @@ void ActionPluginConstraintAdder::rewrite(ProgramCtx& ctx)
 		DBGLOG(DBG,"created aux constraint '" <<
 				printToString<RawPrinter>(idcon, reg) << "'");
 	}
+
 }
 
 } // anonymous namespace

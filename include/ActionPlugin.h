@@ -59,6 +59,10 @@ public:
     // for fast detection whether an ID is this plugin's responsitility to display
     PredicateMask myAuxiliaryPredicateMask;
 
+    // predicate constants which were encountered
+    typedef std::list<ID> PredicateList;
+    PredicateList actionPredicateList;
+
     CtxData();
     virtual ~CtxData() {};
   };
