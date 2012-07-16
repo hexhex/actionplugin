@@ -25,7 +25,7 @@
  * @file ActionPlugin.h
  * @author Stefano Germano
  *
- * @brief Plugin for handling strong negation (extended programs) via rewriting to non-extended programs.
+ * @brief Plugin ...
  */
 
 #ifndef ACTION_PLUGIN_H
@@ -36,60 +36,57 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-class ActionPlugin:
-  public PluginInterface
-{
-public:
-  // stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
-  class CtxData:
-    public PluginData
-  {
+class ActionPlugin: public PluginInterface {
   public:
-    // whether plugin is enabled
-    bool enabled;
+    // stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
+    class CtxData: public PluginData {
+      public:
+        // whether plugin is enabled
+        bool enabled;
 
-    // predicate constants which were encountered in negative form and their arity
-    typedef std::map<ID,unsigned> PredicateArityMap;
-    PredicateArityMap negPredicateArities;
+//    // predicate constants which were encountered in negative form and their arity
+//    typedef std::map<ID,unsigned> PredicateArityMap;
+//    PredicateArityMap negPredicateArities;
+//
+//    // aux predicate constants and their positive counterparts
+//    typedef std::map<ID,ID> NegToPosMap;
+//    NegToPosMap negToPos;
 
-    // aux predicate constants and their positive counterparts
-    typedef std::map<ID,ID> NegToPosMap;
-    NegToPosMap negToPos;
-    
-    // for fast detection whether an ID is this plugin's responsitility to display
-    PredicateMask myAuxiliaryPredicateMask;
+// for fast detection whether an ID is this plugin's responsitility to display
+        PredicateMask myAuxiliaryPredicateMask;
 
-    // predicate constants which were encountered
-    typedef std::list<ID> PredicateList;
-    PredicateList actionPredicateList;
+        // an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
+        dlvhex::ID id_in_the_registry;
 
-    CtxData();
-    virtual ~CtxData() {};
-  };
+        CtxData();
+        virtual ~CtxData() {
+        }
+        ;
+    };
 
-public:
-  ActionPlugin();
-  virtual ~ActionPlugin();
+  public:
+    ActionPlugin();
+    virtual ~ActionPlugin();
 
-	// output help message for this plugin
-	virtual void printUsage(std::ostream& o) const;
+    // output help message for this plugin
+    virtual void printUsage(std::ostream& o) const;
 
-  // accepted options: --strongnegation-enable
-  //
-	// processes options for this plugin, and removes recognized options from pluginOptions
-  // (do not free the pointers, the const char* directly come from argv)
-	virtual void processOptions(std::list<const char*>& pluginOptions, ProgramCtx&);
+    // accepted options: --strongnegation-enable
+    //
+    // processes options for this plugin, and removes recognized options from pluginOptions
+    // (do not free the pointers, the const char* directly come from argv)
+    virtual void processOptions(std::list<const char*>& pluginOptions, ProgramCtx&);
 
-  // create parser modules that extend and the basic hex grammar
-  virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
+    // create parser modules that extend and the basic hex grammar
+    virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
 
-  // rewrite program by adding auxiliary constraints
-  virtual PluginRewriterPtr createRewriter(ProgramCtx&);
+//  // rewrite program by adding auxiliary constraints
+//  virtual PluginRewriterPtr createRewriter(ProgramCtx&);
 
-  // change model callback (print auxiliaries as negative atoms)
-  virtual void setupProgramCtx(ProgramCtx&);
+    // change model callback (print auxiliaries as negative atoms)
+    virtual void setupProgramCtx(ProgramCtx&);
 
-  // no atoms!
+    // no atoms!
 };
 
 DLVHEX_NAMESPACE_END
