@@ -31,7 +31,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-
 //#define BOOST_SPIRIT_DEBUG
 
 #include "ActionPlugin.h"
@@ -53,7 +52,8 @@ namespace spirit = boost::spirit;
 namespace qi = boost::spirit::qi;
 
 ActionPlugin::CtxData::CtxData() :
-    enabled(false) //, action_atom_name("aux_action_atom")
+    enabled(false), idActionMap()
+//, action_atom_name("aux_action_atom")
 //, negPredicateArities()
 {
 }
@@ -102,9 +102,20 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions, Program
 
   }
 
-  if (ctxdata.enabled)
+  if (ctxdata.enabled) {
+
     ctxdata.id_in_the_registry = ctx.registry()->getAuxiliaryConstantSymbol('a',
         dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0));
+
+    ctxdata.id_brave = ctx.registry()->storeConstantTerm("b");
+    ctxdata.id_cautious = ctx.registry()->storeConstantTerm("c");
+    ctxdata.id_preferred_cautious = ctx.registry()->storeConstantTerm("c_p");
+
+    ctxdata.id_default_priority = ID::termFromInteger(1);
+    ctxdata.id_default_weight = ID::termFromInteger(1);
+    ctxdata.id_default_level = ID::termFromInteger(1);
+
+  }
 
 }
 
@@ -213,12 +224,23 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 //  }
 
     void operator()(ActionPluginParserModuleSemantics& mgr,
-        const boost::fusion::vector5< dlvhex::ID, boost::optional< boost::optional< dlvhex::Tuple > >, std::string,
-            boost::optional< dlvhex::ID >,
-            boost::optional< boost::fusion::vector2< boost::optional< dlvhex::ID >, boost::optional< dlvhex::ID > > > > & source,
+        const boost::fusion::vector5<dlvhex::ID, boost::optional<boost::optional<dlvhex::Tuple> >,
+            std::string, boost::optional<dlvhex::ID>,
+            boost::optional<
+                boost::fusion::vector2<boost::optional<dlvhex::ID>, boost::optional<dlvhex::ID> > > > & source,
         ID& target) {
 
       RegistryPtr reg = mgr.ctx.registry();
+
+
+//      const dlvhex::ID id_predicate = boost::fusion::at_c < 0 > (source);
+//
+//      Action action(reg->getTermStringByID(id_predicate),
+//          reg->getAuxiliaryConstantSymbol('a', id_predicate));
+//
+//      mgr.ctxdata.idActionMap.insert(std::pair< id_predicate, action >);
+
+
 
 //  std::cerr << "action_atom_name: " << mgr.ctxdata.action_atom_name << std::endl;
 
@@ -284,12 +306,11 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
       printer.print(boost::fusion::at_c < 0 > (source));
 
       std::cerr << ',';
-      if (!!boost::fusion::at_c < 1 > (source)
-        && !!boost::fusion::at_c < 1 > (source).get()) {
+      if (!!boost::fusion::at_c < 1 > (source) && !!boost::fusion::at_c < 1 > (source).get()) {
 
-          printer.printmany(boost::fusion::at_c < 1 > (source).get().get(), ",");
+        printer.printmany(boost::fusion::at_c < 1 > (source).get().get(), ",");
 
-          std::cerr << ',';
+        std::cerr << ',';
 
       }
 
@@ -327,8 +348,55 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       std::cerr << std::endl;
 
+      //Take the IDs, create OrdinaryAtom, store it in the Registry by using storeOrdinaryAtom and put in target the ID
 
+      OrdinaryAtom oatom(ID::MAINKIND_ATOM);
 
+      Tuple& tuple = oatom.tuple;
+
+      tuple.push_back(mgr.ctxdata.id_in_the_registry);
+      tuple.push_back(boost::fusion::at_c < 0 > (source));
+
+      if (!!boost::fusion::at_c < 1 > (source) && !!boost::fusion::at_c < 1 > (source).get()) {
+        const Tuple& terms = boost::fusion::at_c < 1 > (source).get().get();
+        tuple.insert(tuple.end(), terms.begin(), terms.end());
+      }
+
+      if (boost::fusion::at_c < 2 > (source) == "b")
+        tuple.push_back(mgr.ctxdata.id_brave);
+      else if (boost::fusion::at_c < 2 > (source) == "c")
+        tuple.push_back(mgr.ctxdata.id_cautious);
+      else if (boost::fusion::at_c < 2 > (source) == "c_p")
+        tuple.push_back(mgr.ctxdata.id_preferred_cautious);
+      else {
+        assert(true);
+      }
+
+      if (!!boost::fusion::at_c < 3 > (source))
+        tuple.push_back(boost::fusion::at_c < 3 > (source).get());
+      else
+        tuple.push_back(mgr.ctxdata.id_default_priority);
+
+      if (!!boost::fusion::at_c < 4 > (source)) {
+
+        if (!!boost::fusion::at_c < 0 > (boost::fusion::at_c < 4 > (source).get()))
+          tuple.push_back(
+              boost::fusion::at_c < 0 > (boost::fusion::at_c < 4 > (source).get()).get());
+        else
+          tuple.push_back(mgr.ctxdata.id_default_weight);
+
+        if (!!boost::fusion::at_c < 0 > (boost::fusion::at_c < 4 > (source).get()))
+          tuple.push_back(
+              boost::fusion::at_c < 0 > (boost::fusion::at_c < 4 > (source).get()).get());
+        else
+          tuple.push_back(mgr.ctxdata.id_default_level);
+
+      } else {
+        tuple.push_back(mgr.ctxdata.id_default_weight);
+        tuple.push_back(mgr.ctxdata.id_default_level);
+      }
+
+      createAtom(reg, oatom, target);
 
     }
 };
@@ -348,8 +416,8 @@ namespace {
           Base(sem), sem(sem) {
         typedef ActionPluginParserModuleSemantics Sem;
         actionPrefixAtom =
-            (qi::lit('#') >> Base::classicalAtomPredicate >> -(qi::lit('[') >> -Base::terms >> qi::lit(']'))
-                >> qi::lit('{')
+            (qi::lit('#') >> Base::classicalAtomPredicate
+                >> -(qi::lit('[') >> -Base::terms >> qi::lit(']')) >> qi::lit('{')
                 >> (qi::string("b") | qi::string("c_p") | qi::string("c"))
                 >> -(qi::lit(',') >> Base::term) >> qi::lit('}')
                 >> -(qi::lit('[') >> -(Base::term) >> qi::lit(':') >> -(Base::term) >> qi::lit(']')))[Sem::actionPrefixAtom(

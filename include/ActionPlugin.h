@@ -34,6 +34,8 @@
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/PluginInterface.h"
 
+#include "Action.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
 class ActionPlugin: public PluginInterface {
@@ -57,6 +59,17 @@ class ActionPlugin: public PluginInterface {
 
         // an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
         dlvhex::ID id_in_the_registry;
+
+        dlvhex::ID id_brave;
+        dlvhex::ID id_cautious;
+        dlvhex::ID id_preferred_cautious;
+
+        dlvhex::ID id_default_priority;
+        dlvhex::ID id_default_weight;
+        dlvhex::ID id_default_level;
+
+        typedef std::map<ID, Action> IDActionMap;
+        IDActionMap idActionMap;
 
         CtxData();
         virtual ~CtxData() {

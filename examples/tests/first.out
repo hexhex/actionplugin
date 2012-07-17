@@ -1,4 +1,0 @@
-aux_a_10000000_0
-original: #first_action[]{b,1}[,]
-rewritten: aux_a_10000000_0(first_action,b,1,1,1).
-{}
