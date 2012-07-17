@@ -77,7 +77,6 @@ class ActionPlugin: public PluginInterface {
         ;
     };
 
-  public:
     ActionPlugin();
     virtual ~ActionPlugin();
 

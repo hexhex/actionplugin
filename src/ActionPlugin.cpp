@@ -31,6 +31,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
+
 //#define BOOST_SPIRIT_DEBUG
 
 #include "ActionPlugin.h"
@@ -104,12 +105,14 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions, Program
 
   if (ctxdata.enabled) {
 
-    ctxdata.id_in_the_registry = ctx.registry()->getAuxiliaryConstantSymbol('a',
-        dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0));
+    RegistryPtr reg = ctx.registry();
 
-    ctxdata.id_brave = ctx.registry()->storeConstantTerm("b");
-    ctxdata.id_cautious = ctx.registry()->storeConstantTerm("c");
-    ctxdata.id_preferred_cautious = ctx.registry()->storeConstantTerm("c_p");
+//    ctxdata.id_in_the_registry = reg->getAuxiliaryConstantSymbol('a',
+//        dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0));
+
+    ctxdata.id_brave = reg->storeConstantTerm("b");
+    ctxdata.id_cautious = reg->storeConstantTerm("c");
+    ctxdata.id_preferred_cautious = reg->storeConstantTerm("c_p");
 
     ctxdata.id_default_priority = ID::termFromInteger(1);
     ctxdata.id_default_weight = ID::termFromInteger(1);
@@ -232,23 +235,38 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       RegistryPtr reg = mgr.ctx.registry();
 
-
-//      const dlvhex::ID id_predicate = boost::fusion::at_c < 0 > (source);
-//
-//      Action action(reg->getTermStringByID(id_predicate),
-//          reg->getAuxiliaryConstantSymbol('a', id_predicate));
-//
-//      mgr.ctxdata.idActionMap.insert(std::pair< id_predicate, action >);
-
-
-
-//  std::cerr << "action_atom_name: " << mgr.ctxdata.action_atom_name << std::endl;
-
-      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry) << std::endl;
-
       RawPrinter printer(std::cerr, reg);
 
-      std::cerr << "original: ";
+      if (mgr.ctxdata.idActionMap.count(boost::fusion::at_c < 0 > (source)) == 0)
+      {
+
+        const ID id = boost::fusion::at_c < 0 > (source);
+
+        ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
+
+        Action action(reg->getTermStringByID(id), aux_id);
+
+        mgr.ctxdata.idActionMap.insert(std::pair<ID, Action>(id, action));
+
+        //the above code should be deleted, the one below should be uncommented
+
+//        std::cerr << "Action not found" << std::endl;
+//        return;
+
+      }
+
+//      const dlvhex::ID & id_predicate = boost::fusion::at_c < 0 > (source);
+//
+//      std::map<ID, Action> & idActionMap = mgr.ctxdata.idActionMap;
+//
+////      Action & action = idActionMap[id_predicate];
+//      Action & action = idActionMap.find(id_predicate)->second;
+//
+////      printer.print(idActionMap[id_predicate].getAuxId());
+
+//      printer.print(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
+
+      std::cerr << "original:\t";
 
       std::cerr << '#';
 
@@ -297,9 +315,11 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       std::cerr << std::endl;
 
-      std::cerr << "rewritten: ";
+      std::cerr << "rewritten:\t";
 
-      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
+//      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
+
+      printer.print(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
 
       std::cerr << '(';
 
@@ -354,7 +374,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       Tuple& tuple = oatom.tuple;
 
-      tuple.push_back(mgr.ctxdata.id_in_the_registry);
+//      tuple.push_back(reg->getTermStringByID(mgr.ctxdata.id_in_the_registry));
+      tuple.push_back(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
       tuple.push_back(boost::fusion::at_c < 0 > (source));
 
       if (!!boost::fusion::at_c < 1 > (source) && !!boost::fusion::at_c < 1 > (source).get()) {

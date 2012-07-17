@@ -8,11 +8,15 @@
 #ifndef ACTION_H_
 #define ACTION_H_
 
+#include "dlvhex2/PlatformDefinitions.h"
+#include "dlvhex2/ID.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
 class Action {
   public:
-    Action(std::string predicate, dlvhex::ID aux_id);
+    Action();
+    Action(std::string, dlvhex::ID);
     virtual ~Action();
 
     dlvhex::ID getAuxId() const;
