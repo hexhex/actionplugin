@@ -1,1 +1,1 @@
-#a{b} v #b{c}.
+#a{b} v #b{c} v pr(j) :- not a.

@@ -40,6 +40,15 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionPlugin: public PluginInterface {
   public:
+
+    class MyModelCallback: public ModelCallback {
+      public:
+        MyModelCallback();
+        virtual ~MyModelCallback() {
+        }
+        virtual bool operator()(AnswerSetPtr);
+    };
+
     // stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
     class CtxData: public PluginData {
       public:

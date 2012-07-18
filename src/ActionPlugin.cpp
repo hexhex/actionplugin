@@ -31,8 +31,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-
-//#define BOOST_SPIRIT_DEBUG
+#define BOOST_SPIRIT_DEBUG
 
 #include "ActionPlugin.h"
 
@@ -51,6 +50,16 @@ DLVHEX_NAMESPACE_BEGIN
 
 namespace spirit = boost::spirit;
 namespace qi = boost::spirit::qi;
+
+ActionPlugin::MyModelCallback::MyModelCallback() {
+
+}
+
+bool ActionPlugin::MyModelCallback::operator()(AnswerSetPtr answerSetPtr) {
+  std::cerr << "MyModelCallback called" << std::endl;
+  answerSetPtr->interpretation->print(std::cerr);
+  std::cerr << std::endl;
+}
 
 ActionPlugin::CtxData::CtxData() :
     enabled(false), idActionMap()
@@ -237,8 +246,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       RawPrinter printer(std::cerr, reg);
 
-      if (mgr.ctxdata.idActionMap.count(boost::fusion::at_c < 0 > (source)) == 0)
-      {
+      if (mgr.ctxdata.idActionMap.count(boost::fusion::at_c < 0 > (source)) == 0) {
 
         const ID id = boost::fusion::at_c < 0 > (source);
 
@@ -248,8 +256,9 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
         mgr.ctxdata.idActionMap.insert(std::pair<ID, Action>(id, action));
 
-        //the above code should be deleted, the one below should be uncommented
+#warning the above code should be deleted, the one below should be uncommented
 
+        //throw an exception
 //        std::cerr << "Action not found" << std::endl;
 //        return;
 
@@ -319,7 +328,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 //      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
 
-      printer.print(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
+      printer.print(
+          mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
 
       std::cerr << '(';
 
@@ -375,7 +385,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
       Tuple& tuple = oatom.tuple;
 
 //      tuple.push_back(reg->getTermStringByID(mgr.ctxdata.id_in_the_registry));
-      tuple.push_back(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
+      tuple.push_back(
+          mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
       tuple.push_back(boost::fusion::at_c < 0 > (source));
 
       if (!!boost::fusion::at_c < 1 > (source) && !!boost::fusion::at_c < 1 > (source).get()) {
@@ -763,6 +774,12 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
   // init predicate mask
   ctxdata.myAuxiliaryPredicateMask.setRegistry(reg);
 
+  MyModelCallback * myModelCallback = new MyModelCallback();
+#warning here we could try to only remove the default answer set printer
+  ModelCallbackPtr mcb(myModelCallback);
+  ctx.modelCallbacks.clear();
+  ctx.modelCallbacks.push_back(mcb);
+
 //	// add all auxiliaries to mask (here we should already have parsed all of them)
 //	typedef CtxData::NegToPosMap NegToPosMap;
 //	NegToPosMap::const_iterator it;
@@ -779,6 +796,7 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 //	AuxPrinterPtr negAuxPrinter(new NegAuxPrinter(
 //				reg, ctxdata.myAuxiliaryPredicateMask, ctxdata.negToPos));
 //	reg->registerUserAuxPrinter(negAuxPrinter);
+
 }
 
 //
