@@ -41,14 +41,6 @@ DLVHEX_NAMESPACE_BEGIN
 class ActionPlugin: public PluginInterface {
   public:
 
-    class MyModelCallback: public ModelCallback {
-      public:
-        MyModelCallback();
-        virtual ~MyModelCallback() {
-        }
-        virtual bool operator()(AnswerSetPtr);
-    };
-
     // stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
     class CtxData: public PluginData {
       public:
@@ -67,7 +59,7 @@ class ActionPlugin: public PluginInterface {
         PredicateMask myAuxiliaryPredicateMask;
 
         // an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
-        dlvhex::ID id_in_the_registry;
+        //dlvhex::ID id_in_the_registry;
 
         dlvhex::ID id_brave;
         dlvhex::ID id_cautious;
@@ -80,10 +72,30 @@ class ActionPlugin: public PluginInterface {
         typedef std::map<ID, Action> IDActionMap;
         IDActionMap idActionMap;
 
+        // a map that contains for each level the weight
+        typedef std::map<int, int> LevelsAndWeights;
+        LevelsAndWeights levelsAndWeightsBestModels;
+
+        // the AnswerSets that are Best Model (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
+        typedef std::list<AnswerSetPtr> BestModelsContainer;
+        BestModelsContainer bestModelsContainer;
+
         CtxData();
         virtual ~CtxData() {
         }
         ;
+        void addAction(const ID &, const Action &);
+    };
+
+    class MyModelCallback: public ModelCallback {
+      public:
+        MyModelCallback(ProgramCtx&);
+        virtual ~MyModelCallback() {
+        }
+        virtual bool operator()(AnswerSetPtr);
+      protected:
+        int isABestModel(ActionPlugin::CtxData&, ActionPlugin::CtxData::LevelsAndWeights&);
+        ProgramCtx& ctx;
     };
 
     ActionPlugin();
