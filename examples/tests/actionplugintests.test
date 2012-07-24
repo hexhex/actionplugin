@@ -1,1 +1,4 @@
-
+#first.hex checknothing.stdout --action-enable
+#second.hex checknothing.stdout --action-enable
+third.hex checknothing.stdout --action-enable
+#fourth.hex checknothing.stdout --action-enable
