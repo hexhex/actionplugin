@@ -629,7 +629,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
       //Take the IDs, create OrdinaryAtom, store it in the Registry by using storeOrdinaryAtom and put in target the ID
 
-      OrdinaryAtom oatom(ID::MAINKIND_ATOM);
+      OrdinaryAtom oatom(ID::MAINKIND_ATOM | ID::PROPERTY_AUX);
 
       Tuple& tuple = oatom.tuple;
 
