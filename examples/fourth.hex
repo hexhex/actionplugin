@@ -1,6 +1,7 @@
 #fourth_action[]{b,2}[3:1].
 #fourth_action2[]{b,5}[7:1].
-#fourth_action2[]{b,3}[2:7].
 #fourth_action3[]{b,1}[4:7].
+#fourth_action5[]{b,3}[2:7].
+#fourth_action6[]{b,3}[4:3].
 
 a v b v #fourth_action4[]{b,4}[4:1].

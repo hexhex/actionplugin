@@ -1,1 +1,1 @@
-noinst_HEADERS = ActionPlugin.h Action.h
+include_HEADERS = ActionPlugin.h Action.h ActionPluginInterface.h

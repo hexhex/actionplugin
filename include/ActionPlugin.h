@@ -35,6 +35,7 @@
 #include "dlvhex2/PluginInterface.h"
 
 #include "Action.h"
+#include "ActionPluginInterface.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -72,13 +73,19 @@ class ActionPlugin: public PluginInterface {
         typedef std::map<ID, Action> IDActionMap;
         IDActionMap idActionMap;
 
-        // a map that contains for each level the weight
         typedef std::map<int, int> LevelsAndWeights;
+        // a map that contains for each level the weight
         LevelsAndWeights levelsAndWeightsBestModels;
 
-        // the AnswerSets that are Best Model (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
         typedef std::list<AnswerSetPtr> BestModelsContainer;
+        // the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
         BestModelsContainer bestModelsContainer;
+
+        // the AnswerSets that aren't Best Models
+        BestModelsContainer notBestModelsContainer;
+
+        // an iterator that identifies the position of the BestModel in BestModelsContainer
+        BestModelsContainer::iterator iteratorBestModel;
 
         CtxData();
         virtual ~CtxData() {
@@ -87,15 +94,38 @@ class ActionPlugin: public PluginInterface {
         void addAction(const ID &, const Action &);
     };
 
-    class MyModelCallback: public ModelCallback {
+    class ActionPluginModelCallback: public ModelCallback {
       public:
-        MyModelCallback(ProgramCtx&);
-        virtual ~MyModelCallback() {
+        ActionPluginModelCallback(ProgramCtx&);
+        virtual ~ActionPluginModelCallback() {
         }
         virtual bool operator()(AnswerSetPtr);
       protected:
         int isABestModel(ActionPlugin::CtxData&, ActionPlugin::CtxData::LevelsAndWeights&);
         ProgramCtx& ctx;
+    };
+
+    class ActionPluginFinalCallback: public FinalCallback {
+      public:
+        ActionPluginFinalCallback(ProgramCtx&);
+        virtual ~ActionPluginFinalCallback() {
+        }
+        virtual void operator()();
+      protected:
+        ProgramCtx& ctx;
+    };
+
+    class Scheduler {
+      public:
+        Scheduler(const CtxData& ctxData, const RegistryPtr& registry);
+        void executionModeController(std::multimap<int, Tuple>&);
+        void executionModeRewriter(const std::multimap<int, Tuple>&, std::list<std::set<Tuple> >&);
+      private:
+        const CtxData& ctxData;
+        const RegistryPtr& registry;
+        bool isPresentInAllAnswerset(const Tuple&);
+        bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
+        bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
     };
 
     ActionPlugin();
@@ -116,10 +146,10 @@ class ActionPlugin: public PluginInterface {
 //  // rewrite program by adding auxiliary constraints
 //  virtual PluginRewriterPtr createRewriter(ProgramCtx&);
 
-    // change model callback (print auxiliaries as negative atoms)
     virtual void setupProgramCtx(ProgramCtx&);
 
-    // no atoms!
+    void registerActionPluginInterface(ActionPluginInterfacePtr);
+
 };
 
 DLVHEX_NAMESPACE_END
