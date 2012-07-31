@@ -66,9 +66,11 @@ class ActionPlugin: public PluginInterface {
         dlvhex::ID id_cautious;
         dlvhex::ID id_preferred_cautious;
 
-        dlvhex::ID id_default_priority;
-        dlvhex::ID id_default_weight;
-        dlvhex::ID id_default_level;
+        dlvhex::ID id_default_precedence;
+        dlvhex::ID id_default_weight_with_level;
+        dlvhex::ID id_default_weight_without_level;
+        dlvhex::ID id_default_level_with_weight;
+        dlvhex::ID id_default_level_without_weight;
 
         typedef std::map<ID, Action> IDActionMap;
         IDActionMap idActionMap;
@@ -94,47 +96,13 @@ class ActionPlugin: public PluginInterface {
         void addAction(const ID &, const Action &);
     };
 
-    class ActionPluginModelCallback: public ModelCallback {
-      public:
-        ActionPluginModelCallback(ProgramCtx&);
-        virtual ~ActionPluginModelCallback() {
-        }
-        virtual bool operator()(AnswerSetPtr);
-      protected:
-        int isABestModel(ActionPlugin::CtxData&, ActionPlugin::CtxData::LevelsAndWeights&);
-        ProgramCtx& ctx;
-    };
-
-    class ActionPluginFinalCallback: public FinalCallback {
-      public:
-        ActionPluginFinalCallback(ProgramCtx&);
-        virtual ~ActionPluginFinalCallback() {
-        }
-        virtual void operator()();
-      protected:
-        ProgramCtx& ctx;
-    };
-
-    class Scheduler {
-      public:
-        Scheduler(const CtxData& ctxData, const RegistryPtr& registry);
-        void executionModeController(std::multimap<int, Tuple>&);
-        void executionModeRewriter(const std::multimap<int, Tuple>&, std::list<std::set<Tuple> >&);
-      private:
-        const CtxData& ctxData;
-        const RegistryPtr& registry;
-        bool isPresentInAllAnswerset(const Tuple&);
-        bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
-        bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
-    };
-
     ActionPlugin();
     virtual ~ActionPlugin();
 
     // output help message for this plugin
     virtual void printUsage(std::ostream& o) const;
 
-    // accepted options: --strongnegation-enable
+    // accepted options: --action-enable
     //
     // processes options for this plugin, and removes recognized options from pluginOptions
     // (do not free the pointers, the const char* directly come from argv)
@@ -149,6 +117,26 @@ class ActionPlugin: public PluginInterface {
     virtual void setupProgramCtx(ProgramCtx&);
 
     void registerActionPluginInterface(ActionPluginInterfacePtr);
+
+    static void printTuple(const Tuple& tuple, RegistryPtr registryPtr) {
+      Tuple::const_iterator it = tuple.begin();
+      std::cerr << registryPtr->getTermStringByID(*it);
+      it++;
+      if (it != tuple.end())
+        std::cerr << " with this input list: ";
+      bool first = true;
+      for (; it != tuple.end(); it++) {
+        if (first)
+          first = !first;
+        else
+          std::cerr << ", ";
+        if (it->isConstantTerm() || it->isVariableTerm())
+          std::cerr << registryPtr->getTermStringByID(*it);
+        else
+          std::cerr << it->address;
+      }
+      std::cerr << std::endl;
+    }
 
 };
 

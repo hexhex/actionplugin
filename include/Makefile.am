@@ -1,1 +1,1 @@
-include_HEADERS = ActionPlugin.h Action.h ActionPluginInterface.h
+include_HEADERS = ActionPlugin.h Action.h ActionPluginInterface.h ActionPluginModelCallback.h ActionPluginFinalCallback.h ActionScheduler.h ActionPluginParserModule.h

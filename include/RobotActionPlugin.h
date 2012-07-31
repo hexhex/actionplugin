@@ -10,6 +10,9 @@
 
 #include "ActionPluginInterface.h"
 
+#include <stdlib.h>
+#include <time.h>
+
 DLVHEX_NAMESPACE_BEGIN
 
 class RobotActionPlugin: public ActionPluginInterface {
@@ -29,9 +32,39 @@ class RobotActionPlugin: public ActionPluginInterface {
       public:
         RobotActionAtom() :
             PluginActionAtom("RobotActionAtom") {
+          addInputConstant();
+          setOutputArity(1);
         }
 
-        virtual void retrieve(const Environment&, const Query&, Answer&) {
+        virtual void retrieve(const Environment& environment, const Query& query, Answer& answer) {
+
+          Registry &registry = *getRegistry();
+
+          int arity = query.input.size();
+
+          if (arity != 1)
+            throw PluginError("Wrong input argument type");
+
+          ID id1 = query.input[0];
+
+          const Term& s1 = registry.terms.getByID(id1);
+
+          bool quantityOfFuel;
+
+          if (id1.isConstantTerm() && s1.getUnquotedString() == "fuel") {
+            srand(time(0));
+            quantityOfFuel = rand() % 2;
+          } else
+            throw PluginError("Wrong input argument type");
+
+          Tuple out;
+
+          //
+          // call Term::Term with second argument true to get a quoted string!
+          //
+          Term term(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, quantityOfFuel ? "low" : "high");
+          out.push_back(registry.storeTerm(term));
+          answer.get().push_back(out);
 
         }
 
@@ -42,7 +75,7 @@ class RobotActionPlugin: public ActionPluginInterface {
       public:
 
         RobotAction() :
-          PluginAction("RobotAction") {
+            PluginAction("RobotAction") {
           //addInputConstant();
           currentAlarm = 0;
           world.push_back("                                                                      ");
@@ -185,7 +218,7 @@ class RobotActionPlugin: public ActionPluginInterface {
           moveLeft(25);
         }
 
-        virtual void execute(Environment& environment, const Registry& registry, Tuple& parms,
+        virtual void execute(Environment& environment, const Registry& registry, const Tuple& parms,
             InterpretationPtr & interpretationPtr) {
 
           int c = system("clear");
@@ -220,9 +253,16 @@ class RobotActionPlugin: public ActionPluginInterface {
     };
 
     virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx& ctx) const {
+      std::vector < PluginAtomPtr > ret;
+      ret.push_back(PluginAtomPtr(new RobotActionAtom, PluginPtrDeleter<PluginAtom>()));
+      return ret;
     }
 
     virtual std::vector<PluginActionBasePtr> createActions(ProgramCtx& ctx) const {
+      std::vector<PluginActionBasePtr> ret;
+      ret.push_back(
+          PluginActionBasePtr(new RobotAction, PluginPtrDeleter<PluginPluginActionBase>()));
+      return ret;
     }
 
 };

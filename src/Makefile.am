@@ -7,7 +7,7 @@ plugin_LTLIBRARIES = libdlvhexplugin-action.la
 # replace 'plugin' on the left side as above and
 # add all sources of your plugin
 #
-libdlvhexplugin_action_la_SOURCES = ActionPlugin.cpp Action.cpp
+libdlvhexplugin_action_la_SOURCES = ActionPlugin.cpp Action.cpp ActionPluginModelCallback.cpp ActionPluginFinalCallback.cpp ActionScheduler.cpp
 
 #
 # extend compiler flags by CFLAGS of other needed libraries

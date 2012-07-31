@@ -37,7 +37,10 @@ class ActionPluginInterface: public PluginInterface {
         PluginActionBase(std::string name) :
             name(name) {
         }
-        virtual void execute(Environment&, Tuple&, InterpretationPtr &) = 0; //maybe it's better InterpretationConstPtr
+        virtual ~PluginActionBase() {
+        }
+        virtual void execute(Environment&, const Registry&, const Tuple&,
+            InterpretationConstPtr &) = 0;
       protected:
         std::string name;
     };
@@ -72,8 +75,8 @@ class ActionPluginInterface: public PluginInterface {
         PluginAction(std::string name) :
             PluginActionBase(name) {
         }
-        virtual void execute(typename Derived::Environment&, const Registry& registry, Tuple&,
-            InterpretationPtr &) = 0; //maybe it's better InterpretationConstPtr
+        virtual void execute(typename Derived::Environment&, const Registry&, const Tuple&,
+            InterpretationConstPtr &) = 0;
     };
 
     /**
