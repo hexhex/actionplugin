@@ -171,6 +171,10 @@ void ActionScheduler::executionModeRewriter(const std::multimap<int, Tuple>& mul
       lastPrecedence = it->first;
     }
     currentSet.insert(it->second);
+//#warning test checkIfTheListIsCorrect
+//    Tuple t = it->second;
+//    t[0] = dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0);
+//        currentSet.insert(t);
   }
 
   listOfExecution.push_back(currentSet);
@@ -194,61 +198,96 @@ bool ActionScheduler::checkIfTheListIsCorrect(const std::multimap<int, Tuple>& m
   std::multimap<int, Tuple>::const_iterator itMOE = multimapOfExecution.begin();
   int latestPrecedenceValue = itMOE->first;
   // a vector that contains all the precedences once
-  std::vector<int> precedenceValues;
-  precedenceValues.push_back(itMOE->first);
-  itMOE++;
-  for (; itMOE != multimapOfExecution.end(); itMOE++)
+  //std::vector<int> precedenceValues;
+  std::list < std::set<Tuple> > listOfExecutionFromMultimap;
+//  precedenceValues.push_back(itMOE->first);
+  std::set < Tuple > currentSet;
+//  itMOE++;
+  for (; itMOE != multimapOfExecution.end(); itMOE++) {
+//    if (itMOE->first != latestPrecedenceValue) {
+//      precedenceValues.push_back(itMOE->first);
+//      latestPrecedenceValue = itMOE->first;
+//    }
     if (itMOE->first != latestPrecedenceValue) {
-      precedenceValues.push_back(itMOE->first);
+      listOfExecutionFromMultimap.push_back(currentSet);
+      currentSet.clear();
       latestPrecedenceValue = itMOE->first;
     }
-
-  std::list<std::set<Tuple> >::const_iterator itLOE;
-  int sizeOfAllSetsOfList = 0;
-  int latestIndexOfPrecedenceValues = 0;
-  for (itLOE = listOfExecution.begin(); itLOE != listOfExecution.end(); itLOE++) {
-    const std::set<Tuple> &tempSet = (*itLOE);
-    sizeOfAllSetsOfList += tempSet.size();
-
-    if (tempSet.size()
-        != multimapOfExecution.count(precedenceValues[latestIndexOfPrecedenceValues++]))
-      return false;
-
-    for (std::set<Tuple>::iterator itLOEs = tempSet.begin(); itLOEs != tempSet.end(); itLOEs++) {
-      const Tuple& tempTuple = (*itLOEs);
-      if (!(theMultiMapContainsThisActionWithThisPrecedence(multimapOfExecution, tempTuple,
-          precedenceValues[latestIndexOfPrecedenceValues - 1])))
-        return false;
-    }
+    currentSet.insert(itMOE->second);
   }
+  listOfExecutionFromMultimap.push_back(currentSet);
 
-  if (multimapOfExecution.size() != sizeOfAllSetsOfList)
+//  std::list<std::set<Tuple> >::const_iterator itLOE;
+//  int sizeOfAllSetsOfList = 0;
+//  int latestIndexOfPrecedenceValues = 0;
+//  for (itLOE = listOfExecution.begin(), ; itLOE != listOfExecution.end(); itLOE++) {
+//    const std::set<Tuple> &tempSet = (*itLOE);
+//    sizeOfAllSetsOfList += tempSet.size();
+//
+//    if (tempSet.size()
+//        != multimapOfExecution.count(precedenceValues[latestIndexOfPrecedenceValues++]))
+//      return false;
+//
+//    for (std::set<Tuple>::iterator itLOEs = tempSet.begin(); itLOEs != tempSet.end(); itLOEs++) {
+//      const Tuple& tempTuple = (*itLOEs);
+//      if (!(theMultiMapContainsThisActionWithThisPrecedence(multimapOfExecution, tempTuple,
+//          precedenceValues[latestIndexOfPrecedenceValues - 1])))
+//        return false;
+//    }
+//  }
+//
+//  if (multimapOfExecution.size() != sizeOfAllSetsOfList)
+//    return false;
+
+  if (listOfExecution.size() != listOfExecutionFromMultimap.size())
     return false;
+
+  std::list<std::set<Tuple> >::const_iterator itLOE, itLOEFM;
+  for (itLOE = listOfExecution.begin(), itLOEFM = listOfExecutionFromMultimap.begin();
+      itLOE != listOfExecution.end(), itLOEFM != listOfExecutionFromMultimap.end();
+      itLOE++, itLOEFM++)
+
+    if (!checkIfThisSetsOfTupleContainsTheSameElements(*itLOEFM, *itLOE))
+      return false;
 
   return true;
 
 }
 
-bool ActionScheduler::theMultiMapContainsThisActionWithThisPrecedence(
-    const std::multimap<int, Tuple>& multimapOfExecution, const Tuple& tuple, int precedence) {
+bool ActionScheduler::checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>& set1,
+    const std::set<Tuple>& set2) const {
 
-  for (std::multimap<int, Tuple>::const_iterator itMOE = multimapOfExecution.begin();
-      itMOE != multimapOfExecution.end(); itMOE++)
-    if (itMOE->first == precedence && itMOE->second.size() == tuple.size()) {
+  if (set1.size() != set2.size())
+    return false;
 
-      const Tuple& tempTuple = itMOE->second;
-      bool different = false;
-      for (int i = 0; i < tuple.size() && !different; i++)
-        if (tempTuple[i] != tuple[i])
-          different = true;
+  for (std::set<Tuple>::iterator it1 = set1.begin(); it1 != set1.end(); it1++)
+    if (set2.find(*it1) == set2.end())
+      return false;
 
-      if (!different)
-        return true;
-
-    }
-
-  return false;
+  return true;
 
 }
+
+//bool ActionScheduler::theMultiMapContainsThisActionWithThisPrecedence(
+//    const std::multimap<int, Tuple>& multimapOfExecution, const Tuple& tuple, int precedence) {
+//
+//  for (std::multimap<int, Tuple>::const_iterator itMOE = multimapOfExecution.begin();
+//      itMOE != multimapOfExecution.end(); itMOE++)
+//    if (itMOE->first == precedence && itMOE->second.size() == tuple.size()) {
+//
+//      const Tuple& tempTuple = itMOE->second;
+//      bool different = false;
+//      for (int i = 0; i < tuple.size() && !different; i++)
+//        if (tempTuple[i] != tuple[i])
+//          different = true;
+//
+//      if (!different)
+//        return true;
+//
+//    }
+//
+//  return false;
+//
+//}
 
 DLVHEX_NAMESPACE_END

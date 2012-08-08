@@ -73,6 +73,34 @@ void ActionPluginFinalCallback::operator()() {
 
   std::cerr << "\nExecute the actions in the right order" << std::endl;
 
+  for (itLOE = listOfExecution.begin(); itLOE != listOfExecution.end(); itLOE++) {
+
+    std::set < Tuple > &tempSet = (*itLOE);
+
+    for (std::set<Tuple>::iterator itLOEs = tempSet.begin(); itLOEs != tempSet.end(); itLOEs++) {
+
+      const Tuple& tempTuple = (*itLOEs);
+
+      Tuple tupleForExecute;
+      tupleForExecute.insert(tupleForExecute.begin(), tempTuple.begin() + 1, tempTuple.end());
+
+      std::cerr << "tempTuple: ";
+      ActionPlugin::printTuple(tempTuple, registryPtr);
+      std::cerr << "tupleForExecute: ";
+      ActionPlugin::printTuple(tupleForExecute, registryPtr);
+
+      std::map<std::string, PluginActionBasePtr>::iterator it =
+          ctxData.namePluginActionBaseMap.find(registryPtr->getTermStringByID(*tempTuple.begin()));
+
+      if (it != ctxData.namePluginActionBaseMap.end())
+        it->second->execute(registryPtr, tupleForExecute);
+      else
+        std::cerr << "For the action '" << registryPtr->getTermStringByID(*tempTuple.begin())
+            << "' wasn't found a definition" << std::endl;
+
+    }
+  }
+
 }
 
 DLVHEX_NAMESPACE_END

@@ -38,10 +38,6 @@
 #include "ActionPluginFinalCallback.h"
 #include "ActionPluginParserModule.h"
 
-#warning a test, must be removed
-//#include "RobotActionPlugin.h"
-
-#include "dlvhex2/ProgramCtx.h"
 #include "dlvhex2/Registry.h"
 #include "dlvhex2/PredicateMask.h"
 //#include "dlvhex2/PlatformDefinitions.h"
@@ -51,6 +47,8 @@
 //#include "dlvhex2/HexParser.h"
 //#include "dlvhex2/HexParserModule.h"
 //#include "dlvhex2/HexGrammar.h"
+
+#include "ActionPluginInterface.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -71,6 +69,25 @@ void ActionPlugin::CtxData::addAction(const ID & id, const Action & action) {
   myAuxiliaryPredicateMask.addPredicate(action.getAuxId());
 
 }
+
+void ActionPlugin::CtxData::registerPlugin(
+    boost::shared_ptr<ActionPluginInterface> actionPluginInterfacePtr, ProgramCtx& ctx) {
+
+  std::cerr << "\registerPlugin called" << std::endl;
+
+  std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
+      actionPluginInterfacePtr->createActions(ctx);
+
+  for (std::vector<PluginActionBasePtr>::iterator it = pluginActionBasePtrVector.begin();
+      it != pluginActionBasePtrVector.end(); it++) {
+    namePluginActionBaseMap.insert(
+        std::pair<std::string, PluginActionBasePtr>((*it)->getPredicate(), (*it)));
+
+    std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
+  }
+
+}
+
 ActionPlugin::ActionPlugin() :
     PluginInterface() {
   setNameVersion("dlvhex-actionplugin", 2, 0, 0);
@@ -433,13 +450,6 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 //				reg, ctxdata.myAuxiliaryPredicateMask, ctxdata.negToPos));
 //	reg->registerUserAuxPrinter(negAuxPrinter);
 
-}
-
-void ActionPlugin::registerActionPluginInterface(
-    ActionPluginInterfacePtr actionPluginInterfacePtr) {
-#warning How can I have the ProgramCtx?
-//  std::vector<PluginAtomPtr> pluginAtomPtrVector = actionPluginInterfacePtr->createAtoms(programCtx);
-//  std::vector<PluginActionBasePtr> PluginActionBasePtrVector = actionPluginInterfacePtr->createActions(programCtx);
 }
 
 //

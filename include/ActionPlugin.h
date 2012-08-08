@@ -35,9 +35,16 @@
 #include "dlvhex2/PluginInterface.h"
 
 #include "Action.h"
-#include "ActionPluginInterface.h"
+#include "dlvhex2/HexParserModule.h"
+#include "dlvhex2/ProgramCtx.h"
+
+//#include "ActionPluginInterface.h"
+//typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
+#include "PluginActionBase.h"
 
 DLVHEX_NAMESPACE_BEGIN
+
+class ActionPluginInterface;
 
 class ActionPlugin: public PluginInterface {
   public:
@@ -94,6 +101,11 @@ class ActionPlugin: public PluginInterface {
         }
         ;
         void addAction(const ID &, const Action &);
+
+        std::map<std::string, PluginActionBasePtr> namePluginActionBaseMap;
+
+        void registerPlugin(boost::shared_ptr<ActionPluginInterface>, ProgramCtx&);
+
     };
 
     ActionPlugin();
@@ -116,16 +128,14 @@ class ActionPlugin: public PluginInterface {
 
     virtual void setupProgramCtx(ProgramCtx&);
 
-    void registerActionPluginInterface(ActionPluginInterfacePtr);
-
     static void printTuple(const Tuple& tuple, RegistryPtr registryPtr) {
-      Tuple::const_iterator it = tuple.begin();
-      std::cerr << registryPtr->getTermStringByID(*it);
-      it++;
-      if (it != tuple.end())
-        std::cerr << " with this input list: ";
+//      ;
+//      std::cerr << registryPtr->getTermStringByID(*it);
+//      it++;
+//      if (it != tuple.end())
+//        std::cerr << " with this input list: ";
       bool first = true;
-      for (; it != tuple.end(); it++) {
+      for (Tuple::const_iterator it = tuple.begin(); it != tuple.end(); it++) {
         if (first)
           first = !first;
         else

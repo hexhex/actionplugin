@@ -25,8 +25,9 @@ class ActionScheduler {
     bool isPresentInAllAnswerset(const Tuple&);
     bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
     bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
-    bool theMultiMapContainsThisActionWithThisPrecedence(const std::multimap<int, Tuple>&,
-        const Tuple&, int);
+//    bool theMultiMapContainsThisActionWithThisPrecedence(const std::multimap<int, Tuple>&,
+//        const Tuple&, int);
+    bool checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>&, const std::set<Tuple>&) const;
 };
 
 DLVHEX_NAMESPACE_END

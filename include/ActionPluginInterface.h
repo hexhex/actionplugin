@@ -8,20 +8,27 @@
 #ifndef ACTION_PLUGIN_INTERFACE_H_
 #define ACTION_PLUGIN_INTERFACE_H_
 
-#include "ActionPlugin.h"
+//#include "ActionPlugin.h"
 
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/ProgramCtx.h"
 
+#include "ActionPlugin.h"
+#include "PluginActionBase.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
-class ActionPluginInterface: public PluginInterface {
+class ActionPluginInterface: public PluginInterface, public boost::enable_shared_from_this<
+    ActionPluginInterface> {
 
   public:
 
-    ActionPluginInterface();
-    ~ActionPluginInterface();
+    ActionPluginInterface() :
+        PluginInterface() {
+    }
+    ~ActionPluginInterface() {
+    }
 
     // stored in ProgramCtx, accessed using getPluginEnvironment<ActionAtom>()
     class Environment: public PluginEnvironment {
@@ -31,22 +38,29 @@ class ActionPluginInterface: public PluginInterface {
         }
         ;
     };
+//
+//    class PluginActionBase {
+//      public:
+//        PluginActionBase(const std::string& predicate) :
+//            predicate(predicate) {
+//        }
+//        virtual ~PluginActionBase() {
+//        }
+//        const std::string& getPredicate() const {
+//          return predicate;
+//        }
+//
+//#warning a test, must be fixed
+//        void execute(const RegistryPtr registryPtr, const Tuple& tuple);
+//
+//      protected:
+//        virtual void execute(Environment&, const RegistryPtr registryPtr, const Tuple&,
+//            const InterpretationConstPtr);
+//        std::string predicate;
+//    };
+//    typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
-    class PluginActionBase {
-      public:
-        PluginActionBase(std::string name) :
-            name(name) {
-        }
-        virtual ~PluginActionBase() {
-        }
-        virtual void execute(Environment&, const Registry&, const Tuple&,
-            InterpretationConstPtr &) = 0;
-      protected:
-        std::string name;
-    };
-    typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
-
-    // CRTP pattern
+// CRTP pattern
     template<class Derived>
     class PluginActionAtom: public PluginAtom {
       public:
@@ -56,13 +70,15 @@ class ActionPluginInterface: public PluginInterface {
         PluginActionAtom(std::string name) :
             PluginAtom(name, false) {
         }
-        virtual void retrieve(const typename Derived::Environment&, const Query&, Answer&) = 0;
+
+        void retrieve(const Query& query, Answer& answer) {
+          const typename Derived::Environment& environment =
+              query.ctx->getPluginEnvironment<Derived>();
+          retrieve(environment, query, answer);
+        }
 
       protected:
-        virtual void retrieve(const Query& query, Answer& answer) {
-          const typename Derived::Environment& env = query.ctx->getPluginEnvironment<Derived>();
-          retrieve(env, query, answer);
-        }
+        virtual void retrieve(const typename Derived::Environment&, const Query&, Answer&) = 0;
     };
 
     // CRTP pattern
@@ -72,11 +88,20 @@ class ActionPluginInterface: public PluginInterface {
 
         typedef typename Derived::Environment Environment;
 
-        PluginAction(std::string name) :
-            PluginActionBase(name) {
+        PluginAction(const std::string& predicate) :
+            PluginActionBase(predicate) {
         }
-        virtual void execute(typename Derived::Environment&, const Registry&, const Tuple&,
-            InterpretationConstPtr &) = 0;
+
+#warning a test, must be fixed
+        void execute(const RegistryPtr registryPtr, const Tuple& tuple) {
+          const typename Derived::Environment& environment;
+          InterpretationConstPtr& interpretationConstPtr;
+          execute(environment, registryPtr, tuple, interpretationConstPtr);
+        }
+
+      protected:
+        virtual void execute(typename Derived::Environment&, const RegistryPtr registryPtr,
+            const Tuple&, const InterpretationConstPtr);
     };
 
     /**
@@ -119,8 +144,8 @@ class ActionPluginInterface: public PluginInterface {
             name(name) {
         }
         ;
-//        virtual ActionPlugin::CtxData::BestModelsContainer::iterator getBestModel(
-//            const ActionPlugin::CtxData::BestModelsContainer&) = 0;
+        virtual dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator getBestModel(
+            const dlvhex::ActionPlugin::CtxData::BestModelsContainer&) = 0;
       protected:
         std::string name;
     };
@@ -128,9 +153,19 @@ class ActionPluginInterface: public PluginInterface {
 
     virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const;
 
-    virtual void setupProgramCtx(ProgramCtx& ctx) {
-      //I don't know how I can call ActionPlugin
-      // ActionPlugin -> registerActionPluginInterface(this);
+    virtual void processOptions(std::list<const char*>& pluginOptions, ProgramCtx& ctx) {
+      std::cerr << "\n\n*********************************************************" << std::endl;
+      std::cerr << "   CALLED processOptions of ActionPluginInterface" << std::endl;
+      std::cerr << "*********************************************************\n\n" << std::endl;
+      registerInActionPlugin(ctx);
+    }
+
+    virtual void setupProgramCtx(ProgramCtx&) {
+    }
+
+  protected:
+    void registerInActionPlugin(ProgramCtx& ctx) {
+      ctx.getPluginData<ActionPlugin>().registerPlugin(shared_from_this(), ctx);
     }
 
 };
