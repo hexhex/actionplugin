@@ -14,17 +14,17 @@
 DLVHEX_NAMESPACE_BEGIN
 
 class Action {
-  public:
-    Action();
-    Action(std::string, dlvhex::ID);
-    virtual ~Action();
+public:
+	Action();
+	Action(std::string, dlvhex::ID);
+	virtual ~Action();
 
-    dlvhex::ID getAuxId() const;
-    std::string getPredicate() const;
+	dlvhex::ID getAuxId() const;
+	std::string getPredicate() const;
 
-  protected:
-    std::string predicate;
-    dlvhex::ID aux_id;
+protected:
+	std::string predicate;
+	dlvhex::ID aux_id;
 };
 
 DLVHEX_NAMESPACE_END

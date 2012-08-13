@@ -13,23 +13,23 @@ DLVHEX_NAMESPACE_BEGIN
 class Environment;
 
 class PluginActionBase {
-  public:
-    PluginActionBase(const std::string& predicate) :
-        predicate(predicate) {
-    }
-    virtual ~PluginActionBase() {
-    }
-    const std::string& getPredicate() const {
-      return predicate;
-    }
+public:
+	PluginActionBase(const std::string& predicate) :
+			predicate(predicate) {
+	}
+	virtual ~PluginActionBase() {
+	}
+	const std::string& getPredicate() const {
+		return predicate;
+	}
 
 #warning a test, must be fixed
-    void execute(const RegistryPtr registryPtr, const Tuple& tuple);
+	void execute(const RegistryPtr registryPtr, const Tuple& tuple);
 
-  protected:
-    virtual void execute(Environment&, const RegistryPtr registryPtr, const Tuple&,
-        const InterpretationConstPtr);
-    std::string predicate;
+protected:
+	virtual void execute(Environment&, const RegistryPtr registryPtr,
+			const Tuple&, const InterpretationConstPtr);
+	std::string predicate;
 };
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 

@@ -48,7 +48,8 @@ libdlvhex_action_la_SOURCES = \
 		Action.cpp \
 		ActionPluginModelCallback.cpp \
 		ActionPluginFinalCallback.cpp \
-		ActionScheduler.cpp
+		ActionScheduler.cpp \
+		ActionPluginInterface.cpp
 
 # for more information on `-version-info' see
 # <http://www.gnu.org/software/libtool/manual.html#Versioning>, and
@@ -65,3 +66,14 @@ AM_CPPFLAGS = \
 libdlvhexplugin_action_la_SOURCES = ActionPlugin.cpp
 libdlvhexplugin_action_la_LDFLAGS = -avoid-version -module
 libdlvhexplugin_action_la_LIBADD = libdlvhex-action.la
+
+
+#robot_LTLIBRARIES = libdlvhexplugin-robot_action.la
+#libdlvhexplugin_robot_action_la_SOURCES = RobotActionPlugin.cpp
+#libdlvhexplugin_robot_action_la_LDFLAGS = -avoid-version -module
+#libdlvhexplugin-robot_action-static.la: $(libdlvhexplugin_robot_action_la_OBJECTS)
+#	$(CXXLINK) -avoid-version -module -rpath $(plugindir) $(libdlvhexplugin_robot_action_la_OBJECTS)
+#install-static: libdlvhexplugin-robot_action-static.la
+#	$(LIBTOOL) --mode=install $(INSTALL) -s libdlvhexplugin-robot_action-static.la $(DESTDIR)$(plugindir)/libdlvhexplugin-robot_action-static.la
+#uninstall-static:
+#	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(plugindir)/libdlvhexplugin-robot_action-static.la

@@ -1,8 +1,9 @@
 AC_PREREQ([2.61])
-AC_INIT([dlvhex-actionplugin],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
+AC_INIT([acthex],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/ActionPlugin.cpp])
 AC_CONFIG_HEADERS([include/config.h])
 
+AC_CONFIG_MACRO_DIR([m4])
 # for documentation of the versioning scheme see
 # https://sourceforge.net/apps/trac/dlvhex/wiki/LibraryVersions
 DLVHEX_DEFINE_VERSION([ACTIONPLUGIN],[$PACKAGE_VERSION])

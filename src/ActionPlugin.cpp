@@ -33,10 +33,10 @@
 #endif // HAVE_CONFIG_H
 //#define BOOST_SPIRIT_DEBUG
 
-#include "ActionPlugin.h"
-#include "ActionPluginModelCallback.h"
-#include "ActionPluginFinalCallback.h"
-#include "ActionPluginParserModule.h"
+#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginModelCallback.h"
+#include "acthex/ActionPluginFinalCallback.h"
+#include "acthex/ActionPluginParserModule.h"
 
 #include "dlvhex2/Registry.h"
 #include "dlvhex2/PredicateMask.h"
@@ -48,7 +48,8 @@
 //#include "dlvhex2/HexParserModule.h"
 //#include "dlvhex2/HexGrammar.h"
 
-#include "ActionPluginInterface.h"
+#include "acthex/ActionPluginInterface.h"
+#include "acthex/PluginActionBase.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -56,7 +57,7 @@ DLVHEX_NAMESPACE_BEGIN
 //namespace qi = boost::spirit::qi;
 
 ActionPlugin::CtxData::CtxData() :
-    enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel()
+		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel()
 //, action_atom_name("aux_action_atom")
 //, negPredicateArities()
 {
@@ -64,33 +65,36 @@ ActionPlugin::CtxData::CtxData() :
 
 void ActionPlugin::CtxData::addAction(const ID & id, const Action & action) {
 
-  idActionMap.insert(std::pair<ID, Action>(id, action));
+	idActionMap.insert(std::pair<ID, Action>(id, action));
 
-  myAuxiliaryPredicateMask.addPredicate(action.getAuxId());
+	myAuxiliaryPredicateMask.addPredicate(action.getAuxId());
 
 }
 
 void ActionPlugin::CtxData::registerPlugin(
-    boost::shared_ptr<ActionPluginInterface> actionPluginInterfacePtr, ProgramCtx& ctx) {
+		boost::shared_ptr<ActionPluginInterface> actionPluginInterfacePtr,
+		ProgramCtx& ctx) {
 
-  std::cerr << "\registerPlugin called" << std::endl;
+	std::cerr << "\registerPlugin called" << std::endl;
 
-  std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
-      actionPluginInterfacePtr->createActions(ctx);
+	std::vector < PluginActionBasePtr > pluginActionBasePtrVector =
+			actionPluginInterfacePtr->createActions(ctx);
 
-  for (std::vector<PluginActionBasePtr>::iterator it = pluginActionBasePtrVector.begin();
-      it != pluginActionBasePtrVector.end(); it++) {
-    namePluginActionBaseMap.insert(
-        std::pair<std::string, PluginActionBasePtr>((*it)->getPredicate(), (*it)));
+	for (std::vector<PluginActionBasePtr>::iterator it =
+			pluginActionBasePtrVector.begin();
+			it != pluginActionBasePtrVector.end(); it++) {
+		namePluginActionBaseMap.insert(
+				std::pair<std::string, PluginActionBasePtr>(
+						(*it)->getPredicate(), (*it)));
 
-    std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
-  }
+		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
+	}
 
 }
 
 ActionPlugin::ActionPlugin() :
-    PluginInterface() {
-  setNameVersion("dlvhex-actionplugin", 2, 0, 0);
+		PluginInterface() {
+	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
 }
 
 ActionPlugin::~ActionPlugin() {
@@ -98,103 +102,108 @@ ActionPlugin::~ActionPlugin() {
 
 // output help message for this plugin
 void ActionPlugin::printUsage(std::ostream& o) const {
-  //    123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-
-  o << "     --action-enable   Enable action plugin." << std::endl;
+	//    123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-
+	o << "     --action-enable   Enable action plugin." << std::endl;
 }
 
 // accepted options: --action-enable
 //
 // processes options for this plugin, and removes recognized options from pluginOptions
 // (do not free the pointers, the const char* directly come from argv)
-void ActionPlugin::processOptions(std::list<const char*>& pluginOptions, ProgramCtx& ctx) {
-  ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
+		ProgramCtx& ctx) {
+	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
 
-  typedef std::list<const char*>::iterator Iterator;
-  Iterator it;
+	typedef std::list<const char*>::iterator Iterator;
+	Iterator it;
 #warning create (or reuse, maybe from potassco?) cmdline option processing facility
-  it = pluginOptions.begin();
-  while (it != pluginOptions.end()) {
-    bool processed = false;
-    const std::string str(*it);
-    if (str == "--action-enable") {
-      ctxdata.enabled = true;
-      processed = true;
-    }
+	it = pluginOptions.begin();
+	while (it != pluginOptions.end()) {
+		bool processed = false;
+		const std::string str(*it);
+		if (str == "--action-enable") {
+			ctxdata.enabled = true;
+			processed = true;
+		}
 
-    if (processed) {
-      // return value of erase: element after it, maybe end()
-      DBGLOG(DBG, "ActionPlugin successfully processed option " << str);
-      it = pluginOptions.erase(it);
-    } else {
-      it++;
-    }
+		if (processed) {
+			// return value of erase: element after it, maybe end()
+			DBGLOG(DBG, "ActionPlugin successfully processed option " << str);
+			it = pluginOptions.erase(it);
+		} else {
+			it++;
+		}
 
-  }
+	}
 
-  if (ctxdata.enabled) {
+	if (ctxdata.enabled) {
 
-    RegistryPtr reg = ctx.registry();
+		RegistryPtr reg = ctx.registry();
 
 //    ctxdata.id_in_the_registry = reg->getAuxiliaryConstantSymbol('a',
 //        dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0));
 
-    ctxdata.id_brave = reg->storeConstantTerm("b");
-    ctxdata.id_cautious = reg->storeConstantTerm("c");
-    ctxdata.id_preferred_cautious = reg->storeConstantTerm("c_p");
+		ctxdata.id_brave = reg->storeConstantTerm("b");
+		ctxdata.id_cautious = reg->storeConstantTerm("c");
+		ctxdata.id_preferred_cautious = reg->storeConstantTerm("c_p");
 
-    // so this kind of actions will be executed first (indeed will be put ​​in the first set)
-    ctxdata.id_default_precedence = ID::termFromInteger(0);
-    // because the action atom without weight and level don't have to influence the selection of BestModels
-    ctxdata.id_default_weight_without_level = ID::termFromInteger(0);
-    ctxdata.id_default_level_without_weight = ID::termFromInteger(0);
-    // so the user can avoid specifying one of them if he want that it value is set at 1
-    ctxdata.id_default_weight_with_level = ID::termFromInteger(1);
-    ctxdata.id_default_level_with_weight = ID::termFromInteger(1);
+		// so this kind of actions will be executed first (indeed will be put ​​in the first set)
+		ctxdata.id_default_precedence = ID::termFromInteger(0);
+		// because the action atom without weight and level don't have to influence the selection of BestModels
+		ctxdata.id_default_weight_without_level = ID::termFromInteger(0);
+		ctxdata.id_default_level_without_weight = ID::termFromInteger(0);
+		// so the user can avoid specifying one of them if he want that it value is set at 1
+		ctxdata.id_default_weight_with_level = ID::termFromInteger(1);
+		ctxdata.id_default_level_with_weight = ID::termFromInteger(1);
 
-  }
+	}
 
 }
 
 // create parser modules that extend and the basic hex grammar
 // this parser also stores the query information into the plugin
-std::vector<HexParserModulePtr> ActionPlugin::createParserModules(ProgramCtx & ctx) {
-  DBGLOG(DBG, "ActionPlugin::createParserModules()");
+std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
+		ProgramCtx & ctx) {
+	DBGLOG(DBG, "ActionPlugin::createParserModules()");
 
-  std::vector < HexParserModulePtr > ret;
-  ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+	std::vector < HexParserModulePtr > ret;
+	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
 
-  if (ctxdata.enabled)
-    ret.push_back(HexParserModulePtr(new ActionPluginParserModule<HexParserModule::HEADATOM>(ctx)));
+	if (ctxdata.enabled)
+		ret.push_back(
+				HexParserModulePtr(
+						new ActionPluginParserModule<HexParserModule::HEADATOM>(
+								ctx)));
 
-  return ret;
+	return ret;
 }
 
 namespace {
 
-  typedef ActionPlugin::CtxData CtxData;
+typedef ActionPlugin::CtxData CtxData;
 
-  class ActionPluginConstraintAdder: public PluginRewriter {
-    public:
-      ActionPluginConstraintAdder() {
-      }
-      virtual ~ActionPluginConstraintAdder() {
-      }
+class ActionPluginConstraintAdder: public PluginRewriter {
+public:
+	ActionPluginConstraintAdder() {
+	}
+	virtual ~ActionPluginConstraintAdder() {
+	}
 
-      virtual void rewrite(ProgramCtx& ctx);
-  };
+	virtual void rewrite(ProgramCtx& ctx);
+};
 
-  void ActionPluginConstraintAdder::rewrite(ProgramCtx& ctx) {
+void ActionPluginConstraintAdder::rewrite(ProgramCtx& ctx) {
 //	typedef ActionPlugin::CtxData::PredicateArityMap PredicateArityMap;
 
 //	DBGLOG_SCOPE(DBG,"neg_rewr",false);
 //	DBGLOG(DBG,"= ActionPluginConstraintAdder::rewrite");
 //
-    ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-    assert(ctxdata.enabled && "this rewriter should only be used "
-        "if the plugin is enabled");
+	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+	assert(ctxdata.enabled && "this rewriter should only be used "
+			"if the plugin is enabled");
 
-    RegistryPtr reg = ctx.registry();
-    assert(reg);
+	RegistryPtr reg = ctx.registry();
+	assert(reg);
 //	PredicateArityMap::const_iterator it;
 //	for(it = ctxdata.negPredicateArities.begin();
 //			it != ctxdata.negPredicateArities.end(); ++it)
@@ -277,7 +286,7 @@ namespace {
 //				printToString<RawPrinter>(idcon, reg) << "'");
 //	}
 
-  }
+}
 
 } // anonymous namespace
 //
@@ -414,24 +423,25 @@ namespace {
 //} // anonymous namespace
 
 void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
-  ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-  if (!ctxdata.enabled)
-    return;
+	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+	if (!ctxdata.enabled)
+		return;
 
-  RegistryPtr reg = ctx.registry();
+	RegistryPtr reg = ctx.registry();
 
-  // init predicate mask
-  ctxdata.myAuxiliaryPredicateMask.setRegistry(reg);
+	// init predicate mask
+	ctxdata.myAuxiliaryPredicateMask.setRegistry(reg);
 
-  ActionPluginModelCallback * actionPluginModelCallback = new ActionPluginModelCallback(ctxdata,
-      reg);
+	ActionPluginModelCallback * actionPluginModelCallback =
+			new ActionPluginModelCallback(ctxdata, reg);
 #warning here we could try to only remove the default answer set printer
-  ModelCallbackPtr mcb(actionPluginModelCallback);
-  ctx.modelCallbacks.clear();
-  ctx.modelCallbacks.push_back(mcb);
+	ModelCallbackPtr mcb(actionPluginModelCallback);
+	ctx.modelCallbacks.clear();
+	ctx.modelCallbacks.push_back(mcb);
 
-  FinalCallbackPtr finalCallbackPtr(new ActionPluginFinalCallback(ctxdata, reg));
-  ctx.finalCallbacks.push_back(finalCallbackPtr);
+	FinalCallbackPtr finalCallbackPtr(
+			new ActionPluginFinalCallback(ctxdata, reg));
+	ctx.finalCallbacks.push_back(finalCallbackPtr);
 
 //	// add all auxiliaries to mask (here we should already have parsed all of them)
 //	typedef CtxData::NegToPosMap NegToPosMap;

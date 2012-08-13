@@ -16,8 +16,10 @@ ACTIONHEADERS = \
 	ActionPluginFinalCallback.h \
 	ActionScheduler.h \
 	ActionPluginParserModule.h \
-	PluginActionBase.h
+	PluginActionBase.h \
+	ActionPlugin.h
 
 pkginclude_HEADERS = $(ACTIONHEADERS)
 
-noinst_HEADERS = ActionPlugin.h
+# noinst_HEADERS = ActionPlugin.h
+#noinst_HEADERS = RobotActionPlugin.h

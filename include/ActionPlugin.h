@@ -31,29 +31,31 @@
 #ifndef ACTION_PLUGIN_H
 #define ACTION_PLUGIN_H
 
+#include "acthex/Action.h"
+
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/PluginInterface.h"
-
-#include "Action.h"
 #include "dlvhex2/HexParserModule.h"
 #include "dlvhex2/ProgramCtx.h"
 
 //#include "ActionPluginInterface.h"
 //typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
-#include "PluginActionBase.h"
+#include "acthex/PluginActionBase.h"
+//class PluginActionBase;
+//typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
 DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginInterface;
 
 class ActionPlugin: public PluginInterface {
-  public:
+public:
 
-    // stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
-    class CtxData: public PluginData {
-      public:
-        // whether plugin is enabled
-        bool enabled;
+	// stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
+	class CtxData: public PluginData {
+	public:
+		// whether plugin is enabled
+		bool enabled;
 
 //    // predicate constants which were encountered in negative form and their arity
 //    typedef std::map<ID,unsigned> PredicateArityMap;
@@ -64,89 +66,92 @@ class ActionPlugin: public PluginInterface {
 //    NegToPosMap negToPos;
 
 // for fast detection whether an ID is this plugin's responsitility to display
-        PredicateMask myAuxiliaryPredicateMask;
+		PredicateMask myAuxiliaryPredicateMask;
 
-        // an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
-        //dlvhex::ID id_in_the_registry;
+		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
+		//dlvhex::ID id_in_the_registry;
 
-        dlvhex::ID id_brave;
-        dlvhex::ID id_cautious;
-        dlvhex::ID id_preferred_cautious;
+		dlvhex::ID id_brave;
+		dlvhex::ID id_cautious;
+		dlvhex::ID id_preferred_cautious;
 
-        dlvhex::ID id_default_precedence;
-        dlvhex::ID id_default_weight_with_level;
-        dlvhex::ID id_default_weight_without_level;
-        dlvhex::ID id_default_level_with_weight;
-        dlvhex::ID id_default_level_without_weight;
+		dlvhex::ID id_default_precedence;
+		dlvhex::ID id_default_weight_with_level;
+		dlvhex::ID id_default_weight_without_level;
+		dlvhex::ID id_default_level_with_weight;
+		dlvhex::ID id_default_level_without_weight;
 
-        typedef std::map<ID, Action> IDActionMap;
-        IDActionMap idActionMap;
+		typedef std::map<ID, Action> IDActionMap;
+		IDActionMap idActionMap;
 
-        typedef std::map<int, int> LevelsAndWeights;
-        // a map that contains for each level the weight
-        LevelsAndWeights levelsAndWeightsBestModels;
+		typedef std::map<int, int> LevelsAndWeights;
+		// a map that contains for each level the weight
+		LevelsAndWeights levelsAndWeightsBestModels;
 
-        typedef std::list<AnswerSetPtr> BestModelsContainer;
-        // the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
-        BestModelsContainer bestModelsContainer;
+		typedef std::list<AnswerSetPtr> BestModelsContainer;
+		// the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
+		BestModelsContainer bestModelsContainer;
 
-        // the AnswerSets that aren't Best Models
-        BestModelsContainer notBestModelsContainer;
+		// the AnswerSets that aren't Best Models
+		BestModelsContainer notBestModelsContainer;
 
-        // an iterator that identifies the position of the BestModel in BestModelsContainer
-        BestModelsContainer::iterator iteratorBestModel;
+		// an iterator that identifies the position of the BestModel in BestModelsContainer
+		BestModelsContainer::iterator iteratorBestModel;
 
-        CtxData();
-        virtual ~CtxData() {
-        }
-        ;
-        void addAction(const ID &, const Action &);
+		CtxData();
+		virtual ~CtxData() {
+		}
+		;
+		void addAction(const ID &, const Action &);
 
-        std::map<std::string, PluginActionBasePtr> namePluginActionBaseMap;
+		std::map<std::string, PluginActionBasePtr> namePluginActionBaseMap;
 
-        void registerPlugin(boost::shared_ptr<ActionPluginInterface>, ProgramCtx&);
+		void registerPlugin(boost::shared_ptr<ActionPluginInterface>,
+				ProgramCtx&);
 
-    };
+	};
 
-    ActionPlugin();
-    virtual ~ActionPlugin();
+	ActionPlugin();
+	virtual ~ActionPlugin();
 
-    // output help message for this plugin
-    virtual void printUsage(std::ostream& o) const;
+	// output help message for this plugin
+	virtual void printUsage(std::ostream& o) const;
 
-    // accepted options: --action-enable
-    //
-    // processes options for this plugin, and removes recognized options from pluginOptions
-    // (do not free the pointers, the const char* directly come from argv)
-    virtual void processOptions(std::list<const char*>& pluginOptions, ProgramCtx&);
+	// accepted options: --action-enable
+	//
+	// processes options for this plugin, and removes recognized options from pluginOptions
+	// (do not free the pointers, the const char* directly come from argv)
+	virtual void processOptions(std::list<const char*>& pluginOptions,
+			ProgramCtx&);
 
-    // create parser modules that extend and the basic hex grammar
-    virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
+	// create parser modules that extend and the basic hex grammar
+	virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
 
 //  // rewrite program by adding auxiliary constraints
 //  virtual PluginRewriterPtr createRewriter(ProgramCtx&);
 
-    virtual void setupProgramCtx(ProgramCtx&);
+	virtual void setupProgramCtx(ProgramCtx&);
 
-    static void printTuple(const Tuple& tuple, RegistryPtr registryPtr) {
+	static void printTuple(const Tuple& tuple, RegistryPtr registryPtr) {
 //      ;
 //      std::cerr << registryPtr->getTermStringByID(*it);
 //      it++;
 //      if (it != tuple.end())
 //        std::cerr << " with this input list: ";
-      bool first = true;
-      for (Tuple::const_iterator it = tuple.begin(); it != tuple.end(); it++) {
-        if (first)
-          first = !first;
-        else
-          std::cerr << ", ";
-        if (it->isConstantTerm() || it->isVariableTerm())
-          std::cerr << registryPtr->getTermStringByID(*it);
-        else
-          std::cerr << it->address;
-      }
-      std::cerr << std::endl;
-    }
+		bool first = true;
+		for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
+				it++) {
+			if (first)
+				first = !first;
+			else
+				std::cerr << ", ";
+			if (it->isConstantTerm() || it->isVariableTerm())
+				std::cerr << registryPtr->getTermStringByID(*it);
+			else
+				std::cerr << it->address;
+		}
+		std::cerr << std::endl;
+	}
 
 };
 
