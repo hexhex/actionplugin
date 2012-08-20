@@ -32,11 +32,12 @@
 #include "config.h"
 #endif // HAVE_CONFIG_H
 //#define BOOST_SPIRIT_DEBUG
-
 #include "acthex/ActionPlugin.h"
+
 #include "acthex/ActionPluginModelCallback.h"
 #include "acthex/ActionPluginFinalCallback.h"
 #include "acthex/ActionPluginParserModule.h"
+#include "acthex/ActionPluginInterface.h"
 
 #include "dlvhex2/Registry.h"
 #include "dlvhex2/PredicateMask.h"
@@ -47,9 +48,6 @@
 //#include "dlvhex2/HexParser.h"
 //#include "dlvhex2/HexParserModule.h"
 //#include "dlvhex2/HexGrammar.h"
-
-#include "acthex/ActionPluginInterface.h"
-#include "acthex/PluginActionBase.h"
 
 DLVHEX_NAMESPACE_BEGIN
 

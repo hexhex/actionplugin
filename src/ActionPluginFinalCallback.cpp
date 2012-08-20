@@ -23,11 +23,7 @@ ActionPluginFinalCallback::ActionPluginFinalCallback(
 void ActionPluginFinalCallback::operator()() {
 	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
 
-//  ActionPlugin::CtxData& ctxData = ctx.getPluginData<ActionPlugin>();
-
 #warning I ve to call the BestModelSelection function of the specified ActionAtom
-	//selectBestModel(const ActionPlugin::CtxData::BestModelsContainer& bestModelsContainer)
-	//iteratorBestModel = myActionAtom.selectBestModel(bestModelsContainer);
 
 	ctxData.iteratorBestModel = ctxData.bestModelsContainer.begin();
 
@@ -50,6 +46,8 @@ void ActionPluginFinalCallback::operator()() {
 		ActionPlugin::printTuple(tempTuple, registryPtr);
 	}
 
+
+#warning I ve to call the executionModeRewriter function of the specified ActionAtom
 	std::cerr << "\nCall the executionModeRewriter" << std::endl;
 	std::list < std::set<Tuple> > listOfExecution;
 	scheduler->executionModeRewriter(multimapOfExecution, listOfExecution);

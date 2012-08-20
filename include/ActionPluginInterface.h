@@ -144,7 +144,7 @@ public:
 				name(name) {
 		}
 		;
-		virtual dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator getBestModel(
+		virtual void getBestModel(dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator&,
 				const dlvhex::ActionPlugin::CtxData::BestModelsContainer&) = 0;
 	protected:
 		std::string name;
@@ -153,6 +153,23 @@ public:
 
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		return std::vector<BestModelSelectorPtr>();
+	}
+
+	class ExecutionModeRewriter {
+		ExecutionModeRewriter(std::string name) :
+				name(name) {
+		}
+		;
+		virtual void rewrite(
+				const std::multimap<int, Tuple>& multimapOfExecution,
+				std::list<std::set<Tuple> >& listOfExecution) = 0;
+	protected:
+		std::string name;
+	};
+	typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
+
+	virtual std::vector<ExecutionModeRewriterPtr> getAllExecutionModeRewriters() const {
+		return std::vector<ExecutionModeRewriterPtr>();
 	}
 
 	virtual void processOptions(std::list<const char*>& pluginOptions,

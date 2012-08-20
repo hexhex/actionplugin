@@ -102,6 +102,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 //  std::cerr << "Weight: " << answerSetPtr->costWeight << std::endl;
 //  std::cerr << "Level: " << answerSetPtr->costLevel << std::endl;
 
+	ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeightsBestModels = ctxData.levelsAndWeightsBestModels;
+
 	// eliminates eventual levels with weight 0 in levelsAndWeights
 	ActionPlugin::CtxData::LevelsAndWeights::iterator itLAW =
 			levelsAndWeights.begin();
@@ -179,7 +181,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 //
 //    }
 
-		int res_is = isABestModel(ctxData, levelsAndWeights);
+		int res_is = isABestModel(levelsAndWeightsBestModels, levelsAndWeights);
 
 		if (res_is == 0)
 			;
@@ -188,7 +190,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 			return true;
 		} else if (res_is == 1) {
 			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
-			ctxData.levelsAndWeightsBestModels = levelsAndWeights;
+			levelsAndWeightsBestModels = levelsAndWeights;
 			ctxData.notBestModelsContainer.insert(
 					ctxData.notBestModelsContainer.end(),
 					ctxData.bestModelsContainer.begin(),
@@ -204,8 +206,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	std::cerr << "\nThe levelsAndWeightsBestModels:" << std::endl;
 	std::cerr << "Level\tWeight" << std::endl;
-	for (itLAW = ctxData.levelsAndWeightsBestModels.begin();
-			itLAW != ctxData.levelsAndWeightsBestModels.end(); itLAW++) {
+	for (itLAW = levelsAndWeightsBestModels.begin();
+			itLAW != levelsAndWeightsBestModels.end(); itLAW++) {
 		std::cerr << itLAW->first << '\t' << itLAW->second << std::endl;
 	}
 
@@ -233,7 +235,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 // return 0 if it's a BestModel like the AnswerSets in bestModelsContainer
 // return -1 if it isn't a BestModel
 // return 1 if it's a BestModel and it's better than the AnswerSets in bestModelsContainer
-int ActionPluginModelCallback::isABestModel(ActionPlugin::CtxData& ctxData,
+int ActionPluginModelCallback::isABestModel(ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeightsBestModels,
 		ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeights) {
 
 	//CtxData::LevelsAndWeights::iterator it;
@@ -242,15 +244,15 @@ int ActionPluginModelCallback::isABestModel(ActionPlugin::CtxData& ctxData,
 
 	//if there is a level in levelsAndWeights that is greater than the highest level of levelsAndWeightsBestModels I have to return
 	if ((*levelsAndWeights.rbegin()).first
-			> (*ctxData.levelsAndWeightsBestModels.rbegin()).first)
+			> (*levelsAndWeightsBestModels.rbegin()).first)
 		return -1;
 
 	ActionPlugin::CtxData::LevelsAndWeights::reverse_iterator ritLAW;
 	int first, second;
 	// return if I find that this AnswerSet isn't a BestModel
 	// break if I find that this AnswerSet is "better" than other AnswerSets in bestModelsContainer
-	for (ritLAW = ctxData.levelsAndWeightsBestModels.rbegin();
-			ritLAW != ctxData.levelsAndWeightsBestModels.rend(); ritLAW++) {
+	for (ritLAW = levelsAndWeightsBestModels.rbegin();
+			ritLAW != levelsAndWeightsBestModels.rend(); ritLAW++) {
 		//I need to sort the levelsAndWeightsBestModels for Level (I think that it's just sorted by key),
 		//to inizialize lastLevelSeen at the highest level of levelsAndWeightsBestModels
 		//and to compare, in descending order,the weights in levelsAndWeightsBestModels and the weights in levelsAndWeights
@@ -289,7 +291,7 @@ int ActionPluginModelCallback::isABestModel(ActionPlugin::CtxData& ctxData,
 	//the AnswerSet has a the same levelsAndWeights of the others AnswerSet in the bestModelsContainer
 
 	//if the size of levelsAndWeightsBestModels isn't the same of the size of levelsAndWeights
-	if (ctxData.levelsAndWeightsBestModels.size() != levelsAndWeights.size())
+	if (levelsAndWeightsBestModels.size() != levelsAndWeights.size())
 		return -1;
 
 	return 0;

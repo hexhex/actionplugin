@@ -8,6 +8,8 @@
 #ifndef PLUGIN_ACTION_BASE_H_
 #define PLUGIN_ACTION_BASE_H_
 
+#include "dlvhex2/PluginInterface.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
 class Environment;

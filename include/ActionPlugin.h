@@ -32,21 +32,18 @@
 #define ACTION_PLUGIN_H
 
 #include "acthex/Action.h"
+//#include "acthex/PluginActionBase.h"
 
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/HexParserModule.h"
 #include "dlvhex2/ProgramCtx.h"
 
-//#include "ActionPluginInterface.h"
-//typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
-#include "acthex/PluginActionBase.h"
-//class PluginActionBase;
-//typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
-
 DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginInterface;
+class PluginActionBase;
+typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
 class ActionPlugin: public PluginInterface {
 public:
@@ -57,15 +54,7 @@ public:
 		// whether plugin is enabled
 		bool enabled;
 
-//    // predicate constants which were encountered in negative form and their arity
-//    typedef std::map<ID,unsigned> PredicateArityMap;
-//    PredicateArityMap negPredicateArities;
-//
-//    // aux predicate constants and their positive counterparts
-//    typedef std::map<ID,ID> NegToPosMap;
-//    NegToPosMap negToPos;
-
-// for fast detection whether an ID is this plugin's responsitility to display
+		// for fast detection whether an ID is this plugin's responsitility to display
 		PredicateMask myAuxiliaryPredicateMask;
 
 		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"

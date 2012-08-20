@@ -20,7 +20,7 @@ public:
 	virtual ~ActionPluginModelCallback();
 	virtual bool operator()(AnswerSetPtr);
 protected:
-	int isABestModel(ActionPlugin::CtxData&,
+	int isABestModel(ActionPlugin::CtxData::LevelsAndWeights&,
 			ActionPlugin::CtxData::LevelsAndWeights&);
 	//ProgramCtx& ctx;
 	ActionPlugin::CtxData& ctxData;
