@@ -46,6 +46,8 @@ plugin_LTLIBRARIES = libdlvhexplugin-action.la
 # see the testcases for examples of such additional plugins
 libdlvhex_action_la_SOURCES = \
 		Action.cpp \
+		ActionPlugin.cpp \
+		PluginActionBase.cpp \
 		ActionPluginModelCallback.cpp \
 		ActionPluginFinalCallback.cpp \
 		ActionScheduler.cpp \

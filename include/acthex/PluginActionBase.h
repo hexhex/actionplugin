@@ -19,18 +19,18 @@ public:
 	PluginActionBase(const std::string& predicate) :
 			predicate(predicate) {
 	}
-	virtual ~PluginActionBase() {
-	}
+	virtual ~PluginActionBase();
 	const std::string& getPredicate() const {
 		return predicate;
 	}
 
 #warning a test, must be fixed
-	void execute(const RegistryPtr registryPtr, const Tuple& tuple);
+	virtual void execute(const RegistryPtr registryPtr, const Tuple& tuple) {};
 
 protected:
-	virtual void execute(Environment&, const RegistryPtr registryPtr,
-			const Tuple&, const InterpretationConstPtr);
+#warning a test, must be fixed
+	virtual void execute(Environment&, RegistryPtr registryPtr,
+			const Tuple&, InterpretationConstPtr) {};
 	std::string predicate;
 };
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;

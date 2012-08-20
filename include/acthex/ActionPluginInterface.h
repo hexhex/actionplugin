@@ -92,7 +92,7 @@ public:
 
 #warning a test, must be fixed
 		void execute(const RegistryPtr registryPtr, const Tuple& tuple) {
-			const typename Derived::Environment environment;
+			typename Derived::Environment environment;
 			InterpretationConstPtr interpretationConstPtr;
 			execute(environment, registryPtr, tuple, interpretationConstPtr);
 		}
@@ -100,7 +100,7 @@ public:
 	protected:
 		virtual void execute(typename Derived::Environment&,
 				const RegistryPtr registryPtr, const Tuple&,
-				const InterpretationConstPtr);
+				const InterpretationConstPtr) = 0;
 	};
 
 	/**

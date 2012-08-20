@@ -121,26 +121,7 @@ public:
 
 	virtual void setupProgramCtx(ProgramCtx&);
 
-	static void printTuple(const Tuple& tuple, RegistryPtr registryPtr) {
-//      ;
-//      std::cerr << registryPtr->getTermStringByID(*it);
-//      it++;
-//      if (it != tuple.end())
-//        std::cerr << " with this input list: ";
-		bool first = true;
-		for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
-				it++) {
-			if (first)
-				first = !first;
-			else
-				std::cerr << ", ";
-			if (it->isConstantTerm() || it->isVariableTerm())
-				std::cerr << registryPtr->getTermStringByID(*it);
-			else
-				std::cerr << it->address;
-		}
-		std::cerr << std::endl;
-	}
+	static void printTuple(const Tuple& tuple, RegistryPtr registryPtr);
 
 };
 
