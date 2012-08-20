@@ -71,6 +71,7 @@ AC_CONFIG_FILES([
            Makefile 
            src/Makefile
            include/Makefile
+           include/acthex/Makefile
            examples/Makefile
            testsuite/Makefile
 ])

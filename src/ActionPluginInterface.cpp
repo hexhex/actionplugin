@@ -8,7 +8,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-#include "ActionPluginInterface.h"
+#include <acthex/ActionPluginInterface.h>
 
 DLVHEX_NAMESPACE_BEGIN
 
