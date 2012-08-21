@@ -25,7 +25,7 @@ public:
 	}
 
 #warning a test, must be fixed
-	virtual void execute(const RegistryPtr registryPtr, const Tuple& tuple) {};
+	virtual void execute(ProgramCtx& ctx, const Tuple& tuple) {};
 
 protected:
 #warning a test, must be fixed

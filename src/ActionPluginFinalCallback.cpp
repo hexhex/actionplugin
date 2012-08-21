@@ -15,9 +15,8 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionPluginFinalCallback::ActionPluginFinalCallback(
-		ActionPlugin::CtxData& ctxData, const RegistryPtr registryPtr) :
-		ctxData(ctxData), registryPtr(registryPtr) {
+ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx, ActionPlugin::CtxData& ctxData) : programCtx(ctx),
+		ctxData(ctxData), registryPtr(ctx.registry()) {
 }
 
 void ActionPluginFinalCallback::operator()() {
@@ -102,7 +101,7 @@ void ActionPluginFinalCallback::operator()() {
 							registryPtr->getTermStringByID(*tempTuple.begin()));
 
 			if (it != ctxData.namePluginActionBaseMap.end())
-				it->second->execute(registryPtr, tupleForExecute);
+				it->second->execute(programCtx, tupleForExecute);
 			else
 				std::cerr << "For the action '"
 						<< registryPtr->getTermStringByID(*tempTuple.begin())

@@ -91,10 +91,11 @@ public:
 		}
 
 #warning a test, must be fixed
-		void execute(const RegistryPtr registryPtr, const Tuple& tuple) {
-			typename Derived::Environment environment;
+		void execute(ProgramCtx& ctx, const Tuple& tuple) {
 			InterpretationConstPtr interpretationConstPtr;
-			execute(environment, registryPtr, tuple, interpretationConstPtr);
+			typename Derived::Environment& environment =
+					ctx.getPluginEnvironment<Derived>();
+			execute(environment, ctx.registry(), tuple, interpretationConstPtr);
 		}
 
 	protected:

@@ -438,7 +438,7 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 	ctx.modelCallbacks.push_back(mcb);
 
 	FinalCallbackPtr finalCallbackPtr(
-			new ActionPluginFinalCallback(ctxdata, reg));
+			new ActionPluginFinalCallback(ctx, ctxdata));
 	ctx.finalCallbacks.push_back(finalCallbackPtr);
 
 //	// add all auxiliaries to mask (here we should already have parsed all of them)
