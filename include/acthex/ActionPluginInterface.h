@@ -17,8 +17,7 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-class ActionPluginInterface: public PluginInterface,
-		public boost::enable_shared_from_this<ActionPluginInterface> {
+class ActionPluginInterface: public PluginInterface {
 
 public:
 
@@ -69,6 +68,7 @@ public:
 		}
 
 		void retrieve(const Query& query, Answer& answer) {
+			std::cerr << "retrive" << std::endl;
 			const typename Derived::Environment& environment =
 					query.ctx->getPluginEnvironment<Derived>();
 			retrieve(environment, query, answer);
@@ -144,7 +144,8 @@ public:
 				name(name) {
 		}
 		;
-		virtual void getBestModel(dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator&,
+		virtual void getBestModel(
+				dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator&,
 				const dlvhex::ActionPlugin::CtxData::BestModelsContainer&) = 0;
 	protected:
 		std::string name;
@@ -174,14 +175,7 @@ public:
 
 	virtual void processOptions(std::list<const char*>& pluginOptions,
 			ProgramCtx& ctx) {
-		std::cerr
-				<< "\n\n*********************************************************"
-				<< std::endl;
-		std::cerr << "   CALLED processOptions of ActionPluginInterface"
-				<< std::endl;
-		std::cerr
-				<< "*********************************************************\n\n"
-				<< std::endl;
+		std::cerr << "processOptions of ActionPluginInterface" << std::endl;
 		registerInActionPlugin(ctx);
 	}
 
@@ -190,8 +184,22 @@ public:
 
 protected:
 	void registerInActionPlugin(ProgramCtx& ctx) {
-		ctx.getPluginData<ActionPlugin>().registerPlugin(shared_from_this(),
-				ctx);
+		std::cerr << "registerInActionPlugin of ActionPluginInterface"
+				<< std::endl;
+
+//		boost::shared_ptr<ActionPluginInterface> pointer_shared_ptr = boost::shared_ptr<ActionPluginInterface>(this);
+//		std::cerr << "after shared_ptr" << std::endl;
+
+//		boost::shared_ptr<ActionPluginInterface> pointer_shared_from_this =
+//				shared_from_this();
+//		std::cerr << "after shared_from_this" << std::endl;
+
+//		ctx.getPluginData<ActionPlugin>().registerPlugin(shared_from_this(), ctx);
+		ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx), ctx);
+	}
+
+	virtual ActionPluginInterfacePtr create(ProgramCtx& ctx) {
+		throw PluginError("ERROR you haven't overridden create() function");
 	}
 
 };

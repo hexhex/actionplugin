@@ -70,10 +70,10 @@ void ActionPlugin::CtxData::addAction(const ID & id, const Action & action) {
 }
 
 void ActionPlugin::CtxData::registerPlugin(
-		boost::shared_ptr<ActionPluginInterface> actionPluginInterfacePtr,
+		ActionPluginInterfacePtr actionPluginInterfacePtr,
 		ProgramCtx& ctx) {
 
-	std::cerr << "\registerPlugin called" << std::endl;
+	std::cerr << "registerPlugin called" << std::endl;
 
 	std::vector < PluginActionBasePtr > pluginActionBasePtrVector =
 			actionPluginInterfacePtr->createActions(ctx);

@@ -42,6 +42,7 @@
 DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginInterface;
+typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
@@ -95,7 +96,7 @@ public:
 
 		std::map<std::string, PluginActionBasePtr> namePluginActionBaseMap;
 
-		void registerPlugin(boost::shared_ptr<ActionPluginInterface>,
+		void registerPlugin(ActionPluginInterfacePtr,
 				ProgramCtx&);
 
 	};
