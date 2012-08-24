@@ -78,14 +78,24 @@ void ActionPlugin::CtxData::registerPlugin(
 	std::vector < PluginActionBasePtr > pluginActionBasePtrVector =
 			actionPluginInterfacePtr->createActions(ctx);
 
+	RegistryPtr reg = ctx.registry();
+
 	for (std::vector<PluginActionBasePtr>::iterator it =
 			pluginActionBasePtrVector.begin();
 			it != pluginActionBasePtrVector.end(); it++) {
+
+		const ID id = reg->storeConstantTerm((*it)->getPredicate());
+
 		namePluginActionBaseMap.insert(
 				std::pair<std::string, PluginActionBasePtr>(
 						(*it)->getPredicate(), (*it)));
 
 		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
+
+		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
+		Action action(reg->getTermStringByID(id), aux_id);
+		this->addAction(id, action);
+
 	}
 
 }

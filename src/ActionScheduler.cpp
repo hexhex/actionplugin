@@ -184,18 +184,10 @@ void ActionScheduler::executionModeRewriter(
 			lastPrecedence = it->first;
 		}
 		currentSet.insert(it->second);
-//#warning test checkIfTheListIsCorrect
-//    Tuple t = it->second;
-//    t[0] = dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0);
-//        currentSet.insert(t);
+
 	}
 
 	listOfExecution.push_back(currentSet);
-
-//#warning test checkIfTheListIsCorrect
-//  currentSet.clear();
-//  currentSet.insert(multimapOfExecution.begin()->second);
-//  listOfExecution.push_back(currentSet);
 
 }
 

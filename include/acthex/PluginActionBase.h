@@ -24,11 +24,9 @@ public:
 		return predicate;
 	}
 
-#warning a test, must be fixed
 	virtual void execute(ProgramCtx& ctx, const Tuple& tuple) {};
 
 protected:
-#warning a test, must be fixed
 	virtual void execute(Environment&, RegistryPtr registryPtr,
 			const Tuple&, InterpretationConstPtr) {};
 	std::string predicate;

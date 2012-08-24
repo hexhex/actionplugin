@@ -139,20 +139,16 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		if (mgr.ctxdata.idActionMap.count(boost::fusion::at_c < 0 > (source))
 				== 0) {
 
-			const ID id = boost::fusion::at_c < 0 > (source);
-
-			ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
-
-			Action action(reg->getTermStringByID(id), aux_id);
-
-			mgr.ctxdata.addAction(id, action);
+//			const ID id = boost::fusion::at_c < 0 > (source);
+//
+//			ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
+//
+//			Action action(reg->getTermStringByID(id), aux_id);
+//
+//			mgr.ctxdata.addAction(id, action);
 			//mgr.ctxdata.idActionMap.insert(std::pair<ID, Action>(id, action));
 
-#warning the above code should be deleted, the one below should be uncommented
-
-			//throw an exception
-			//        std::cerr << "Action not found" << std::endl;
-			//        return;
+			throw PluginError("Action not found");
 
 		}
 
