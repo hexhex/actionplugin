@@ -24,11 +24,17 @@ public:
 		return predicate;
 	}
 
-	virtual void execute(ProgramCtx& ctx, const Tuple& tuple) {};
+	virtual void execute(ProgramCtx& ctx,
+			const InterpretationConstPtr interpretationConstPtr,
+			const Tuple& tuple) {
+	}
+	;
 
 protected:
-	virtual void execute(Environment&, RegistryPtr registryPtr,
-			const Tuple&, InterpretationConstPtr) {};
+	virtual void execute(Environment&, RegistryPtr registryPtr, const Tuple&,
+			const InterpretationConstPtr interpretationConstPtr) {
+	}
+	;
 	std::string predicate;
 };
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;

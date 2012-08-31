@@ -69,9 +69,9 @@ public:
 				PluginActionBase(predicate) {
 		}
 
-		void execute(ProgramCtx& ctx, const Tuple& tuple) {
-#warning I don t know I can have InterpretationConstPtr;
-			InterpretationConstPtr interpretationConstPtr;
+		void execute(ProgramCtx& ctx,
+				const InterpretationConstPtr interpretationConstPtr,
+				const Tuple& tuple) {
 			typename Derived::Environment& environment =
 					ctx.getPluginEnvironment<Derived>();
 			execute(environment, ctx.registry(), tuple, interpretationConstPtr);
@@ -120,46 +120,109 @@ public:
 			ProgramCtx& ctx) const = 0;
 
 	class BestModelSelector {
-		BestModelSelector(std::string name) :
-				name(name) {
-		}
-		;
+#warning it s dangerous to pass BestModelsContainer as reference but isn t efficent to pass it without reference; it isn t possible to pass it in a constant way
 		virtual void getBestModel(
 				dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator&,
-				const dlvhex::ActionPlugin::CtxData::BestModelsContainer&) = 0;
-	protected:
-		std::string name;
+				dlvhex::ActionPlugin::CtxData::BestModelsContainer) = 0;
 	};
 	typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
 
+	class DefaultBestModelSelector: public BestModelSelector {
+		virtual void getBestModel(
+				dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator& iteratorBestModel,
+				dlvhex::ActionPlugin::CtxData::BestModelsContainer bestModelsContainer) {
+			iteratorBestModel = bestModelsContainer.begin();
+		}
+	};
+
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
-		return std::vector<BestModelSelectorPtr>();
+		std::vector<BestModelSelectorPtr> allBestModelSelectors;
+		BestModelSelectorPtr bestModelSelectorPtr(new DefaultBestModelSelector);
+		allBestModelSelectors.push_back(bestModelSelectorPtr);
+		return allBestModelSelectors;
 	}
 
 	class ExecutionModeRewriter {
-		ExecutionModeRewriter(std::string name) :
-				name(name) {
-		}
-		;
 		virtual void rewrite(
 				const std::multimap<int, Tuple>& multimapOfExecution,
 				std::list<std::set<Tuple> >& listOfExecution) = 0;
-	protected:
-		std::string name;
 	};
 	typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
 
+	class DefaultExecutionModeRewriter: public ExecutionModeRewriter {
+		virtual void rewrite(
+				const std::multimap<int, Tuple>& multimapOfExecution,
+				std::list<std::set<Tuple> >& listOfExecution) {
+
+			if (multimapOfExecution.empty())
+				return;
+
+			std::multimap<int, Tuple>::const_iterator it =
+					multimapOfExecution.begin();
+			int lastPrecedence = it->first;
+			std::set < Tuple > currentSet;
+			for (; it != multimapOfExecution.end(); it++) {
+
+//				std::cerr << "lastPrecedence: " << lastPrecedence << std::endl;
+//				std::cerr << "in multimap: " << it->first << " "
+//						<< registryPtr->getTermStringByID(it->second[0])
+//						<< std::endl;
+
+				if (it->first != lastPrecedence) {
+					listOfExecution.push_back(currentSet);
+					currentSet.clear();
+					lastPrecedence = it->first;
+				}
+				currentSet.insert(it->second);
+
+			}
+
+			listOfExecution.push_back(currentSet);
+
+		}
+	};
+
 	virtual std::vector<ExecutionModeRewriterPtr> getAllExecutionModeRewriters() const {
-		return std::vector<ExecutionModeRewriterPtr>();
+		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters;
+		ExecutionModeRewriterPtr executionModeRewriterPtr(
+				new DefaultExecutionModeRewriter);
+		allExecutionModeRewriters.push_back(executionModeRewriterPtr);
+		return allExecutionModeRewriters;
 	}
 
 	virtual void processOptions(std::list<const char*>& pluginOptions,
 			ProgramCtx& ctx) {
 		std::cerr << "processOptions of ActionPluginInterface" << std::endl;
-		registerInActionPlugin(ctx);
-	}
 
-	virtual void setupProgramCtx(ProgramCtx&) {
+		ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+
+		typedef std::list<const char*>::iterator Iterator;
+		Iterator it;
+
+		it = pluginOptions.begin();
+		while (it != pluginOptions.end()) {
+			bool processed = false;
+			const std::string str(*it);
+			if (str == "--action-enable") {
+				ctxdata.enabled = true;
+				processed = true;
+			}
+
+			if (processed) {
+				// return value of erase: element after it, maybe end()
+				DBGLOG(DBG,
+						"ActionPluginInterface successfully processed option "
+								<< str);
+				it = pluginOptions.erase(it);
+			} else {
+				it++;
+			}
+
+		}
+
+		if (ctxdata.enabled)
+			registerInActionPlugin(ctx);
+
 	}
 
 protected:
@@ -175,7 +238,8 @@ protected:
 //		std::cerr << "after shared_from_this" << std::endl;
 
 //		ctx.getPluginData<ActionPlugin>().registerPlugin(shared_from_this(), ctx);
-		ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx), ctx);
+		ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx),
+				ctx);
 	}
 
 	virtual ActionPluginInterfacePtr create(ProgramCtx& ctx) {
@@ -183,7 +247,6 @@ protected:
 	}
 
 };
-typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
 
 DLVHEX_NAMESPACE_END
 

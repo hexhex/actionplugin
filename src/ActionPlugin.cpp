@@ -41,41 +41,36 @@
 
 #include "dlvhex2/Registry.h"
 #include "dlvhex2/PredicateMask.h"
-//#include "dlvhex2/PlatformDefinitions.h"
-//#include "dlvhex2/Printer.h"
-//#include "dlvhex2/Printhelpers.h"
-//#include "dlvhex2/Logger.h"
-//#include "dlvhex2/HexParser.h"
-//#include "dlvhex2/HexParserModule.h"
-//#include "dlvhex2/HexGrammar.h"
-
 DLVHEX_NAMESPACE_BEGIN
 
-//namespace spirit = boost::spirit;
-//namespace qi = boost::spirit::qi;
-
 ActionPlugin::CtxData::CtxData() :
-		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel()
-//, action_atom_name("aux_action_atom")
-//, negPredicateArities()
-{
+		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap() {
 }
 
-void ActionPlugin::CtxData::addAction(const ID & id, const Action & action) {
+ActionPlugin::CtxData::~CtxData() {
+	idActionMap.clear();
+	levelsAndWeightsBestModels.clear();
+	iteratorBestModel = bestModelsContainer.end();
+	bestModelsContainer.clear();
+	notBestModelsContainer.clear();
+	namePluginActionBaseMap.clear();
+}
 
-	idActionMap.insert(std::pair<ID, Action>(id, action));
+void ActionPlugin::CtxData::addAction(const ID & id,
+		const ActionPtr actionPtr) {
 
-	myAuxiliaryPredicateMask.addPredicate(action.getAuxId());
+	idActionMap.insert(std::pair<ID, ActionPtr>(id, actionPtr));
+
+	myAuxiliaryPredicateMask.addPredicate(actionPtr->getAuxId());
 
 }
 
 void ActionPlugin::CtxData::registerPlugin(
-		ActionPluginInterfacePtr actionPluginInterfacePtr,
-		ProgramCtx& ctx) {
+		ActionPluginInterfacePtr actionPluginInterfacePtr, ProgramCtx& ctx) {
 
 	std::cerr << "registerPlugin called" << std::endl;
 
-	std::vector < PluginActionBasePtr > pluginActionBasePtrVector =
+	std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
 			actionPluginInterfacePtr->createActions(ctx);
 
 	RegistryPtr reg = ctx.registry();
@@ -93,8 +88,9 @@ void ActionPlugin::CtxData::registerPlugin(
 		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
 
 		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
-		Action action(reg->getTermStringByID(id), aux_id);
-		this->addAction(id, action);
+		//std::cerr << reg->getTermStringByID(id) << std::endl;
+		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
+		this->addAction(id, actionPtr);
 
 	}
 
@@ -102,10 +98,12 @@ void ActionPlugin::CtxData::registerPlugin(
 
 ActionPlugin::ActionPlugin() :
 		PluginInterface() {
-	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
+#warning without it there isn t Segmentation Fault
+//	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
 }
 
 ActionPlugin::~ActionPlugin() {
+
 }
 
 // output help message for this plugin
@@ -124,7 +122,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 
 	typedef std::list<const char*>::iterator Iterator;
 	Iterator it;
-#warning create (or reuse, maybe from potassco?) cmdline option processing facility
+
 	it = pluginOptions.begin();
 	while (it != pluginOptions.end()) {
 		bool processed = false;
@@ -186,251 +184,11 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 	return ret;
 }
 
-namespace {
-
-typedef ActionPlugin::CtxData CtxData;
-
-class ActionPluginConstraintAdder: public PluginRewriter {
-public:
-	ActionPluginConstraintAdder() {
-	}
-	virtual ~ActionPluginConstraintAdder() {
-	}
-
-	virtual void rewrite(ProgramCtx& ctx);
-};
-
-void ActionPluginConstraintAdder::rewrite(ProgramCtx& ctx) {
-//	typedef ActionPlugin::CtxData::PredicateArityMap PredicateArityMap;
-
-//	DBGLOG_SCOPE(DBG,"neg_rewr",false);
-//	DBGLOG(DBG,"= ActionPluginConstraintAdder::rewrite");
-//
-	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-	assert(ctxdata.enabled && "this rewriter should only be used "
-			"if the plugin is enabled");
-
-	RegistryPtr reg = ctx.registry();
-	assert(reg);
-//	PredicateArityMap::const_iterator it;
-//	for(it = ctxdata.negPredicateArities.begin();
-//			it != ctxdata.negPredicateArities.end(); ++it)
-//	{
-//		// for predicate foo of arity k create constraint
-//		// :- foo(X1,X2,...,Xk), foo_neg_aux(X1,X2,...,Xk).
-//
-//		// create atoms
-//		const ID idpred = it->first;
-//		const unsigned arity = it->second;
-//		DBGLOG(DBG,"processing predicate '" <<
-//				printToString<RawPrinter>(idpred, reg) << "'/" << idpred <<
-//				" with arity " << arity);
-//
-//		const ID idnegpred = reg->getAuxiliaryConstantSymbol('s', idpred);
-//		ID idatom;
-//		ID idnegatom;
-//		if( arity == 0 )
-//		{
-//			// ground atoms
-//			OrdinaryAtom predAtom(
-//					ID::MAINKIND_ATOM |
-//					ID::SUBKIND_ATOM_ORDINARYG);
-//			predAtom.tuple.push_back(idpred);
-//			OrdinaryAtom negpredAtom(
-//					ID::MAINKIND_ATOM |
-//					ID::SUBKIND_ATOM_ORDINARYG |
-//					ID::PROPERTY_AUX);
-//			negpredAtom.tuple.push_back(idnegpred);
-//			idatom = reg->storeOrdinaryGAtom(predAtom);
-//			idnegatom = reg->storeOrdinaryGAtom(negpredAtom);
-//		}
-//		else
-//		{
-//			// nonground atoms
-//			OrdinaryAtom predAtom(
-//					ID::MAINKIND_ATOM |
-//					ID::SUBKIND_ATOM_ORDINARYN);
-//			predAtom.tuple.push_back(idpred);
-//			OrdinaryAtom negpredAtom(
-//					ID::MAINKIND_ATOM |
-//					ID::SUBKIND_ATOM_ORDINARYN |
-//					ID::PROPERTY_AUX);
-//			negpredAtom.tuple.push_back(idnegpred);
-//
-//			// add variables
-//			for(unsigned i = 0; i < arity; ++i)
-//			{
-//				// create variable
-//				std::ostringstream s;
-//				s << "X" << i;
-//				Term var(
-//						ID::MAINKIND_TERM |
-//						ID::SUBKIND_TERM_VARIABLE |
-//						ID::PROPERTY_AUX,
-//						s.str());
-//				const ID idvar = reg->storeConstOrVarTerm(var);
-//				predAtom.tuple.push_back(idvar);
-//				negpredAtom.tuple.push_back(idvar);
-//			}
-//
-//			DBGLOG(DBG,"storing auxiliary atom " << predAtom);
-//			idatom = reg->storeOrdinaryNAtom(predAtom);
-//			DBGLOG(DBG,"storing auxiliary negative atom " << negpredAtom);
-//			idnegatom = reg->storeOrdinaryNAtom(negpredAtom);
-//		}
-//
-//		// create constraint
-//		Rule r(
-//				ID::MAINKIND_RULE |
-//				ID::SUBKIND_RULE_CONSTRAINT |
-//				ID::PROPERTY_AUX);
-//
-//		r.body.push_back(ID::posLiteralFromAtom(idatom));
-//		r.body.push_back(ID::posLiteralFromAtom(idnegatom));
-//
-//		ID idcon = reg->storeRule(r);
-//		ctx.idb.push_back(idcon);
-//		DBGLOG(DBG,"created aux constraint '" <<
-//				printToString<RawPrinter>(idcon, reg) << "'");
-//	}
-
-}
-
-} // anonymous namespace
-//
-//// rewrite program by adding auxiliary query rules
-//PluginRewriterPtr ActionPlugin::createRewriter(ProgramCtx& ctx)
-//{
-//	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-//	if( !ctxdata.enabled )
-//		return PluginRewriterPtr();
-//
-//	return PluginRewriterPtr(new ActionPluginConstraintAdder);
-//}
-//
-//namespace
-//{
-//
-//class NegAuxPrinter:
-//	public AuxPrinter
-//{
-//public:
-//	typedef ActionPlugin::CtxData::NegToPosMap NegToPosMap;
-//public:
-//	NegAuxPrinter(
-//			RegistryPtr reg,
-//			PredicateMask& negAuxMask,
-//			const NegToPosMap& ntpm):
-//		reg(reg), mask(negAuxMask), ntpm(ntpm)
-//	{
-//	}
-//
-//  // print an ID and return true,
-//  // or do not print it and return false
-//  virtual bool print(std::ostream& out, ID id, const std::string& prefix) const
-//	{
-//		assert(id.isAuxiliary());
-//		mask.updateMask();
-//		DBGLOG(DBG,"mask is " << *mask.mask());
-//		if( mask.mask()->getFact(id.address) )
-//		{
-//			// we cannot use any stored text to print this, we have to assemble it from pieces
-//			DBGLOG(DBG,"printing auxiliary for strong negation: " << id);
-//
-//			// get replacement atom details
-//			const OrdinaryAtom& r_atom = reg->ogatoms.getByAddress(id.address);
-//
-//			// find positive version of predicate
-//			assert(!r_atom.tuple.empty());
-//			const NegToPosMap::const_iterator itpred = ntpm.find(r_atom.tuple.front());
-//			assert(itpred != ntpm.end());
-//			const ID idpred = itpred->second;
-//
-//			// print strong negation
-//			out << prefix << '-';
-//
-//			// print tuple
-//      RawPrinter printer(out, reg);
-//      // predicate
-//      printer.print(idpred);
-//      if( r_atom.tuple.size() > 1 )
-//      {
-//        Tuple t(r_atom.tuple.begin()+1, r_atom.tuple.end());
-//        out << "(";
-//        printer.printmany(t,",");
-//        out << ")";
-//      }
-//
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//protected:
-//	RegistryPtr reg;
-//	PredicateMask& mask;
-//	const NegToPosMap& ntpm;
-//};
-//
-//} // anonymous namespace
-
-//namespace {
-//
-//  class ActionAuxPrinter: public AuxPrinter {
-//    public:
-//      ActionAuxPrinter(RegistryPtr reg, PredicateMask& mask) :
-//          reg(reg), mask(mask) {
-//      }
-//
-//      // print an ID and return true,
-//      // or do not print it and return false
-//      virtual bool print(std::ostream& out, ID id, const std::string& prefix) const {
-//        return false;
-////		assert(id.isAuxiliary());
-////		mask.updateMask();
-////		DBGLOG(DBG,"mask is " << *mask.mask());
-////		if( mask.mask()->getFact(id.address) )
-////		{
-////			// we cannot use any stored text to print this, we have to assemble it from pieces
-////			DBGLOG(DBG,"printing auxiliary for strong negation: " << id);
-////
-////			// get replacement atom details
-////			const OrdinaryAtom& r_atom = reg->ogatoms.getByAddress(id.address);
-////
-////			// find positive version of predicate
-////			assert(!r_atom.tuple.empty());
-////			const NegToPosMap::const_iterator itpred = ntpm.find(r_atom.tuple.front());
-////			assert(itpred != ntpm.end());
-////			const ID idpred = itpred->second;
-////
-////			// print strong negation
-////			out << prefix << '-';
-////
-////			// print tuple
-////      RawPrinter printer(out, reg);
-////      // predicate
-////      printer.print(idpred);
-////      if( r_atom.tuple.size() > 1 )
-////      {
-////        Tuple t(r_atom.tuple.begin()+1, r_atom.tuple.end());
-////        out << "(";
-////        printer.printmany(t,",");
-////        out << ")";
-////      }
-////
-////			return true;
-////		}
-////		return false;
-//      }
-//
-//    protected:
-//      RegistryPtr reg;
-//      PredicateMask& mask;
-//  };
-//
-//} // anonymous namespace
+#warning is used only to create a CtxData that isn t destroyed
+void deallocatorFunc(ActionPlugin::CtxData * ctxData) {}
 
 void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
+
 	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
 	if (!ctxdata.enabled)
 		return;
@@ -440,57 +198,16 @@ void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 	// init predicate mask
 	ctxdata.myAuxiliaryPredicateMask.setRegistry(reg);
 
-	ActionPluginModelCallback * actionPluginModelCallback =
-			new ActionPluginModelCallback(ctxdata, reg);
-#warning here we could try to only remove the default answer set printer
-	ModelCallbackPtr mcb(actionPluginModelCallback);
+	CtxDataPtr ctxDataPtr(&ctxdata, deallocatorFunc);
+
+	ModelCallbackPtr mcb(new ActionPluginModelCallback(ctxDataPtr, reg));
 	ctx.modelCallbacks.clear();
 	ctx.modelCallbacks.push_back(mcb);
 
 	FinalCallbackPtr finalCallbackPtr(
-			new ActionPluginFinalCallback(ctx, ctxdata));
+			new ActionPluginFinalCallback(ctx, ctxDataPtr));
 	ctx.finalCallbacks.push_back(finalCallbackPtr);
 
-//	// add all auxiliaries to mask (here we should already have parsed all of them)
-//	typedef CtxData::NegToPosMap NegToPosMap;
-//	NegToPosMap::const_iterator it;
-//	for(it = ctxdata.negToPos.begin();
-//			it != ctxdata.negToPos.end(); ++it)
-//	{
-//		ctxdata.myAuxiliaryPredicateMask.addPredicate(it->first);
-//	}
-//
-//	// update predicate mask
-//	ctxdata.myAuxiliaryPredicateMask.updateMask();
-//
-//	// create auxiliary printer using mask
-//	AuxPrinterPtr negAuxPrinter(new NegAuxPrinter(
-//				reg, ctxdata.myAuxiliaryPredicateMask, ctxdata.negToPos));
-//	reg->registerUserAuxPrinter(negAuxPrinter);
-
-}
-
-//static
-void ActionPlugin::printTuple(const Tuple& tuple, RegistryPtr registryPtr)
-{
-//      ;
-//      std::cerr << registryPtr->getTermStringByID(*it);
-//      it++;
-//      if (it != tuple.end())
-//        std::cerr << " with this input list: ";
-	bool first = true;
-	for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
-			it++) {
-		if (first)
-			first = !first;
-		else
-			std::cerr << ", ";
-		if (it->isConstantTerm() || it->isVariableTerm())
-			std::cerr << registryPtr->getTermStringByID(*it);
-		else
-			std::cerr << it->address;
-	}
-	std::cerr << std::endl;
 }
 
 //

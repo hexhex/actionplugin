@@ -43,6 +43,7 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginInterface;
 typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
+#warning could we put PluginActionBase in ActionPluginInterface?
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
@@ -59,7 +60,7 @@ public:
 		PredicateMask myAuxiliaryPredicateMask;
 
 		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
-		//dlvhex::ID id_in_the_registry;
+//		dlvhex::ID id_in_the_registry;
 
 		dlvhex::ID id_brave;
 		dlvhex::ID id_cautious;
@@ -71,7 +72,7 @@ public:
 		dlvhex::ID id_default_level_with_weight;
 		dlvhex::ID id_default_level_without_weight;
 
-		typedef std::map<ID, Action> IDActionMap;
+		typedef std::map<ID, ActionPtr> IDActionMap;
 		IDActionMap idActionMap;
 
 		typedef std::map<int, int> LevelsAndWeights;
@@ -89,15 +90,15 @@ public:
 		BestModelsContainer::iterator iteratorBestModel;
 
 		CtxData();
-		virtual ~CtxData() {
-		}
-		;
-		void addAction(const ID &, const Action &);
 
-		std::map<std::string, PluginActionBasePtr> namePluginActionBaseMap;
+		virtual ~CtxData();
 
-		void registerPlugin(ActionPluginInterfacePtr,
-				ProgramCtx&);
+		void addAction(const ID &, const ActionPtr);
+
+		typedef std::map<std::string, PluginActionBasePtr> NamePluginActionBaseMap;
+		NamePluginActionBaseMap namePluginActionBaseMap;
+
+		void registerPlugin(ActionPluginInterfacePtr, ProgramCtx&);
 
 	};
 
@@ -117,14 +118,27 @@ public:
 	// create parser modules that extend and the basic hex grammar
 	virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
 
-//  // rewrite program by adding auxiliary constraints
-//  virtual PluginRewriterPtr createRewriter(ProgramCtx&);
-
 	virtual void setupProgramCtx(ProgramCtx&);
 
-	static void printTuple(const Tuple& tuple, RegistryPtr registryPtr);
+	static void printTuple(const Tuple& tuple, const RegistryPtr registryPtr) {
+		bool first = true;
+		for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
+				it++) {
+			if (first)
+				first = !first;
+			else
+				std::cerr << ", ";
+			if (it->isConstantTerm() || it->isVariableTerm())
+				std::cerr << registryPtr->getTermStringByID(*it);
+			else
+				std::cerr << it->address;
+		}
+		std::cerr << std::endl;
+	}
+	;
 
 };
+typedef boost::shared_ptr<ActionPlugin::CtxData> CtxDataPtr;
 
 DLVHEX_NAMESPACE_END
 

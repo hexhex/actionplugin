@@ -224,7 +224,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		//      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
 
 		printer.print(
-				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
+				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second->getAuxId());
 
 		std::cerr << '(';
 
@@ -289,7 +289,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		//      tuple.push_back(reg->getTermStringByID(mgr.ctxdata.id_in_the_registry));
 		tuple.push_back(
-				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
+				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second->getAuxId());
 		tuple.push_back(boost::fusion::at_c < 0 > (source));
 
 		if (!!boost::fusion::at_c < 1 > (source)

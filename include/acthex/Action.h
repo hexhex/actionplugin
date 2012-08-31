@@ -26,6 +26,7 @@ protected:
 	std::string predicate;
 	dlvhex::ID aux_id;
 };
+typedef boost::shared_ptr<Action> ActionPtr;
 
 DLVHEX_NAMESPACE_END
 
