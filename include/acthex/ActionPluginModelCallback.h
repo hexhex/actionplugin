@@ -16,14 +16,15 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginModelCallback: public ModelCallback {
 public:
-	ActionPluginModelCallback(ActionPlugin::CtxData&, const RegistryPtr);
+	ActionPluginModelCallback(CtxDataPtr, const RegistryPtr);
 	virtual ~ActionPluginModelCallback();
 	virtual bool operator()(AnswerSetPtr);
 protected:
 	int isABestModel(ActionPlugin::CtxData::LevelsAndWeights&,
 			ActionPlugin::CtxData::LevelsAndWeights&);
 	//ProgramCtx& ctx;
-	ActionPlugin::CtxData& ctxData;
+	//ActionPlugin::CtxData& ctxData;
+	CtxDataPtr ctxDataPtr;
 	const RegistryPtr registryPtr;
 };
 

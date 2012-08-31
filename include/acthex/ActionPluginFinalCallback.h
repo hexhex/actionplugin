@@ -16,13 +16,14 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginFinalCallback: public FinalCallback {
 public:
-	ActionPluginFinalCallback(ProgramCtx&, ActionPlugin::CtxData&);
+	ActionPluginFinalCallback(ProgramCtx&, CtxDataPtr);
 	virtual ~ActionPluginFinalCallback() {
 	}
 	virtual void operator()();
 protected:
 	ProgramCtx& programCtx;
-	ActionPlugin::CtxData& ctxData;
+//	ActionPlugin::CtxData& ctxData;
+	CtxDataPtr ctxDataPtr;
 	const RegistryPtr registryPtr;
 };
 

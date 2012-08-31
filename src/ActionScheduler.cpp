@@ -14,18 +14,19 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionScheduler::ActionScheduler(const ActionPlugin::CtxData& ctxData,
+ActionScheduler::ActionScheduler(CtxDataPtr ctxDataPtr,
 		const RegistryPtr registryPtr) :
-		ctxData(ctxData), registryPtr(registryPtr) {
+		ctxDataPtr(ctxDataPtr), registryPtr(registryPtr) {
 }
 
 void ActionScheduler::executionModeController(
 		std::multimap<int, Tuple>& multimapOfExecution) {
 
-	const AnswerSetPtr& bestModel = (*ctxData.iteratorBestModel);
+	const AnswerSetPtr& bestModel = (*(ctxDataPtr->iteratorBestModel));
 
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
-	intr->getStorage() |= ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
+	intr->getStorage() |=
+			ctxDataPtr->myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= bestModel->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;
@@ -57,15 +58,15 @@ void ActionScheduler::executionModeController(
 					<< std::endl;
 			std::cerr << "Precedence: " << precedence << std::endl;
 
-			if (id_actionOption == ctxData.id_brave)
+			if (id_actionOption == ctxDataPtr->id_brave)
 				;
-			else if (id_actionOption == ctxData.id_cautious)
+			else if (id_actionOption == ctxDataPtr->id_cautious)
 				if (!isPresentInAllAnswerset(action_tuple)) {
 					std::cerr
 							<< "This action atom isn't present in all AnswerSet: ";
 					ActionPlugin::printTuple(action_tuple, registryPtr);
 					continue;
-				} else if (id_actionOption == ctxData.id_preferred_cautious)
+				} else if (id_actionOption == ctxDataPtr->id_preferred_cautious)
 					if (!isPresentInAllTheBestModelsAnswerset(action_tuple)) {
 						std::cerr
 								<< "This action atom isn't present in all BestModels AnswerSet: ";
@@ -92,8 +93,8 @@ bool ActionScheduler::isPresentInAllAnswerset(const Tuple& action_tuple) {
 		return false;
 
 	ActionPlugin::CtxData::BestModelsContainer::const_iterator itBMC;
-	for (itBMC = ctxData.notBestModelsContainer.begin();
-			itBMC != ctxData.notBestModelsContainer.end(); itBMC++)
+	for (itBMC = ctxDataPtr->notBestModelsContainer.begin();
+			itBMC != ctxDataPtr->notBestModelsContainer.end(); itBMC++)
 		if (!thisAnswerSetContainsThisAction(*itBMC, action_tuple))
 			return false;
 
@@ -105,8 +106,8 @@ bool ActionScheduler::isPresentInAllTheBestModelsAnswerset(
 		const Tuple& action_tuple) {
 
 	ActionPlugin::CtxData::BestModelsContainer::const_iterator itBMC;
-	for (itBMC = ctxData.bestModelsContainer.begin();
-			itBMC != ctxData.bestModelsContainer.end(); itBMC++)
+	for (itBMC = ctxDataPtr->bestModelsContainer.begin();
+			itBMC != ctxDataPtr->bestModelsContainer.end(); itBMC++)
 		if (!(thisAnswerSetContainsThisAction(*itBMC, action_tuple)))
 			return false;
 
@@ -118,7 +119,8 @@ bool ActionScheduler::thisAnswerSetContainsThisAction(
 		const AnswerSetPtr& answerSetPtr, const Tuple& action_tuple) {
 
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
-	intr->getStorage() |= ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
+	intr->getStorage() |=
+			ctxDataPtr->myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= answerSetPtr->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;
@@ -162,6 +164,7 @@ bool ActionScheduler::thisAnswerSetContainsThisAction(
 
 }
 
+#warning can be removed because it s implemented in DefaultExecutionModeRewriter
 void ActionScheduler::executionModeRewriter(
 		const std::multimap<int, Tuple>& multimapOfExecution,
 		std::list<std::set<Tuple> >& listOfExecution) {

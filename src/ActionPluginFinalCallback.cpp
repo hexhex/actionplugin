@@ -15,23 +15,23 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx, ActionPlugin::CtxData& ctxData) : programCtx(ctx),
-		ctxData(ctxData), registryPtr(ctx.registry()) {
+ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx,
+		CtxDataPtr ctxDataPtr) :
+		programCtx(ctx), ctxDataPtr(ctxDataPtr), registryPtr(ctx.registry()) {
 }
 
 void ActionPluginFinalCallback::operator()() {
 	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
 
 #warning I ve to call the BestModelSelection function of the specified ActionAtom
-
-	ctxData.iteratorBestModel = ctxData.bestModelsContainer.begin();
+	ctxDataPtr->iteratorBestModel = ctxDataPtr->bestModelsContainer.begin();
 
 	std::cerr << "\nBestModel selected:" << std::endl;
-	(*ctxData.iteratorBestModel)->interpretation->print(std::cerr);
+	(*ctxDataPtr->iteratorBestModel)->interpretation->print(std::cerr);
 	std::cerr << std::endl;
 
 	std::cerr << "\nCall the executionModeController" << std::endl;
-	ActionScheduler* scheduler = new ActionScheduler(ctxData, registryPtr);
+	ActionScheduler* scheduler = new ActionScheduler(ctxDataPtr, registryPtr);
 	std::multimap<int, Tuple> multimapOfExecution;
 	scheduler->executionModeController(multimapOfExecution);
 
@@ -44,7 +44,6 @@ void ActionPluginFinalCallback::operator()() {
 		const Tuple& tempTuple = itMMOE->second;
 		ActionPlugin::printTuple(tempTuple, registryPtr);
 	}
-
 
 #warning I ve to call the executionModeRewriter function of the specified ActionAtom
 	std::cerr << "\nCall the executionModeRewriter" << std::endl;
@@ -97,11 +96,13 @@ void ActionPluginFinalCallback::operator()() {
 			ActionPlugin::printTuple(tupleForExecute, registryPtr);
 
 			std::map<std::string, PluginActionBasePtr>::iterator it =
-					ctxData.namePluginActionBaseMap.find(
+					ctxDataPtr->namePluginActionBaseMap.find(
 							registryPtr->getTermStringByID(*tempTuple.begin()));
 
-			if (it != ctxData.namePluginActionBaseMap.end())
-				it->second->execute(programCtx, tupleForExecute);
+			if (it != ctxDataPtr->namePluginActionBaseMap.end())
+				it->second->execute(programCtx,
+						(*(ctxDataPtr->iteratorBestModel))->interpretation,
+						tupleForExecute);
 			else
 				std::cerr << "For the action '"
 						<< registryPtr->getTermStringByID(*tempTuple.begin())

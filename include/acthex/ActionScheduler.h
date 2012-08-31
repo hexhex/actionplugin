@@ -14,15 +14,16 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionScheduler {
 public:
-	ActionScheduler(const ActionPlugin::CtxData& ctxData,
-			const RegistryPtr registry);
+	ActionScheduler(const CtxDataPtr, const RegistryPtr registry);
 	void executionModeController(std::multimap<int, Tuple>&);
+#warning can be removed because it s implemented in DefaultExecutionModeRewriter
 	void executionModeRewriter(const std::multimap<int, Tuple>&,
 			std::list<std::set<Tuple> >&);
 	bool checkIfTheListIsCorrect(const std::multimap<int, Tuple>&,
 			const std::list<std::set<Tuple> >&);
 private:
-	const ActionPlugin::CtxData& ctxData;
+//	const ActionPlugin::CtxData& ctxData;
+	const CtxDataPtr ctxDataPtr;
 	const RegistryPtr registryPtr;
 	bool isPresentInAllAnswerset(const Tuple&);
 	bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
