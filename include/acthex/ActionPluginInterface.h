@@ -47,7 +47,6 @@ public:
 		}
 
 		void retrieve(const Query& query, Answer& answer) {
-			std::cerr << "retrive" << std::endl;
 			const typename Derived::Environment& environment =
 					query.ctx->getPluginEnvironment<Derived>();
 			retrieve(environment, query, answer);

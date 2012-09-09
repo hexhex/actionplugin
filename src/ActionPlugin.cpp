@@ -39,20 +39,20 @@
 #include "acthex/ActionPluginParserModule.h"
 #include "acthex/ActionPluginInterface.h"
 
-#include "dlvhex2/Registry.h"
 #include "dlvhex2/PredicateMask.h"
 DLVHEX_NAMESPACE_BEGIN
 
 ActionPlugin::CtxData::CtxData() :
-		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap() {
+		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap(), iterationType(
+				DEFAULT), continueIteration(false), stopIteration(false) {
 }
 
 ActionPlugin::CtxData::~CtxData() {
 	idActionMap.clear();
 	levelsAndWeightsBestModels.clear();
-	iteratorBestModel = bestModelsContainer.end();
 	bestModelsContainer.clear();
 	notBestModelsContainer.clear();
+	iteratorBestModel = bestModelsContainer.end();
 	namePluginActionBaseMap.clear();
 }
 
@@ -88,11 +88,56 @@ void ActionPlugin::CtxData::registerPlugin(
 		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
 
 		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
-		//std::cerr << reg->getTermStringByID(id) << std::endl;
+
+		RawPrinter printer(std::cerr, reg);
+
+		std::cerr << "Id: ";
+		printer.print(id);
+		std::cerr << "\t";
+		printer.print(aux_id);
+		std::cerr << std::endl;
+
 		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
 		this->addAction(id, actionPtr);
 
 	}
+
+}
+
+void ActionPlugin::CtxData::clearDataStructures() {
+	levelsAndWeightsBestModels.clear();
+	bestModelsContainer.clear();
+	notBestModelsContainer.clear();
+	iteratorBestModel = bestModelsContainer.end();
+}
+
+void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(RegistryPtr reg) {
+
+	id_continue = reg->storeConstantTerm("continueIteration");
+	id_stop = reg->storeConstantTerm("stopIteration");
+
+	RawPrinter printer(std::cerr, reg);
+
+	ID aux_id_continue = reg->getAuxiliaryConstantSymbol('a', id_continue);
+	ActionPtr actionPtrContinue(new Action(reg->getTermStringByID(id_continue), aux_id_continue));
+	this->addAction(id_continue, actionPtrContinue);
+
+	std::cerr << "id_continue : ";
+	printer.print(id_continue);
+	std::cerr << ",\t aux_id_continue: ";
+	printer.print(aux_id_continue);
+	std::cerr << std::endl;
+
+	ID aux_id_stop = reg->getAuxiliaryConstantSymbol('a', id_stop);
+	ActionPtr actionPtrStop(new Action(reg->getTermStringByID(id_stop), aux_id_stop));
+	this->addAction(id_stop, actionPtrStop);
+
+	std::cerr << "id_stop : ";
+	printer.print(id_stop);
+	std::cerr << ",\t aux_id_stop:";
+	printer.print(aux_id_stop);
+	std::cerr << std::endl;
+
 
 }
 
@@ -130,6 +175,9 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		if (str == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
+		} else if (str == "--iterate-infinite") { //FIXME only to try if it works
+			processed = true;
+			ctxdata.iterationType = FIXED;
 		}
 
 		if (processed) {
@@ -162,6 +210,12 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		ctxdata.id_default_weight_with_level = ID::termFromInteger(1);
 		ctxdata.id_default_level_with_weight = ID::termFromInteger(1);
 
+		std::cerr << "IterationType:"
+				<< (ctxdata.iterationType == 0 ? "DEFAULT" : "FIXED")
+				<< std::endl;
+
+		ctxdata.createAndInsertContinueAndStopActions(reg);
+
 	}
 
 }
@@ -185,7 +239,8 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 }
 
 #warning is used only to create a CtxData that isn t destroyed
-void deallocatorFunc(ActionPlugin::CtxData * ctxData) {}
+void deallocatorFunc(ActionPlugin::CtxData * ctxData) {
+}
 
 void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 

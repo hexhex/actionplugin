@@ -38,6 +38,7 @@
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/HexParserModule.h"
 #include "dlvhex2/ProgramCtx.h"
+#include "dlvhex2/Registry.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -46,6 +47,11 @@ typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
 #warning could we put PluginActionBase in ActionPluginInterface?
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
+
+enum IterationType {
+	DEFAULT, FIXED
+};
+//FIXME we have to find another name
 
 class ActionPlugin: public PluginInterface {
 public:
@@ -62,16 +68,19 @@ public:
 		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
 //		dlvhex::ID id_in_the_registry;
 
-		dlvhex::ID id_brave;
-		dlvhex::ID id_cautious;
-		dlvhex::ID id_preferred_cautious;
+		// ids stored in Registry that represent the action options
+		ID id_brave;
+		ID id_cautious;
+		ID id_preferred_cautious;
 
-		dlvhex::ID id_default_precedence;
-		dlvhex::ID id_default_weight_with_level;
-		dlvhex::ID id_default_weight_without_level;
-		dlvhex::ID id_default_level_with_weight;
-		dlvhex::ID id_default_level_without_weight;
+		// ids stored in Registry that represent the default values for precedence, weight and level
+		ID id_default_precedence;
+		ID id_default_weight_with_level;
+		ID id_default_weight_without_level;
+		ID id_default_level_with_weight;
+		ID id_default_level_without_weight;
 
+		// a map that stores for each ID the corresponding action
 		typedef std::map<ID, ActionPtr> IDActionMap;
 		IDActionMap idActionMap;
 
@@ -93,12 +102,34 @@ public:
 
 		virtual ~CtxData();
 
+		// add actions to idActionMap and myAuxiliaryPredicateMask
 		void addAction(const ID &, const ActionPtr);
 
 		typedef std::map<std::string, PluginActionBasePtr> NamePluginActionBaseMap;
+		// a map that contains the name and a pointer to the corresponding Action
 		NamePluginActionBaseMap namePluginActionBaseMap;
 
+		// called by Actions to register themselves
 		void registerPlugin(ActionPluginInterfacePtr, ProgramCtx&);
+
+		// makes the plugin ready to execute another iteration
+		void clearDataStructures();
+
+		// the type of Iteration (an enum)
+		IterationType iterationType;
+
+		// if we have to execute another Iteration
+		bool continueIteration;
+
+		// if we have to stop the Iterations
+		bool stopIteration;
+
+		// ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
+		ID id_continue;
+		ID id_stop;
+
+		// creates the Actions "#continueIteration" and "#stopIteration"
+		void createAndInsertContinueAndStopActions(RegistryPtr);
 
 	};
 

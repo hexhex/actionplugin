@@ -86,6 +86,16 @@ void ActionPluginFinalCallback::operator()() {
 
 			const Tuple& tempTuple = (*itLOEs);
 
+			if (*tempTuple.begin() == ctxDataPtr->id_continue
+					&& ctxDataPtr->iterationType == DEFAULT) {
+				ctxDataPtr->continueIteration = true;
+				continue;
+			} else if (*tempTuple.begin() == ctxDataPtr->id_stop
+					&& ctxDataPtr->iterationType == FIXED) {
+				ctxDataPtr->stopIteration = true;
+				continue;
+			}
+
 			Tuple tupleForExecute;
 			tupleForExecute.insert(tupleForExecute.begin(),
 					tempTuple.begin() + 1, tempTuple.end());
@@ -110,6 +120,26 @@ void ActionPluginFinalCallback::operator()() {
 
 		}
 	}
+
+	std::cerr << "\nCheck Iteration" << std::endl;
+	std::cerr << "IterationType:"
+			<< (ctxDataPtr->iterationType == 0 ? "DEFAULT" : "FIXED")
+			<< std::endl;
+	if (ctxDataPtr->iterationType == DEFAULT && ctxDataPtr->continueIteration)
+		programCtx.config.setOption("RepeatEvaluation", 1);
+	else if (ctxDataPtr->iterationType == FIXED && ctxDataPtr->stopIteration)
+		programCtx.config.setOption("RepeatEvaluation", 0);
+	else if (ctxDataPtr->iterationType == FIXED) //FIXME only to try if it works
+		programCtx.config.setOption("RepeatEvaluation", 1); //FIXME only to try if it works
+
+	std::cerr << "\nClear data structures" << std::endl;
+	ctxDataPtr->clearDataStructures();
+
+	ctxDataPtr->continueIteration = false;
+	ctxDataPtr->stopIteration = false;
+
+	#warning Reset cache
+	std::cerr << "\nReset cache TODO" << std::endl;
 
 }
 

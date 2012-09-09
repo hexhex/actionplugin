@@ -103,9 +103,6 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 //  std::cerr << "Weight: " << answerSetPtr->costWeight << std::endl;
 //  std::cerr << "Level: " << answerSetPtr->costLevel << std::endl;
 
-	ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeightsBestModels =
-			ctxDataPtr->levelsAndWeightsBestModels;
-
 	// eliminates eventual levels with weight 0 in levelsAndWeights
 	ActionPlugin::CtxData::LevelsAndWeights::iterator itLAW =
 			levelsAndWeights.begin();
@@ -115,7 +112,25 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 		else
 			++itLAW;
 
-	if (ctxDataPtr->levelsAndWeightsBestModels.empty()) {
+	if (levelsAndWeights.empty()) {
+		// this is always a BestModel
+
+		if (!ctxDataPtr->levelsAndWeightsBestModels.empty()) {
+			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
+			ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
+			ctxDataPtr->notBestModelsContainer.insert(
+					ctxDataPtr->notBestModelsContainer.end(),
+					ctxDataPtr->bestModelsContainer.begin(),
+					ctxDataPtr->bestModelsContainer.end());
+			ctxDataPtr->bestModelsContainer.clear();
+		}
+
+	} else if (ctxDataPtr->levelsAndWeightsBestModels.empty()) {
+
+		if (!ctxDataPtr->bestModelsContainer.empty()) {
+			ctxDataPtr->notBestModelsContainer.push_back(answerSetPtr);
+			return true;
+		}
 
 		ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
 
@@ -183,7 +198,10 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 //
 //    }
 
-		int res_is = isABestModel(levelsAndWeightsBestModels, levelsAndWeights);
+		int res_is = isABestModel(ctxDataPtr->levelsAndWeightsBestModels,
+				levelsAndWeights);
+
+		std::cerr << "res_is " << res_is << std::endl;
 
 		if (res_is == 0)
 			;
@@ -192,7 +210,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 			return true;
 		} else if (res_is == 1) {
 			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
-			levelsAndWeightsBestModels = levelsAndWeights;
+			ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
 			ctxDataPtr->notBestModelsContainer.insert(
 					ctxDataPtr->notBestModelsContainer.end(),
 					ctxDataPtr->bestModelsContainer.begin(),
@@ -208,8 +226,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	std::cerr << "\nThe levelsAndWeightsBestModels:" << std::endl;
 	std::cerr << "Level\tWeight" << std::endl;
-	for (itLAW = levelsAndWeightsBestModels.begin();
-			itLAW != levelsAndWeightsBestModels.end(); itLAW++) {
+	for (itLAW = ctxDataPtr->levelsAndWeightsBestModels.begin();
+			itLAW != ctxDataPtr->levelsAndWeightsBestModels.end(); itLAW++) {
 		std::cerr << itLAW->first << '\t' << itLAW->second << std::endl;
 	}
 
@@ -245,15 +263,18 @@ int ActionPluginModelCallback::isABestModel(
 	// the last level that I've seen
 	int lastLevelSeen = -1;
 
+	std::cerr << "starting\t" << levelsAndWeights.size() << "\t"
+			<< levelsAndWeightsBestModels.size() << std::endl;
+
 	//if there is a level in levelsAndWeights that is greater than the highest level of levelsAndWeightsBestModels I have to return
 	if ((*levelsAndWeights.rbegin()).first
 			> (*levelsAndWeightsBestModels.rbegin()).first)
 		return -1;
 
+	std::cerr << "before for" << std::endl;
+
 	ActionPlugin::CtxData::LevelsAndWeights::reverse_iterator ritLAW;
 	int first, second;
-	// return if I find that this AnswerSet isn't a BestModel
-	// break if I find that this AnswerSet is "better" than other AnswerSets in bestModelsContainer
 	for (ritLAW = levelsAndWeightsBestModels.rbegin();
 			ritLAW != levelsAndWeightsBestModels.rend(); ritLAW++) {
 		//I need to sort the levelsAndWeightsBestModels for Level (I think that it's just sorted by key),
@@ -262,6 +283,8 @@ int ActionPluginModelCallback::isABestModel(
 
 		first = ritLAW->first;
 		second = ritLAW->second;
+
+		std::cerr << "before if:\t" << first << "\t" << second << std::endl;
 
 		//if there is a level in levelsAndWeights that is smallest than the lastLevelSeen and greater than the current level
 		if (lastLevelSeen != -1)

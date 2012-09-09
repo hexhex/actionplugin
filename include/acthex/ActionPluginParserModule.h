@@ -64,65 +64,6 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		DBGLOG(DBG, "stored atom " << atom << " which got id " << target);
 	}
 
-	//  void operator()(
-	//    ActionPluginParserModuleSemantics& mgr,
-	//    const boost::fusion::vector2<
-	//      dlvhex::ID,
-	//      boost::optional<boost::optional<std::vector<dlvhex::ID> > >
-	//    >& source,
-	//    ID& target)
-	//  {
-	//    typedef ActionPlugin::CtxData::PredicateArityMap PredicateArityMap;
-	//
-	//    RegistryPtr reg = mgr.ctx.registry();
-	//
-	//    // predicate
-	//    const ID& idpred = boost::fusion::at_c<0>(source);
-	//
-	//    // create/get aux constant for idpred
-	//    const ID idnegpred = reg->getAuxiliaryConstantSymbol('s', idpred);
-	//
-	//    // build atom with auxiliary (SUBKIND is initialized by createAtom())
-	//    OrdinaryAtom atom(ID::MAINKIND_ATOM | ID::PROPERTY_AUX);
-	//    atom.tuple.push_back(idnegpred);
-	//
-	//    // arguments
-	//    if( (!!boost::fusion::at_c<1>(source)) &&
-	//        (!!(boost::fusion::at_c<1>(source).get())) )
-	//    {
-	//      const Tuple& tuple = boost::fusion::at_c<1>(source).get().get();
-	//      atom.tuple.insert(atom.tuple.end(), tuple.begin(), tuple.end());
-	//    }
-	//
-	//    // store predicate with arity (ensure each predicate is used with only one arity)
-	//    PredicateArityMap::const_iterator it =
-	//      mgr.ctxdata.negPredicateArities.find(idpred);
-	//    if( it != mgr.ctxdata.negPredicateArities.end() )
-	//    {
-	//      // verify
-	//      if( it->second != atom.tuple.size() - 1 )
-	//      {
-	//        LOG(ERROR,"strongly negated predicate '" <<
-	//            printToString<RawPrinter>(idpred, reg) <<
-	//            "' encountered with arity " << it->second <<
-	//            " before and with arity " << (atom.tuple.size()-1) << " now");
-	//        throw FatalError("got strongly negated predicate with multiple arities");
-	//      }
-	//    }
-	//    else
-	//    {
-	//      // store as new
-	//      mgr.ctxdata.negPredicateArities[idpred] = atom.tuple.size() - 1;
-	//      mgr.ctxdata.negToPos[idnegpred] = idpred;
-	//      DBGLOG(DBG,"got strongly negated predicate " <<
-	//          printToString<RawPrinter>(idpred, reg) << "/" <<
-	//          idpred << " with arity " << atom.tuple.size() - 1);
-	//    }
-	//
-	//    // create atom
-	//    createAtom(reg, atom, target);
-	//  }
-
 	void operator()(ActionPluginParserModuleSemantics& mgr,
 			const boost::fusion::vector5<dlvhex::ID,
 					boost::optional<boost::optional<dlvhex::Tuple> >,
@@ -136,8 +77,22 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		RawPrinter printer(std::cerr, reg);
 
-		if (mgr.ctxdata.idActionMap.count(boost::fusion::at_c < 0 > (source))
-				== 0) {
+		const ID id_0 = boost::fusion::at_c < 0 > (source);
+
+		std::cerr << "\nThe IdActionMap:" << std::endl;
+		std::map<ID, ActionPtr>::iterator itIAM;
+		for (itIAM = mgr.ctxdata.idActionMap.begin();
+				itIAM != mgr.ctxdata.idActionMap.end(); itIAM++) {
+			printer.print(itIAM->first);
+			std::cerr << "\t\t";
+			printer.print(itIAM->second->getAuxId());
+			std::cerr << "\t\t";
+			std::cerr << itIAM->second->getPredicate() << std::endl;
+		}
+
+		std::cerr << std::endl;
+
+		if (mgr.ctxdata.idActionMap.count(id_0) == 0) {
 
 //			const ID id = boost::fusion::at_c < 0 > (source);
 //
@@ -148,7 +103,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 //			mgr.ctxdata.addAction(id, action);
 			//mgr.ctxdata.idActionMap.insert(std::pair<ID, Action>(id, action));
 
-			throw PluginError("Action not found");
+			throw PluginError("Action '" + reg->getTermStringByID(id_0) + "' not found");
 
 		}
 
@@ -167,7 +122,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		std::cerr << '#';
 
-		printer.print(boost::fusion::at_c < 0 > (source));
+		printer.print(id_0);
 
 		if (!!boost::fusion::at_c < 1 > (source)) {
 
@@ -223,12 +178,11 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		//      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
 
-		printer.print(
-				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second->getAuxId());
+		printer.print(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
 
 		std::cerr << '(';
 
-		printer.print(boost::fusion::at_c < 0 > (source));
+		printer.print(id_0);
 
 		std::cerr << ',';
 		if (!!boost::fusion::at_c < 1 > (source)
@@ -288,9 +242,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		Tuple& tuple = oatom.tuple;
 
 		//      tuple.push_back(reg->getTermStringByID(mgr.ctxdata.id_in_the_registry));
-		tuple.push_back(
-				mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second->getAuxId());
-		tuple.push_back(boost::fusion::at_c < 0 > (source));
+		tuple.push_back(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
+		tuple.push_back(id_0);
 
 		if (!!boost::fusion::at_c < 1 > (source)
 				&& !!boost::fusion::at_c < 1 > (source).get()) {
