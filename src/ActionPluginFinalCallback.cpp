@@ -138,8 +138,8 @@ void ActionPluginFinalCallback::operator()() {
 	ctxDataPtr->continueIteration = false;
 	ctxDataPtr->stopIteration = false;
 
-	#warning Reset cache
-	std::cerr << "\nReset cache TODO" << std::endl;
+	std::cerr << "\nReset cache" << std::endl;
+	programCtx.resetCacheOfPlugins();
 
 }
 

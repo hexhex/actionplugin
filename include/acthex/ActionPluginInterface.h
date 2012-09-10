@@ -44,6 +44,8 @@ public:
 
 		PluginActionAtom(std::string name) :
 				PluginAtom(name, false) {
+			prop.pa = this;
+			prop.usesEnvironment = true;
 		}
 
 		void retrieve(const Query& query, Answer& answer) {
