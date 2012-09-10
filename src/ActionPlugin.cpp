@@ -111,7 +111,8 @@ void ActionPlugin::CtxData::clearDataStructures() {
 	iteratorBestModel = bestModelsContainer.end();
 }
 
-void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(RegistryPtr reg) {
+void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(
+		RegistryPtr reg) {
 
 	id_continue = reg->storeConstantTerm("continueIteration");
 	id_stop = reg->storeConstantTerm("stopIteration");
@@ -119,7 +120,8 @@ void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(RegistryPtr re
 	RawPrinter printer(std::cerr, reg);
 
 	ID aux_id_continue = reg->getAuxiliaryConstantSymbol('a', id_continue);
-	ActionPtr actionPtrContinue(new Action(reg->getTermStringByID(id_continue), aux_id_continue));
+	ActionPtr actionPtrContinue(
+			new Action(reg->getTermStringByID(id_continue), aux_id_continue));
 	this->addAction(id_continue, actionPtrContinue);
 
 	std::cerr << "id_continue : ";
@@ -129,7 +131,8 @@ void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(RegistryPtr re
 	std::cerr << std::endl;
 
 	ID aux_id_stop = reg->getAuxiliaryConstantSymbol('a', id_stop);
-	ActionPtr actionPtrStop(new Action(reg->getTermStringByID(id_stop), aux_id_stop));
+	ActionPtr actionPtrStop(
+			new Action(reg->getTermStringByID(id_stop), aux_id_stop));
 	this->addAction(id_stop, actionPtrStop);
 
 	std::cerr << "id_stop : ";
@@ -137,7 +140,6 @@ void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(RegistryPtr re
 	std::cerr << ",\t aux_id_stop:";
 	printer.print(aux_id_stop);
 	std::cerr << std::endl;
-
 
 }
 
@@ -171,18 +173,25 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 	it = pluginOptions.begin();
 	while (it != pluginOptions.end()) {
 		bool processed = false;
-		const std::string str(*it);
-		if (str == "--action-enable") {
+		const std::string option(*it);
+		if (option == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
-		} else if (str == "--iterate-infinite") { //FIXME only to try if it works
+		} else if (option == "--iterate-infinite") { //FIXME only to try if it works
 			processed = true;
 			ctxdata.iterationType = FIXED;
+		} else if (option.find("--num-iterations=") != std::string::npos) {
+			processed = true;
+			ctxdata.iterationType = FIXED;
+			std::string string_of_number = option.substr(17);
+			unsigned int number;
+			qi::parse(string_of_number.begin(), string_of_number.end(), number);
+			ctx.config.setOption("RepeatEvaluation", number);
 		}
 
 		if (processed) {
 			// return value of erase: element after it, maybe end()
-			DBGLOG(DBG, "ActionPlugin successfully processed option " << str);
+			DBGLOG(DBG, "ActionPlugin successfully processed option " << option);
 			it = pluginOptions.erase(it);
 		} else {
 			it++;
