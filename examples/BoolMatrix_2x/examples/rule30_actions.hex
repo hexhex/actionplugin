@@ -1,0 +1,15 @@
+
+#boolMatrix[setDimension, Nr, Nc]{b, 5} :- max_row(Nr), max_column(Nc), &haveToSetDimension[]().
+
+#boolMatrix[add, 0, 95]{b, 9} :- &haveToSetDimension[]().
+%#boolMatrix[add, R, C]{b, 10} :- &rule30[R, C](), max_row(Mr), max_column(Mc), R < Mr, C < Mc, #int(R), #int(C).
+%#boolMatrix[add, R, C]{b, 10} :- not &haveToSetDimension[](), &rule30[R, C](), column(C), highest(R).
+#boolMatrix[add, R, C]{b, 10} :- not &haveToSetDimension[](), &rule30[R, C](), column(C), rowWhereIHaveToInsert(R).
+
+#boolMatrix[print, "#", " "]{b, 15}.
+
+#boolMatrix[draw, rule30, 1]{b, 20} :- haveReachedLastRow.
+
+haveReachedLastRow :- &highestRowWithAdd[](Lr), max_row(Mr), Mr = Lr + 1.
+
+rowWhereIHaveToInsert(R) :- &highestRowWithAdd[](Hr), row(R), R = Hr + 1.

@@ -132,14 +132,18 @@ void ActionPluginFinalCallback::operator()() {
 	else if (ctxDataPtr->iterationType == FIXED) //FIXME only to try if it works
 		programCtx.config.setOption("RepeatEvaluation", 1); //FIXME only to try if it works
 
-	std::cerr << "\nClear data structures" << std::endl;
-	ctxDataPtr->clearDataStructures();
+	if (programCtx.config.getOption("RepeatEvaluation") > 0) {
 
-	ctxDataPtr->continueIteration = false;
-	ctxDataPtr->stopIteration = false;
+		std::cerr << "\nClear data structures" << std::endl;
+		ctxDataPtr->clearDataStructures();
 
-	std::cerr << "\nReset cache" << std::endl;
-	programCtx.resetCacheOfPlugins();
+		ctxDataPtr->continueIteration = false;
+		ctxDataPtr->stopIteration = false;
+
+		std::cerr << "\nReset cache" << std::endl;
+		programCtx.resetCacheOfPlugins();
+
+	}
 
 }
 

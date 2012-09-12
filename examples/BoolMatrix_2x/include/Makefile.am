@@ -1,0 +1,1 @@
+noinst_HEADERS = BoolMatrixActionPlugin.h TGAImageMaker.h

@@ -1,3 +1,3 @@
-EXTRA_DIST = \
-  tests/actionplugintests.test
+SUBDIRS = \
+          BoolMatrix_2x/
 
