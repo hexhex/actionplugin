@@ -6,6 +6,8 @@ ACTIONHEADERS = \
 	ActionScheduler.h \
 	ActionPluginParserModule.h \
 	PluginActionBase.h \
-	ActionPlugin.h
+	ActionPlugin.h \
+	BestModelSelector.h \
+	ExecutionModeRewriter.h
 
 pkginclude_HEADERS = $(ACTIONHEADERS)

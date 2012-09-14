@@ -1,5 +1,5 @@
 /**
- * @file PluginActionBase.cpp
+ * @file BestModelSelector.cpp
  * @author Stefano Germano
  *
  * @brief Plugin ...
@@ -8,13 +8,11 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-
-#include "acthex/PluginActionBase.h"
+#include "acthex/BestModelSelector.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
-PluginActionBase::~PluginActionBase()
-{
+BestModelSelector::~BestModelSelector() {
 }
 
 DLVHEX_NAMESPACE_END

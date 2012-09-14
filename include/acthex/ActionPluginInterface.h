@@ -10,6 +10,8 @@
 
 #include "acthex/ActionPlugin.h"
 #include "acthex/PluginActionBase.h"
+#include "acthex/BestModelSelector.h"
+#include "acthex/ExecutionModeRewriter.h"
 
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/PlatformDefinitions.h"
@@ -120,37 +122,31 @@ public:
 	virtual std::vector<PluginActionBasePtr> createActions(
 			ProgramCtx& ctx) const = 0;
 
-	class BestModelSelector {
-#warning it s dangerous to pass BestModelsContainer as reference but isn t efficent to pass it without reference; it isn t possible to pass it in a constant way
-		virtual void getBestModel(
-				dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator&,
-				dlvhex::ActionPlugin::CtxData::BestModelsContainer) = 0;
-	};
-	typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
-
 	class DefaultBestModelSelector: public BestModelSelector {
+	public:
+		DefaultBestModelSelector(std::string name) :
+				BestModelSelector(name) {
+		}
 		virtual void getBestModel(
-				dlvhex::ActionPlugin::CtxData::BestModelsContainer::iterator& iteratorBestModel,
-				dlvhex::ActionPlugin::CtxData::BestModelsContainer bestModelsContainer) {
+				dlvhex::ActionPlugin::CtxData::BestModelsContainer::const_iterator& iteratorBestModel,
+				const dlvhex::ActionPlugin::CtxData::BestModelsContainer& bestModelsContainer) {
 			iteratorBestModel = bestModelsContainer.begin();
 		}
 	};
 
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		std::vector<BestModelSelectorPtr> allBestModelSelectors;
-		BestModelSelectorPtr bestModelSelectorPtr(new DefaultBestModelSelector);
+		BestModelSelectorPtr bestModelSelectorPtr(
+				new DefaultBestModelSelector("default"));
 		allBestModelSelectors.push_back(bestModelSelectorPtr);
 		return allBestModelSelectors;
 	}
 
-	class ExecutionModeRewriter {
-		virtual void rewrite(
-				const std::multimap<int, Tuple>& multimapOfExecution,
-				std::list<std::set<Tuple> >& listOfExecution) = 0;
-	};
-	typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
-
 	class DefaultExecutionModeRewriter: public ExecutionModeRewriter {
+	public:
+		DefaultExecutionModeRewriter(std::string name) :
+				ExecutionModeRewriter(name) {
+		}
 		virtual void rewrite(
 				const std::multimap<int, Tuple>& multimapOfExecution,
 				std::list<std::set<Tuple> >& listOfExecution) {
@@ -186,7 +182,7 @@ public:
 	virtual std::vector<ExecutionModeRewriterPtr> getAllExecutionModeRewriters() const {
 		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters;
 		ExecutionModeRewriterPtr executionModeRewriterPtr(
-				new DefaultExecutionModeRewriter);
+				new DefaultExecutionModeRewriter("default"));
 		allExecutionModeRewriters.push_back(executionModeRewriterPtr);
 		return allExecutionModeRewriters;
 	}

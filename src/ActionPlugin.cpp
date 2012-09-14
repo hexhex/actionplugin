@@ -44,7 +44,8 @@ DLVHEX_NAMESPACE_BEGIN
 
 ActionPlugin::CtxData::CtxData() :
 		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap(), iterationType(
-				DEFAULT), continueIteration(false), stopIteration(false) {
+				DEFAULT), continueIteration(false), stopIteration(false), numberIterations(
+				-1), nameBestModelSelectorMap(), nameExecutionModeRewriterMap() {
 }
 
 ActionPlugin::CtxData::~CtxData() {
@@ -54,6 +55,8 @@ ActionPlugin::CtxData::~CtxData() {
 	notBestModelsContainer.clear();
 	iteratorBestModel = bestModelsContainer.end();
 	namePluginActionBaseMap.clear();
+	nameBestModelSelectorMap.clear();
+	nameExecutionModeRewriterMap.clear();
 }
 
 void ActionPlugin::CtxData::addAction(const ID & id,
@@ -70,10 +73,52 @@ void ActionPlugin::CtxData::registerPlugin(
 
 	std::cerr << "registerPlugin called" << std::endl;
 
-	std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
-			actionPluginInterfacePtr->createActions(ctx);
+	registerActionsOfPlugin(actionPluginInterfacePtr->createActions(ctx),
+			ctx.registry());
 
-	RegistryPtr reg = ctx.registry();
+	registerBestModelSelectorsOfPlugin(
+			actionPluginInterfacePtr->getAllBestModelSelectors());
+
+	registerExecutionModeRewritersOfPlugin(
+			actionPluginInterfacePtr->getAllExecutionModeRewriters());
+
+//	std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
+//			actionPluginInterfacePtr->createActions(ctx);
+//
+//	RegistryPtr reg = ctx.registry();
+//
+//	for (std::vector<PluginActionBasePtr>::iterator it =
+//			pluginActionBasePtrVector.begin();
+//			it != pluginActionBasePtrVector.end(); it++) {
+//
+//		const ID id = reg->storeConstantTerm((*it)->getPredicate());
+//
+//		namePluginActionBaseMap.insert(
+//				std::pair<std::string, PluginActionBasePtr>(
+//						(*it)->getPredicate(), (*it)));
+//
+//		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
+//
+//		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
+//
+//		RawPrinter printer(std::cerr, reg);
+//
+//		std::cerr << "Id: ";
+//		printer.print(id);
+//		std::cerr << "\t";
+//		printer.print(aux_id);
+//		std::cerr << std::endl;
+//
+//		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
+//		this->addAction(id, actionPtr);
+//
+//	}
+
+}
+
+void ActionPlugin::CtxData::registerActionsOfPlugin(
+		std::vector<PluginActionBasePtr> pluginActionBasePtrVector,
+		RegistryPtr reg) {
 
 	for (std::vector<PluginActionBasePtr>::iterator it =
 			pluginActionBasePtrVector.begin();
@@ -100,6 +145,37 @@ void ActionPlugin::CtxData::registerPlugin(
 		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
 		this->addAction(id, actionPtr);
 
+	}
+
+}
+
+void ActionPlugin::CtxData::registerBestModelSelectorsOfPlugin(
+		std::vector<BestModelSelectorPtr> allBestModelSelectors) {
+
+	std::cerr << "\nregisterBestModelSelectorsOfPlugin" << std::endl;
+
+	for (std::vector<BestModelSelectorPtr>::iterator it =
+			allBestModelSelectors.begin(); it != allBestModelSelectors.end();
+			it++) {
+		nameBestModelSelectorMap.insert(
+				std::pair<std::string, BestModelSelectorPtr>((*it)->getName(),
+						(*it)));
+		std::cerr << "Inserted: " << (*it)->getName() << std::endl;
+	}
+}
+
+void ActionPlugin::CtxData::registerExecutionModeRewritersOfPlugin(
+		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters) {
+
+	std::cerr << "\nregisterExecutionModeRewritersOfPlugin" << std::endl;
+
+	for (std::vector<ExecutionModeRewriterPtr>::iterator it =
+			allExecutionModeRewriters.begin();
+			it != allExecutionModeRewriters.end(); it++) {
+		nameExecutionModeRewriterMap.insert(
+				std::pair<std::string, ExecutionModeRewriterPtr>(
+						(*it)->getName(), (*it)));
+		std::cerr << "Inserted: " << (*it)->getName() << std::endl;
 	}
 
 }
@@ -177,21 +253,40 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		if (option == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
-		} else if (option == "--iterate-infinite") { //FIXME only to try if it works
-			processed = true;
-			ctxdata.iterationType = FIXED;
 		} else if (option.find("--num-iterations=") != std::string::npos) {
 			processed = true;
-			ctxdata.iterationType = FIXED;
 			std::string string_of_number = option.substr(17);
-			unsigned int number;
-			qi::parse(string_of_number.begin(), string_of_number.end(), number);
-			ctx.config.setOption("RepeatEvaluation", number);
+			if (string_of_number == "inf")
+				ctxdata.iterationType = INFINITE;
+			else {
+				ctxdata.iterationType = FIXED;
+				unsigned int number;
+				qi::parse(string_of_number.begin(), string_of_number.end(),
+						number);
+				ctx.config.setOption("RepeatEvaluation", number);
+				ctxdata.numberIterations = number;
+			}
+		} else if (option.find("--duration-iterations=") != std::string::npos) {
+			processed = true;
+			std::string string_of_number = option.substr(22);
+			if (string_of_number == "inf")
+				ctxdata.iterationType = INFINITE;
+			else {
+				ctxdata.iterationType = FIXED;
+				//FIXME now I consider only the number of seconds
+				unsigned int time;
+				qi::parse(string_of_number.begin(), string_of_number.end(),
+						time);
+				ctxdata.timeDuration = boost::posix_time::seconds(time);
+				ctxdata.startingTime =
+						boost::posix_time::second_clock::local_time();
+			}
 		}
 
 		if (processed) {
 			// return value of erase: element after it, maybe end()
-			DBGLOG(DBG, "ActionPlugin successfully processed option " << option);
+			DBGLOG(DBG,
+					"ActionPlugin successfully processed option " << option);
 			it = pluginOptions.erase(it);
 		} else {
 			it++;
@@ -218,10 +313,6 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		// so the user can avoid specifying one of them if he want that it value is set at 1
 		ctxdata.id_default_weight_with_level = ID::termFromInteger(1);
 		ctxdata.id_default_level_with_weight = ID::termFromInteger(1);
-
-		std::cerr << "IterationType:"
-				<< (ctxdata.iterationType == 0 ? "DEFAULT" : "FIXED")
-				<< std::endl;
 
 		ctxdata.createAndInsertContinueAndStopActions(reg);
 

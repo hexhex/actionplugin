@@ -42,16 +42,21 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
+//Forward declaration
 class ActionPluginInterface;
 typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
 #warning could we put PluginActionBase in ActionPluginInterface?
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 
+class BestModelSelector;
+typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
+class ExecutionModeRewriter;
+typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
+
 enum IterationType {
-	DEFAULT, FIXED
+	DEFAULT, INFINITE, FIXED
 };
-//FIXME we have to find another name
 
 class ActionPlugin: public PluginInterface {
 public:
@@ -68,7 +73,7 @@ public:
 		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
 //		dlvhex::ID id_in_the_registry;
 
-		// ids stored in Registry that represent the action options
+// ids stored in Registry that represent the action options
 		ID id_brave;
 		ID id_cautious;
 		ID id_preferred_cautious;
@@ -96,7 +101,7 @@ public:
 		BestModelsContainer notBestModelsContainer;
 
 		// an iterator that identifies the position of the BestModel in BestModelsContainer
-		BestModelsContainer::iterator iteratorBestModel;
+		BestModelsContainer::const_iterator iteratorBestModel;
 
 		CtxData();
 
@@ -131,6 +136,27 @@ public:
 		// creates the Actions "#continueIteration" and "#stopIteration"
 		void createAndInsertContinueAndStopActions(RegistryPtr);
 
+		int numberIterations;
+
+		boost::posix_time::time_duration timeDuration;
+
+		boost::posix_time::ptime startingTime;
+
+		typedef std::map<std::string, BestModelSelectorPtr> NameBestModelSelectorMap;
+		// a map that contains the name and a pointer to the corresponding BestModelSelector
+		NameBestModelSelectorMap nameBestModelSelectorMap;
+
+		typedef std::map<std::string, ExecutionModeRewriterPtr> NameExecutionModeRewriterMap;
+		// a map that contains the name and a pointer to the corresponding ExecutionModeRewriter
+		NameExecutionModeRewriterMap nameExecutionModeRewriterMap;
+
+	private:
+		void registerActionsOfPlugin(std::vector<PluginActionBasePtr>,
+				RegistryPtr);
+		void registerBestModelSelectorsOfPlugin(
+				std::vector<BestModelSelectorPtr>);
+		void registerExecutionModeRewritersOfPlugin(
+				std::vector<ExecutionModeRewriterPtr>);
 	};
 
 	ActionPlugin();

@@ -86,12 +86,10 @@ void ActionPluginFinalCallback::operator()() {
 
 			const Tuple& tempTuple = (*itLOEs);
 
-			if (*tempTuple.begin() == ctxDataPtr->id_continue
-					&& ctxDataPtr->iterationType == DEFAULT) {
+			if (*tempTuple.begin() == ctxDataPtr->id_continue) {
 				ctxDataPtr->continueIteration = true;
 				continue;
-			} else if (*tempTuple.begin() == ctxDataPtr->id_stop
-					&& ctxDataPtr->iterationType == FIXED) {
+			} else if (*tempTuple.begin() == ctxDataPtr->id_stop) {
 				ctxDataPtr->stopIteration = true;
 				continue;
 			}
@@ -122,15 +120,27 @@ void ActionPluginFinalCallback::operator()() {
 	}
 
 	std::cerr << "\nCheck Iteration" << std::endl;
-	std::cerr << "IterationType:"
-			<< (ctxDataPtr->iterationType == 0 ? "DEFAULT" : "FIXED")
-			<< std::endl;
 	if (ctxDataPtr->iterationType == DEFAULT && ctxDataPtr->continueIteration)
 		programCtx.config.setOption("RepeatEvaluation", 1);
-	else if (ctxDataPtr->iterationType == FIXED && ctxDataPtr->stopIteration)
+	else if (ctxDataPtr->iterationType != DEFAULT && ctxDataPtr->stopIteration)
 		programCtx.config.setOption("RepeatEvaluation", 0);
-	else if (ctxDataPtr->iterationType == FIXED) //FIXME only to try if it works
-		programCtx.config.setOption("RepeatEvaluation", 1); //FIXME only to try if it works
+	else if (ctxDataPtr->iterationType == INFINITE)
+		programCtx.config.setOption("RepeatEvaluation", 1);
+	else if (ctxDataPtr->iterationType == FIXED) {
+		if (!ctxDataPtr->startingTime.is_not_a_date_time()) {
+			boost::posix_time::time_duration diff =
+					boost::posix_time::second_clock::local_time()
+							- ctxDataPtr->startingTime;
+			if (diff > ctxDataPtr->timeDuration)
+				programCtx.config.setOption("RepeatEvaluation", 0);
+			else if (ctxDataPtr->numberIterations != -1) {
+				programCtx.config.setOption("RepeatEvaluation",
+						ctxDataPtr->numberIterations);
+				ctxDataPtr->numberIterations--;
+			} else
+				programCtx.config.setOption("RepeatEvaluation", 1);
+		}
+	}
 
 	if (programCtx.config.getOption("RepeatEvaluation") > 0) {
 

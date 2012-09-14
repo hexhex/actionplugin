@@ -51,7 +51,9 @@ libdlvhex_action_la_SOURCES = \
 		ActionPluginModelCallback.cpp \
 		ActionPluginFinalCallback.cpp \
 		ActionScheduler.cpp \
-		ActionPluginInterface.cpp
+		ActionPluginInterface.cpp \
+		BestModelSelector.cpp \
+		ExecutionModeRewriter.cpp
 
 # for more information on `-version-info' see
 # <http://www.gnu.org/software/libtool/manual.html#Versioning>, and
