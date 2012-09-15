@@ -92,9 +92,9 @@ public:
 
 		BoolMatrixAction();
 
-	private:
-		virtual void execute(Environment& environment, RegistryPtr registry,
-				const Tuple& parms, InterpretationConstPtr interpretationPtr);
+	protected:
+		void execute(Environment&, RegistryPtr,
+				const Tuple&, const InterpretationConstPtr);
 
 	};
 

@@ -16,6 +16,8 @@
 
 #include "acthex/ActionScheduler.h"
 #include "acthex/PluginActionBase.h"
+#include "acthex/BestModelSelector.h"
+#include "acthex/ExecutionModeRewriter.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -28,7 +30,7 @@ void ActionPluginFinalCallback::operator()() {
 	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
 
 #warning I ve to call the BestModelSelection function of the specified ActionAtom
-	ctxDataPtr->iteratorBestModel = ctxDataPtr->bestModelsContainer.begin();
+	 ctxDataPtr->nameBestModelSelectorMap["default"]->getBestModel(ctxDataPtr->iteratorBestModel, ctxDataPtr->bestModelsContainer);
 
 	std::cerr << "\nBestModel selected:" << std::endl;
 	(*ctxDataPtr->iteratorBestModel)->interpretation->print(std::cerr);
@@ -52,7 +54,7 @@ void ActionPluginFinalCallback::operator()() {
 #warning I ve to call the executionModeRewriter function of the specified ActionAtom
 	std::cerr << "\nCall the executionModeRewriter" << std::endl;
 	std::list < std::set<Tuple> > listOfExecution;
-	scheduler->executionModeRewriter(multimapOfExecution, listOfExecution);
+	ctxDataPtr->nameExecutionModeRewriterMap["default"]->rewrite(multimapOfExecution, listOfExecution);
 
 	std::cerr << "\nThe ListOfExecution:" << std::endl;
 	std::list<std::set<Tuple> >::iterator itLOE;

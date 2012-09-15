@@ -1,2 +1,2 @@
 
-#continueIteration{b} :- not haveReachedLastRow.
+#acthexContinue{b} :- not haveReachedLastRow.

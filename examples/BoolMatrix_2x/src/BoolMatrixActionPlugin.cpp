@@ -300,7 +300,7 @@ BoolMatrixActionPlugin::BoolMatrixAction::BoolMatrixAction() :
 
 void BoolMatrixActionPlugin::BoolMatrixAction::execute(Environment& environment,
 		RegistryPtr pregistry, const Tuple& parms,
-		InterpretationConstPtr interpretationPtr) {
+		const InterpretationConstPtr interpretationPtr) {
 
   Registry& registry = *pregistry;
 

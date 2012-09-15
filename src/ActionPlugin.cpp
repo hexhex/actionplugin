@@ -40,6 +40,9 @@
 #include "acthex/ActionPluginInterface.h"
 
 #include "dlvhex2/PredicateMask.h"
+
+#include <boost/date_time/posix_time/time_parsers.hpp>
+
 DLVHEX_NAMESPACE_BEGIN
 
 ActionPlugin::CtxData::CtxData() :
@@ -165,8 +168,8 @@ void ActionPlugin::CtxData::clearDataStructures() {
 void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(
 		RegistryPtr reg) {
 
-	id_continue = reg->storeConstantTerm("continueIteration");
-	id_stop = reg->storeConstantTerm("stopIteration");
+	id_continue = reg->storeConstantTerm("acthexContinue");
+	id_stop = reg->storeConstantTerm("acthexStop");
 
 	RawPrinter printer(std::cerr, reg);
 
@@ -230,8 +233,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		if (option == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
-		} else if (option.find("--number-iterations=") != std::string::npos) {
-			processed = true;
+		} else if (option.find("--acthexNumberIterations=") != std::string::npos) {
 			std::string string_of_number = option.substr(20);
 			unsigned int number;
 			qi::parse(string_of_number.begin(), string_of_number.end(), number);
@@ -242,20 +244,22 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 				ctx.config.setOption("RepeatEvaluation", number);
 				ctxdata.numberIterations = number;
 			}
-		} else if (option.find("--duration-iterations=") != std::string::npos) {
 			processed = true;
-			std::string string_of_number = option.substr(22);
-			unsigned int time;
-			qi::parse(string_of_number.begin(), string_of_number.end(), time);
-			if (time == 0)
+		} else if (option.find("--acthexDurationIterations=") != std::string::npos) {
+			const std::string string_of_duration = option.substr(22);
+			if (string_of_duration.length() == 0)
+				continue;
+			else if (string_of_duration[0] == '-')
+				continue;
+			else if (string_of_duration == "0")
 				ctxdata.iterationType = INFINITE;
 			else {
 				ctxdata.iterationType = FIXED;
-#warning now I consider only the number of seconds
-				ctxdata.timeDuration = boost::posix_time::seconds(time);
+				ctxdata.timeDuration = boost::posix_time::duration_from_string(string_of_duration);
 				ctxdata.startingTime =
 						boost::posix_time::second_clock::local_time();
 			}
+			processed = true;
 		}
 
 		if (processed) {

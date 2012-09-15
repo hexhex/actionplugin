@@ -86,7 +86,7 @@ public:
 	protected:
 		// The function that must be overridden by the creator of the Action to execute the own code
 		virtual void execute(typename Derived::Environment&,
-				const RegistryPtr registryPtr, const Tuple&,
+				const RegistryPtr, const Tuple&,
 				const InterpretationConstPtr) = 0;
 	};
 

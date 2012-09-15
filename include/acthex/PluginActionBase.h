@@ -30,12 +30,8 @@ public:
 	// The function that will be called by the FinalCallback to execute the Actions
 	virtual void execute(ProgramCtx& ctx,
 			const InterpretationConstPtr interpretationConstPtr,
-			const Tuple& tuple) {}
+			const Tuple& tuple) = 0;
 protected:
-	// The function that must be overridden by the creator of the Action to execute the own code
-	virtual void execute(Environment&, RegistryPtr registryPtr, const Tuple&,
-			const InterpretationConstPtr interpretationConstPtr) = 0;
-
 	// a string that will be used to identify it
 	std::string predicate;
 };
