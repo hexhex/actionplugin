@@ -25,7 +25,7 @@
  * @file ActionPlugin.cpp
  * @author Stefano Germano
  *
- * @brief Plugin ...
+ * @brief Plugin that provides an implementation of the ActHEX language.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -59,6 +59,7 @@ ActionPlugin::CtxData::~CtxData() {
 	nameExecutionModeRewriterMap.clear();
 }
 
+// add Actions to idActionMap and myAuxiliaryPredicateMask
 void ActionPlugin::CtxData::addAction(const ID & id,
 		const ActionPtr actionPtr) {
 
@@ -68,6 +69,7 @@ void ActionPlugin::CtxData::addAction(const ID & id,
 
 }
 
+// called by Actions to register themselves
 void ActionPlugin::CtxData::registerPlugin(
 		ActionPluginInterfacePtr actionPluginInterfacePtr, ProgramCtx& ctx) {
 
@@ -82,40 +84,9 @@ void ActionPlugin::CtxData::registerPlugin(
 	registerExecutionModeRewritersOfPlugin(
 			actionPluginInterfacePtr->getAllExecutionModeRewriters());
 
-//	std::vector<PluginActionBasePtr> pluginActionBasePtrVector =
-//			actionPluginInterfacePtr->createActions(ctx);
-//
-//	RegistryPtr reg = ctx.registry();
-//
-//	for (std::vector<PluginActionBasePtr>::iterator it =
-//			pluginActionBasePtrVector.begin();
-//			it != pluginActionBasePtrVector.end(); it++) {
-//
-//		const ID id = reg->storeConstantTerm((*it)->getPredicate());
-//
-//		namePluginActionBaseMap.insert(
-//				std::pair<std::string, PluginActionBasePtr>(
-//						(*it)->getPredicate(), (*it)));
-//
-//		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
-//
-//		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
-//
-//		RawPrinter printer(std::cerr, reg);
-//
-//		std::cerr << "Id: ";
-//		printer.print(id);
-//		std::cerr << "\t";
-//		printer.print(aux_id);
-//		std::cerr << std::endl;
-//
-//		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
-//		this->addAction(id, actionPtr);
-//
-//	}
-
 }
 
+// Utility functions used to register Actions of a Plugin
 void ActionPlugin::CtxData::registerActionsOfPlugin(
 		std::vector<PluginActionBasePtr> pluginActionBasePtrVector,
 		RegistryPtr reg) {
@@ -149,6 +120,7 @@ void ActionPlugin::CtxData::registerActionsOfPlugin(
 
 }
 
+// Utility functions used to register BestModelSelectors of a Plugin
 void ActionPlugin::CtxData::registerBestModelSelectorsOfPlugin(
 		std::vector<BestModelSelectorPtr> allBestModelSelectors) {
 
@@ -164,6 +136,7 @@ void ActionPlugin::CtxData::registerBestModelSelectorsOfPlugin(
 	}
 }
 
+// Utility functions used to register ExecutionModeRewriters of a Plugin
 void ActionPlugin::CtxData::registerExecutionModeRewritersOfPlugin(
 		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters) {
 
@@ -180,6 +153,7 @@ void ActionPlugin::CtxData::registerExecutionModeRewritersOfPlugin(
 
 }
 
+// makes the plugin ready to execute another iteration
 void ActionPlugin::CtxData::clearDataStructures() {
 	levelsAndWeightsBestModels.clear();
 	bestModelsContainer.clear();
@@ -187,6 +161,7 @@ void ActionPlugin::CtxData::clearDataStructures() {
 	iteratorBestModel = bestModelsContainer.end();
 }
 
+// creates the Actions "#continueIteration" and "#stopIteration"
 void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(
 		RegistryPtr reg) {
 
@@ -236,6 +211,8 @@ void ActionPlugin::printUsage(std::ostream& o) const {
 }
 
 // accepted options: --action-enable
+//					 --num-iterations
+//					 --duration-iterations
 //
 // processes options for this plugin, and removes recognized options from pluginOptions
 // (do not free the pointers, the const char* directly come from argv)
@@ -253,30 +230,28 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		if (option == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
-		} else if (option.find("--num-iterations=") != std::string::npos) {
+		} else if (option.find("--number-iterations=") != std::string::npos) {
 			processed = true;
-			std::string string_of_number = option.substr(17);
-			if (string_of_number == "inf")
+			std::string string_of_number = option.substr(20);
+			unsigned int number;
+			qi::parse(string_of_number.begin(), string_of_number.end(), number);
+			if (number == 0)
 				ctxdata.iterationType = INFINITE;
 			else {
 				ctxdata.iterationType = FIXED;
-				unsigned int number;
-				qi::parse(string_of_number.begin(), string_of_number.end(),
-						number);
 				ctx.config.setOption("RepeatEvaluation", number);
 				ctxdata.numberIterations = number;
 			}
 		} else if (option.find("--duration-iterations=") != std::string::npos) {
 			processed = true;
 			std::string string_of_number = option.substr(22);
-			if (string_of_number == "inf")
+			unsigned int time;
+			qi::parse(string_of_number.begin(), string_of_number.end(), time);
+			if (time == 0)
 				ctxdata.iterationType = INFINITE;
 			else {
 				ctxdata.iterationType = FIXED;
-				//FIXME now I consider only the number of seconds
-				unsigned int time;
-				qi::parse(string_of_number.begin(), string_of_number.end(),
-						time);
+#warning now I consider only the number of seconds
 				ctxdata.timeDuration = boost::posix_time::seconds(time);
 				ctxdata.startingTime =
 						boost::posix_time::second_clock::local_time();
@@ -297,9 +272,6 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 	if (ctxdata.enabled) {
 
 		RegistryPtr reg = ctx.registry();
-
-//    ctxdata.id_in_the_registry = reg->getAuxiliaryConstantSymbol('a',
-//        dlvhex::ID(ID::MAINKIND_TERM | ID::SUBKIND_TERM_CONSTANT, 0));
 
 		ctxdata.id_brave = reg->storeConstantTerm("b");
 		ctxdata.id_cautious = reg->storeConstantTerm("c");

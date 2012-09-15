@@ -2,7 +2,7 @@
  * @file ExecutionModeRewriter.cpp
  * @author Stefano Germano
  *
- * @brief Plugin ...
+ * @brief Base class to implement a Scheduler for the Actions with the same Precedence attribute
  */
 
 #ifdef HAVE_CONFIG_H

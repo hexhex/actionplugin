@@ -2,7 +2,7 @@
  * @file PluginActionBase.cpp
  * @author Stefano Germano
  *
- * @brief Plugin ...
+ * @brief Base class to implement a PluginAction
  */
 
 #ifdef HAVE_CONFIG_H

@@ -2,7 +2,7 @@
  * @file ActionPluginParserModule.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief Parser for the Actions
  */
 
 #ifndef ACTION_PLUGIN_PARSER_MODULE_H_
@@ -92,31 +92,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		std::cerr << std::endl;
 
-		if (mgr.ctxdata.idActionMap.count(id_0) == 0) {
-
-//			const ID id = boost::fusion::at_c < 0 > (source);
-//
-//			ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
-//
-//			Action action(reg->getTermStringByID(id), aux_id);
-//
-//			mgr.ctxdata.addAction(id, action);
-			//mgr.ctxdata.idActionMap.insert(std::pair<ID, Action>(id, action));
-
+		if (mgr.ctxdata.idActionMap.count(id_0) == 0)
 			throw PluginError("Action '" + reg->getTermStringByID(id_0) + "' not found");
-
-		}
-
-		//      const dlvhex::ID & id_predicate = boost::fusion::at_c < 0 > (source);
-		//
-		//      std::map<ID, Action> & idActionMap = mgr.ctxdata.idActionMap;
-		//
-		////      Action & action = idActionMap[id_predicate];
-		//      Action & action = idActionMap.find(id_predicate)->second;
-		//
-		////      printer.print(idActionMap[id_predicate].getAuxId());
-
-		//      printer.print(mgr.ctxdata.idActionMap.find(boost::fusion::at_c < 0 > (source))->second.getAuxId());
 
 		std::cerr << "original:\t";
 
@@ -175,8 +152,6 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		std::cerr << std::endl;
 
 		std::cerr << "rewritten:\t";
-
-		//      std::cerr << reg->getTermStringByID(mgr.ctxdata.id_in_the_registry);
 
 		printer.print(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
 
@@ -241,7 +216,6 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		Tuple& tuple = oatom.tuple;
 
-		//      tuple.push_back(reg->getTermStringByID(mgr.ctxdata.id_in_the_registry));
 		tuple.push_back(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
 		tuple.push_back(id_0);
 

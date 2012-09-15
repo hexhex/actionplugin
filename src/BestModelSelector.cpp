@@ -2,7 +2,7 @@
  * @file BestModelSelector.cpp
  * @author Stefano Germano
  *
- * @brief Plugin ...
+ * @brief Base class to implement a Selector of BestMoldel
  */
 
 #ifdef HAVE_CONFIG_H

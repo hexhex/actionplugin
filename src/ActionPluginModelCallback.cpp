@@ -2,7 +2,8 @@
  * @file ActionPluginModelCallback.cpp
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A custom implementation of ModelCallback;
+ * implement the Filter for Weights and Levels
  */
 
 #ifdef HAVE_CONFIG_H
@@ -20,36 +21,13 @@ ActionPluginModelCallback::ActionPluginModelCallback(CtxDataPtr ctxDataPtr,
 ActionPluginModelCallback::~ActionPluginModelCallback() {
 }
 
+// This function will be called for each AnswerSet
 bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	std::cerr << "\nActionPluginModelCallback called" << std::endl;
 	std::cerr << "\nThe Interpretation:" << std::endl;
 	answerSetPtr->interpretation->print(std::cerr);
 	std::cerr << std::endl;
-
-//  std::cerr << "\nWeight and Level before " << std::endl;
-//  std::cerr << "Weight: " << answerSetPtr->costWeight << std::endl;
-//  std::cerr << "Level: " << answerSetPtr->costLevel << std::endl;
-//
-//  if (answerSetPtr->costWeight == -1)
-//    answerSetPtr->costWeight = 0;
-//
-//  if (answerSetPtr->costLevel == -1)
-//    answerSetPtr->costLevel = 0;
-
-//  std::cerr << "\nThe Atoms Of Interpretation:" << std::endl;
-	//  Interpretation::TrueBitIterator bit, bit_end;
-//  for (boost::tie(bit, bit_end) = answerSetPtr->interpretation->trueBits(); bit != bit_end; ++bit) {
-//    const OrdinaryAtom& oatom = ctx.registry()->ogatoms.getByAddress(*bit);
-//    std::cerr << oatom << std::endl;
-//    std::cerr << "The atom: " << oatom.text << std::endl;
-//  }
-
-//  std::cerr << "Before" << std::endl;
-//
-//  ActionPlugin::CtxData& ctxData = ctx.getPluginData<ActionPlugin>();
-//
-//  std::cerr << "After" << std::endl;
 
 	ActionPlugin::CtxData::LevelsAndWeights levelsAndWeights;
 
@@ -58,6 +36,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	std::cerr << "\nThe Atoms Of Interpretation with myAuxiliaryPredicateMask:"
 			<< std::endl;
 
+	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
 	intr->getStorage() |=
 			ctxDataPtr->myAuxiliaryPredicateMask.mask()->getStorage();
@@ -65,8 +44,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	Interpretation::TrueBitIterator bit, bit_end;
 	for (boost::tie(bit, bit_end) = intr->trueBits(); bit != bit_end; ++bit) {
+
 		const OrdinaryAtom& oatom = registryPtr->ogatoms.getByAddress(*bit);
-		//std::cerr << oatom << std::endl;
 		std::cerr << "The atom: " << oatom.text << std::endl;
 
 		const Tuple & tuple = oatom.tuple;
@@ -88,20 +67,11 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 			else
 				levelsAndWeights[level] += weight;
 
-//      answerSetPtr->costWeight += tuple[tuple.size() - 2].address;
-//      answerSetPtr->costLevel += tuple[tuple.size() - 1].address;
-
-		} else {
+		} else
 			throw PluginError(
 					"In ModelCallback Weight and/or Level aren't Integer term");
-			//return false;
-		}
 
 	}
-
-//  std::cerr << "\nWeight and Level after " << std::endl;
-//  std::cerr << "Weight: " << answerSetPtr->costWeight << std::endl;
-//  std::cerr << "Level: " << answerSetPtr->costLevel << std::endl;
 
 	// eliminates eventual levels with weight 0 in levelsAndWeights
 	ActionPlugin::CtxData::LevelsAndWeights::iterator itLAW =
@@ -114,7 +84,6 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	if (levelsAndWeights.empty()) {
 		// this is always a BestModel
-
 		if (!ctxDataPtr->levelsAndWeightsBestModels.empty()) {
 			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
 			ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
@@ -124,7 +93,6 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 					ctxDataPtr->bestModelsContainer.end());
 			ctxDataPtr->bestModelsContainer.clear();
 		}
-
 	} else if (ctxDataPtr->levelsAndWeightsBestModels.empty()) {
 
 		if (!ctxDataPtr->bestModelsContainer.empty()) {
@@ -135,68 +103,6 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 		ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
 
 	} else {
-
-//    //CtxData::LevelsAndWeights::iterator it;
-//    // the last level that I've seen
-//    int lastLevelSeen = -1;
-//
-//    //if there is a level in levelsAndWeights that is greater than the highest level of levelsAndWeightsBestModels I have to return
-//    if ((*levelsAndWeights.rbegin()).first > (*ctxData.levelsAndWeightsBestModels.rbegin()).first)
-//      return true;
-//
-//    CtxData::LevelsAndWeights::reverse_iterator ritLAW;
-//    // return if I find that this AnswerSet isn't a BestModel
-//    // break if I find that this AnswerSet is "better" than other AnswerSets in bestModelsContainer
-//    for (ritLAW = ctxData.levelsAndWeightsBestModels.rbegin();
-//        ritLAW != ctxData.levelsAndWeightsBestModels.rend(); ritLAW++) {
-//      //I need to sort the levelsAndWeightsBestModels for Level (I think that it's just sorted by key),
-//      //to inizialize lastLevelSeen at the highest level of levelsAndWeightsBestModels
-//      //and to compare, in descending order,the weights in levelsAndWeightsBestModels and the weights in levelsAndWeights
-//
-//      //if there is a level in levelsAndWeights that is smallest than the lastLevelSeen and greater than the current level I have to return
-//      if (lastLevelSeen != -1)
-//        for (CtxData::LevelsAndWeights::reverse_iterator ritLAW2 = levelsAndWeights.rbegin();
-//            ritLAW2 != levelsAndWeights.rend(); ritLAW2++)
-//          if (ritLAW2->first < lastLevelSeen && ritLAW2->first > ritLAW->first)
-//            return true;
-//
-//      //if the level in levelsAndWeightsBestModels there isn't in levelsAndWeights I have to break
-//      if (levelsAndWeights.count(ritLAW->first) == 0)
-//        break;
-//      else {
-//
-//        //if the level in levelsAndWeightsBestModels there is in levelsAndWeights but the weight in the second have a smallest value I have to break
-//        if ((levelsAndWeights.find(ritLAW->first))->second < ritLAW->second)
-//          break;
-//        else
-//        //if the level in levelsAndWeightsBestModels there is in levelsAndWeights but the weight in the second have a greater value I have to return
-//        if ((levelsAndWeights.find(ritLAW->first))->second > ritLAW->second)
-//          return true;
-//        else
-//          //if the level in levelsAndWeightsBestModels there is in levelsAndWeights and the weights are the same I have to update lastLevelSeen and continue
-//          lastLevelSeen = ritLAW->first;
-//
-//      }
-//
-//    }
-//
-//    // if the execution arrives here this AnswerSet is a BestModel
-//
-//    if (itLAW == ctxData.levelsAndWeightsBestModels.end()) {
-//      //the AnswerSet has a the same levelsAndWeights of the others AnswerSet in the bestModelsContainer
-//
-//      //if the size of levelsAndWeightsBestModels isn't the same of the size of levelsAndWeights I can return
-//      if (ctxData.levelsAndWeightsBestModels.size() != levelsAndWeights.size())
-//        return true;
-//
-//    } else {
-//      //the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
-//
-//      ctxData.levelsAndWeightsBestModels = levelsAndWeights;
-//
-//      ctxData.bestModelsContainer.clear();
-//
-//    }
 
 		int res_is = isABestModel(ctxDataPtr->levelsAndWeightsBestModels,
 				levelsAndWeights);
@@ -259,7 +165,6 @@ int ActionPluginModelCallback::isABestModel(
 		ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeightsBestModels,
 		ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeights) {
 
-	//CtxData::LevelsAndWeights::iterator it;
 	// the last level that I've seen
 	int lastLevelSeen = -1;
 
@@ -277,6 +182,7 @@ int ActionPluginModelCallback::isABestModel(
 	int first, second;
 	for (ritLAW = levelsAndWeightsBestModels.rbegin();
 			ritLAW != levelsAndWeightsBestModels.rend(); ritLAW++) {
+
 		//I need to sort the levelsAndWeightsBestModels for Level (I think that it's just sorted by key),
 		//to inizialize lastLevelSeen at the highest level of levelsAndWeightsBestModels
 		//and to compare, in descending order,the weights in levelsAndWeightsBestModels and the weights in levelsAndWeights

@@ -2,7 +2,11 @@
  * @file ActionPluginFinalCallback.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A custom implementation of FinalCallback;
+ * will be used for:
+ *  - select the BestModel
+ *  - build the Execution Scheduler
+ *  - execute the Actions in the Execution Scheduler
  */
 
 #ifndef ACTION_PLUGIN_FINAL_CALLBACK_H_
@@ -22,7 +26,6 @@ public:
 	virtual void operator()();
 protected:
 	ProgramCtx& programCtx;
-//	ActionPlugin::CtxData& ctxData;
 	CtxDataPtr ctxDataPtr;
 	const RegistryPtr registryPtr;
 };

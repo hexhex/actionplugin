@@ -2,7 +2,7 @@
  * @file Action.cpp
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A simple class to store an Action
  */
 
 #ifdef HAVE_CONFIG_H
@@ -15,7 +15,7 @@ DLVHEX_NAMESPACE_BEGIN
 Action::Action() :
 		predicate("") {
 }
-// I don't know if it's better initialize this->aux_id at null
+#warning maybe it s better to initialize aux_id at null
 
 Action::Action(std::string predicate, ID aux_id) :
 		predicate(predicate), aux_id(aux_id) {

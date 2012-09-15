@@ -2,7 +2,7 @@
  * @file Action.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A simple class to store an Action
  */
 
 #ifndef ACTION_H_
@@ -23,7 +23,9 @@ public:
 	std::string getPredicate() const;
 
 protected:
+	// The string of the ID of this Action
 	std::string predicate;
+	// An auxiliary id for this Action taken from the Registry
 	dlvhex::ID aux_id;
 };
 typedef boost::shared_ptr<Action> ActionPtr;

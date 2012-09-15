@@ -2,7 +2,7 @@
  * @file ActionPluginInterface.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief Interface to implement a Plugin of ActionPlugin
  */
 
 #ifndef ACTION_PLUGIN_INTERFACE_H_
@@ -37,11 +37,12 @@ public:
 		;
 	};
 
-// CRTP pattern
+	// CRTP pattern
 	template<class Derived>
+	// Base class to implement an External Atom
 	class PluginActionAtom: public PluginAtom {
 	public:
-
+		// the Environment of this Plugin
 		typedef typename Derived::Environment Environment;
 
 		PluginActionAtom(std::string name) :
@@ -50,28 +51,31 @@ public:
 			prop.usesEnvironment = true;
 		}
 
+		// The function that will be called by dlvhex to evaluate the External Atom
 		void retrieve(const Query& query, Answer& answer) {
 			const typename Derived::Environment& environment =
 					query.ctx->getPluginEnvironment<Derived>();
 			retrieve(environment, query, answer);
 		}
-
 	protected:
+		// The function that must be overridden by the creator of the External Atom to execute the own code
 		virtual void retrieve(const typename Derived::Environment&,
 				const Query&, Answer&) = 0;
 	};
 
 	// CRTP pattern
 	template<class Derived>
+	// Base class to implement an Action
 	class PluginAction: public PluginActionBase {
 	public:
-
+		// the Environment of this Plugin
 		typedef typename Derived::Environment Environment;
 
 		PluginAction(const std::string& predicate) :
 				PluginActionBase(predicate) {
 		}
 
+		// The function that will be called by the FinalCallback to execute the Actions
 		void execute(ProgramCtx& ctx,
 				const InterpretationConstPtr interpretationConstPtr,
 				const Tuple& tuple) {
@@ -79,8 +83,8 @@ public:
 					ctx.getPluginEnvironment<Derived>();
 			execute(environment, ctx.registry(), tuple, interpretationConstPtr);
 		}
-
 	protected:
+		// The function that must be overridden by the creator of the Action to execute the own code
 		virtual void execute(typename Derived::Environment&,
 				const RegistryPtr registryPtr, const Tuple&,
 				const InterpretationConstPtr) = 0;
@@ -119,9 +123,11 @@ public:
 	 */
 	virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx& ctx) const = 0;
 
+	// Publish Actions to ActionPlugin
 	virtual std::vector<PluginActionBasePtr> createActions(
 			ProgramCtx& ctx) const = 0;
 
+	// A default implementation of BestModelSelector
 	class DefaultBestModelSelector: public BestModelSelector {
 	public:
 		DefaultBestModelSelector(std::string name) :
@@ -134,6 +140,7 @@ public:
 		}
 	};
 
+	// Will be called by ActionPlugin to collect the BestModelSelectors
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		std::vector<BestModelSelectorPtr> allBestModelSelectors;
 		BestModelSelectorPtr bestModelSelectorPtr(
@@ -142,6 +149,7 @@ public:
 		return allBestModelSelectors;
 	}
 
+	// A default implementation of ExecutionModeRewriter
 	class DefaultExecutionModeRewriter: public ExecutionModeRewriter {
 	public:
 		DefaultExecutionModeRewriter(std::string name) :
@@ -179,6 +187,7 @@ public:
 		}
 	};
 
+	// Will be called by ActionPlugin to collect the ExecutionModeRewriters
 	virtual std::vector<ExecutionModeRewriterPtr> getAllExecutionModeRewriters() const {
 		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters;
 		ExecutionModeRewriterPtr executionModeRewriterPtr(
@@ -187,6 +196,7 @@ public:
 		return allExecutionModeRewriters;
 	}
 
+	// Used to activate the Plugin only if "--action-enable" option is selected
 	virtual void processOptions(std::list<const char*>& pluginOptions,
 			ProgramCtx& ctx) {
 		std::cerr << "processOptions of ActionPluginInterface" << std::endl;
@@ -218,27 +228,14 @@ public:
 		}
 
 		if (ctxdata.enabled)
-			registerInActionPlugin(ctx);
+			// Register the Action in the ActionPlugin
+			ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx),
+					ctx);
 
 	}
 
 protected:
-	void registerInActionPlugin(ProgramCtx& ctx) {
-		std::cerr << "registerInActionPlugin of ActionPluginInterface"
-				<< std::endl;
-
-//		boost::shared_ptr<ActionPluginInterface> pointer_shared_ptr = boost::shared_ptr<ActionPluginInterface>(this);
-//		std::cerr << "after shared_ptr" << std::endl;
-
-//		boost::shared_ptr<ActionPluginInterface> pointer_shared_from_this =
-//				shared_from_this();
-//		std::cerr << "after shared_from_this" << std::endl;
-
-//		ctx.getPluginData<ActionPlugin>().registerPlugin(shared_from_this(), ctx);
-		ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx),
-				ctx);
-	}
-
+	// Must be overridden by the Plugins to instantiate themselves
 	virtual ActionPluginInterfacePtr create(ProgramCtx& ctx) {
 		throw PluginError("ERROR you haven't overridden create() function");
 	}

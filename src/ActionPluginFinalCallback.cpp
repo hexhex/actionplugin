@@ -2,7 +2,11 @@
  * @file ActionPluginFinalCallback.cpp
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A custom implementation of FinalCallback;
+ * will be used for:
+ *  - select the BestModel
+ *  - build the Execution Scheduler
+ *  - execute the Actions in the Execution Scheduler
  */
 
 #ifdef HAVE_CONFIG_H

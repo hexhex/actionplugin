@@ -25,14 +25,13 @@
  * @file ActionPlugin.h
  * @author Stefano Germano
  *
- * @brief Plugin ...
+ * @brief Plugin that provides an implementation of the ActHEX language.
  */
 
 #ifndef ACTION_PLUGIN_H
 #define ACTION_PLUGIN_H
 
 #include "acthex/Action.h"
-//#include "acthex/PluginActionBase.h"
 
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/PluginInterface.h"
@@ -42,18 +41,18 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-//Forward declaration
+//Forward declarations
 class ActionPluginInterface;
 typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
 #warning could we put PluginActionBase in ActionPluginInterface?
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
-
 class BestModelSelector;
 typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
 class ExecutionModeRewriter;
 typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
 
+// An enum to specify the type of Iteration
 enum IterationType {
 	DEFAULT, INFINITE, FIXED
 };
@@ -70,10 +69,7 @@ public:
 		// for fast detection whether an ID is this plugin's responsitility to display
 		PredicateMask myAuxiliaryPredicateMask;
 
-		// an id that is stored in Registry and give the string representing the name of each action atom "rewritten"
-//		dlvhex::ID id_in_the_registry;
-
-// ids stored in Registry that represent the action options
+		// ids stored in Registry that represent the action options
 		ID id_brave;
 		ID id_cautious;
 		ID id_preferred_cautious;
@@ -107,7 +103,7 @@ public:
 
 		virtual ~CtxData();
 
-		// add actions to idActionMap and myAuxiliaryPredicateMask
+		// add Actions to idActionMap and myAuxiliaryPredicateMask
 		void addAction(const ID &, const ActionPtr);
 
 		typedef std::map<std::string, PluginActionBasePtr> NamePluginActionBaseMap;
@@ -136,10 +132,14 @@ public:
 		// creates the Actions "#continueIteration" and "#stopIteration"
 		void createAndInsertContinueAndStopActions(RegistryPtr);
 
+		// a integer that specify the number of Iterations
+		// will be used only if both (number and time) are specified
 		int numberIterations;
 
+		// the time after which the Iterations must stop
 		boost::posix_time::time_duration timeDuration;
 
+		// the time when the ActionPlugin starts
 		boost::posix_time::ptime startingTime;
 
 		typedef std::map<std::string, BestModelSelectorPtr> NameBestModelSelectorMap;
@@ -151,6 +151,7 @@ public:
 		NameExecutionModeRewriterMap nameExecutionModeRewriterMap;
 
 	private:
+		// Utility functions used to register all parts of a Plugin of the ActionPlugin
 		void registerActionsOfPlugin(std::vector<PluginActionBasePtr>,
 				RegistryPtr);
 		void registerBestModelSelectorsOfPlugin(
@@ -166,6 +167,8 @@ public:
 	virtual void printUsage(std::ostream& o) const;
 
 	// accepted options: --action-enable
+	//					 --num-iterations
+	//					 --duration-iterations
 	//
 	// processes options for this plugin, and removes recognized options from pluginOptions
 	// (do not free the pointers, the const char* directly come from argv)
@@ -177,6 +180,7 @@ public:
 
 	virtual void setupProgramCtx(ProgramCtx&);
 
+	// Utility function that prints a Tuple on standard error
 	static void printTuple(const Tuple& tuple, const RegistryPtr registryPtr) {
 		bool first = true;
 		for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();

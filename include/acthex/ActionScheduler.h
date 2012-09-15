@@ -2,7 +2,7 @@
  * @file ActionSchedulerCallback.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief Class that contains the functions used to Schedule the Actions
  */
 
 #ifndef ACTION_SCHEDULER_H_
@@ -15,21 +15,22 @@ DLVHEX_NAMESPACE_BEGIN
 class ActionScheduler {
 public:
 	ActionScheduler(const CtxDataPtr, const RegistryPtr registry);
+	// function that fill the multimap (passed as parameter)
+	// with Precedence attribute and Action Tuple
+	// checking the Action Option attribute
 	void executionModeController(std::multimap<int, Tuple>&);
-#warning can be removed because it s implemented in DefaultExecutionModeRewriter
-	void executionModeRewriter(const std::multimap<int, Tuple>&,
-			std::list<std::set<Tuple> >&);
+	// function that check if the order of execution of Actions
+	// in the List, based on their Precedence attribute, is correct
+	// and if in the List there are all the Actions
 	bool checkIfTheListIsCorrect(const std::multimap<int, Tuple>&,
 			const std::list<std::set<Tuple> >&);
 private:
-//	const ActionPlugin::CtxData& ctxData;
 	const CtxDataPtr ctxDataPtr;
 	const RegistryPtr registryPtr;
+	// Utility functions
 	bool isPresentInAllAnswerset(const Tuple&);
 	bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
 	bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
-//    bool theMultiMapContainsThisActionWithThisPrecedence(const std::multimap<int, Tuple>&,
-//        const Tuple&, int);
 	bool checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>&,
 			const std::set<Tuple>&) const;
 };
