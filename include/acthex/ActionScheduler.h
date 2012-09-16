@@ -14,7 +14,7 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionScheduler {
 public:
-	ActionScheduler(const CtxDataPtr, const RegistryPtr registry);
+	ActionScheduler(ActionPlugin::CtxData&, const RegistryPtr registry);
 	// function that fill the multimap (passed as parameter)
 	// with Precedence attribute and Action Tuple
 	// checking the Action Option attribute
@@ -25,7 +25,7 @@ public:
 	bool checkIfTheListIsCorrect(const std::multimap<int, Tuple>&,
 			const std::list<std::set<Tuple> >&);
 private:
-	const CtxDataPtr ctxDataPtr;
+	ActionPlugin::CtxData& ctxData;
 	const RegistryPtr registryPtr;
 	// Utility functions
 	bool isPresentInAllAnswerset(const Tuple&);

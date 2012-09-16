@@ -13,9 +13,9 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionPluginModelCallback::ActionPluginModelCallback(CtxDataPtr ctxDataPtr,
+ActionPluginModelCallback::ActionPluginModelCallback(ActionPlugin::CtxData& ctxData,
 		const RegistryPtr registryPtr) :
-		ctxDataPtr(ctxDataPtr), registryPtr(registryPtr) {
+		ctxData(ctxData), registryPtr(registryPtr) {
 }
 
 ActionPluginModelCallback::~ActionPluginModelCallback() {
@@ -31,7 +31,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	ActionPlugin::CtxData::LevelsAndWeights levelsAndWeights;
 
-	ctxDataPtr->myAuxiliaryPredicateMask.updateMask();
+	ctxData.myAuxiliaryPredicateMask.updateMask();
 
 	std::cerr << "\nThe Atoms Of Interpretation with myAuxiliaryPredicateMask:"
 			<< std::endl;
@@ -39,7 +39,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
 	intr->getStorage() |=
-			ctxDataPtr->myAuxiliaryPredicateMask.mask()->getStorage();
+			ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= answerSetPtr->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;
@@ -84,27 +84,27 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	if (levelsAndWeights.empty()) {
 		// this is always a BestModel
-		if (!ctxDataPtr->levelsAndWeightsBestModels.empty()) {
+		if (!ctxData.levelsAndWeightsBestModels.empty()) {
 			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
-			ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
-			ctxDataPtr->notBestModelsContainer.insert(
-					ctxDataPtr->notBestModelsContainer.end(),
-					ctxDataPtr->bestModelsContainer.begin(),
-					ctxDataPtr->bestModelsContainer.end());
-			ctxDataPtr->bestModelsContainer.clear();
+			ctxData.levelsAndWeightsBestModels = levelsAndWeights;
+			ctxData.notBestModelsContainer.insert(
+					ctxData.notBestModelsContainer.end(),
+					ctxData.bestModelsContainer.begin(),
+					ctxData.bestModelsContainer.end());
+			ctxData.bestModelsContainer.clear();
 		}
-	} else if (ctxDataPtr->levelsAndWeightsBestModels.empty()) {
+	} else if (ctxData.levelsAndWeightsBestModels.empty()) {
 
-		if (!ctxDataPtr->bestModelsContainer.empty()) {
-			ctxDataPtr->notBestModelsContainer.push_back(answerSetPtr);
+		if (!ctxData.bestModelsContainer.empty()) {
+			ctxData.notBestModelsContainer.push_back(answerSetPtr);
 			return true;
 		}
 
-		ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
+		ctxData.levelsAndWeightsBestModels = levelsAndWeights;
 
 	} else {
 
-		int res_is = isABestModel(ctxDataPtr->levelsAndWeightsBestModels,
+		int res_is = isABestModel(ctxData.levelsAndWeightsBestModels,
 				levelsAndWeights);
 
 		std::cerr << "res_is " << res_is << std::endl;
@@ -112,42 +112,42 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 		if (res_is == 0)
 			;
 		else if (res_is == -1) {
-			ctxDataPtr->notBestModelsContainer.push_back(answerSetPtr);
+			ctxData.notBestModelsContainer.push_back(answerSetPtr);
 			return true;
 		} else if (res_is == 1) {
 			//the AnswerSet has a "better" levelsAndWeights of the others AnswerSet in the bestModelsContainer
-			ctxDataPtr->levelsAndWeightsBestModels = levelsAndWeights;
-			ctxDataPtr->notBestModelsContainer.insert(
-					ctxDataPtr->notBestModelsContainer.end(),
-					ctxDataPtr->bestModelsContainer.begin(),
-					ctxDataPtr->bestModelsContainer.end());
-			ctxDataPtr->bestModelsContainer.clear();
+			ctxData.levelsAndWeightsBestModels = levelsAndWeights;
+			ctxData.notBestModelsContainer.insert(
+					ctxData.notBestModelsContainer.end(),
+					ctxData.bestModelsContainer.begin(),
+					ctxData.bestModelsContainer.end());
+			ctxData.bestModelsContainer.clear();
 		} else
 			throw PluginError(
 					"In ModelCallback, there was an error when operator() called isABestModel");
 
 	}
 
-	ctxDataPtr->bestModelsContainer.push_back(answerSetPtr);
+	ctxData.bestModelsContainer.push_back(answerSetPtr);
 
 	std::cerr << "\nThe levelsAndWeightsBestModels:" << std::endl;
 	std::cerr << "Level\tWeight" << std::endl;
-	for (itLAW = ctxDataPtr->levelsAndWeightsBestModels.begin();
-			itLAW != ctxDataPtr->levelsAndWeightsBestModels.end(); itLAW++) {
+	for (itLAW = ctxData.levelsAndWeightsBestModels.begin();
+			itLAW != ctxData.levelsAndWeightsBestModels.end(); itLAW++) {
 		std::cerr << itLAW->first << '\t' << itLAW->second << std::endl;
 	}
 
 	std::cerr << "\nThe bestModelsContainer:" << std::endl;
 	ActionPlugin::CtxData::BestModelsContainer::iterator itBMC;
-	for (itBMC = ctxDataPtr->bestModelsContainer.begin();
-			itBMC != ctxDataPtr->bestModelsContainer.end(); itBMC++) {
+	for (itBMC = ctxData.bestModelsContainer.begin();
+			itBMC != ctxData.bestModelsContainer.end(); itBMC++) {
 		(*itBMC)->interpretation->print(std::cerr);
 		std::cerr << std::endl;
 	}
 
 	std::cerr << "\nThe notBestModelsContainer:" << std::endl;
-	for (itBMC = ctxDataPtr->notBestModelsContainer.begin();
-			itBMC != ctxDataPtr->notBestModelsContainer.end(); itBMC++) {
+	for (itBMC = ctxData.notBestModelsContainer.begin();
+			itBMC != ctxData.notBestModelsContainer.end(); itBMC++) {
 		(*itBMC)->interpretation->print(std::cerr);
 		std::cerr << std::endl;
 	}

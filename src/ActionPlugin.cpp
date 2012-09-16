@@ -333,29 +333,23 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 	return ret;
 }
 
-#warning is used only to create a CtxData that isn t destroyed
-void deallocatorFunc(ActionPlugin::CtxData * ctxData) {
-}
-
 void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 
-	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-	if (!ctxdata.enabled)
+	ActionPlugin::CtxData& ctxData = ctx.getPluginData<ActionPlugin>();
+	if (!ctxData.enabled)
 		return;
 
 	RegistryPtr reg = ctx.registry();
 
 	// init predicate mask
-	ctxdata.myAuxiliaryPredicateMask.setRegistry(reg);
+	ctxData.myAuxiliaryPredicateMask.setRegistry(reg);
 
-	CtxDataPtr ctxDataPtr(&ctxdata, deallocatorFunc);
-
-	ModelCallbackPtr mcb(new ActionPluginModelCallback(ctxDataPtr, reg));
+	ModelCallbackPtr mcb(new ActionPluginModelCallback(ctxData, reg));
 	ctx.modelCallbacks.clear();
 	ctx.modelCallbacks.push_back(mcb);
 
 	FinalCallbackPtr finalCallbackPtr(
-			new ActionPluginFinalCallback(ctx, ctxDataPtr));
+			new ActionPluginFinalCallback(ctx));
 	ctx.finalCallbacks.push_back(finalCallbackPtr);
 
 }
