@@ -1,0 +1,66 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[english]{babel}
+
+\usepackage{parskip}
+\setlength{\parskip}{1ex}
+
+\usepackage{xspace}
+\newcommand{\Iteration}{\textbf{Iteration}\xspace}
+
+\begin{document}
+
+	\section*{Iteration}
+		We introduced the possibility to iterate the process of evaluation/execution of \textit{Action Atoms}.
+
+		An \Iteration is the evaluation of a given hex program with \textit{Action Atoms} and the execution of the entailed \textit{Action Atoms}.
+
+		This feature is very useful and becomes necessary when we want to use \textit{Environment} in a proper way.
+
+		\vspace*{1em}
+
+		The behavior of the iteration process is controlled by means of a \Iteration variable.
+
+		The default value of \Iteration is ``NO ITERATION'' meaning that we won't do any iteration namely the evaluation/execution of \textit{Action Atoms} will be performed only 1 time.
+
+		\vspace*{1em}
+
+		The user can modify this default behavior in 3 different ways:
+		\begin{itemize}
+			\item from a command line option
+			\item by changing some built-in constant values (that override the behavior specified from command line)
+			\item by entailing the truth of some built-in action predicates.
+		\end{itemize}
+
+		\vspace*{1em}
+
+		The ``value'' of \Iteration can be specified in 2 ways:
+		\begin{itemize}
+			\item with \verb|--acthexNumberIterations=NUMBER| (command line option) or \verb|#acthexNumberIterations=NUMBER.| (built-in constant)
+
+				\verb|NUMBER| must be an integer number that expresses the number of iterations that the program will have to do (0 expresses that the iterations must continue indefinitely);
+
+			\item with \verb|--acthexDurationIterations=TIME| (command line option) or \verb|#acthexDurationIterations=TIME.| (built-in constant)
+
+				\verb|TIME| must be a time duration (represented in a string in this format ``h[h][:mm][:ss][.fff]''; accepted delimiters are ``\-:,.'') after which the iterations must end (0 expresses that the iterations must continue indefinitely); obviously at the end of the current iteration (we verify at the end of each iteration if the time is over).
+		\end{itemize}
+
+		If are specified both \verb|acthexNumIterations| and \verb|acthexDurationIterations| from command line options or both with built-in constant, they must be considered in OR (the program will end when it made ​​the specified number of iterations or when the specified time has passed).
+
+		\vspace*{1em}
+
+		There are 2 ``Special Atoms'' that can modify the behavior of \Iteration:
+		\begin{itemize}
+			\item \verb+#acthexContinue{b|c|c_p}+
+
+				If this ''Special Atom'' is scheduled when the value of \Iteration is the default value the program executes another iteration;
+
+			\item \verb+#acthexStop{b|c|c_p}+
+
+				If this ''Special Atoms'' is scheduled when the value of \Iteration is set to a value other than the default one the iteration process will end at the end of the current iteration.
+		\end{itemize}
+
+\end{document}

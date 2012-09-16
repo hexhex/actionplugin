@@ -150,6 +150,10 @@ public:
 		// a map that contains the name and a pointer to the corresponding ExecutionModeRewriter
 		NameExecutionModeRewriterMap nameExecutionModeRewriterMap;
 
+		//
+		void addNumberIterations(const unsigned int, ProgramCtx&);
+		void addDurationIterations(const std::string & string_of_duration);
+
 	private:
 		// Utility functions used to register all parts of a Plugin of the ActionPlugin
 		void registerActionsOfPlugin(std::vector<PluginActionBasePtr>,
@@ -196,7 +200,6 @@ public:
 		}
 		std::cerr << std::endl;
 	}
-	;
 
 };
 typedef boost::shared_ptr<ActionPlugin::CtxData> CtxDataPtr;

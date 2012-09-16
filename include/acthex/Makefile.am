@@ -8,6 +8,7 @@ ACTIONHEADERS = \
 	PluginActionBase.h \
 	ActionPlugin.h \
 	BestModelSelector.h \
-	ExecutionModeRewriter.h
+	ExecutionModeRewriter.h \
+	ActionPluginParserModuleForBuiltInConstants.h
 
 pkginclude_HEADERS = $(ACTIONHEADERS)

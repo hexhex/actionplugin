@@ -38,6 +38,7 @@
 #include "acthex/ActionPluginFinalCallback.h"
 #include "acthex/ActionPluginParserModule.h"
 #include "acthex/ActionPluginInterface.h"
+#include "acthex/ActionPluginParserModuleForBuiltInConstants.h"
 
 #include "dlvhex2/PredicateMask.h"
 
@@ -197,6 +198,34 @@ void ActionPlugin::CtxData::createAndInsertContinueAndStopActions(
 
 }
 
+void ActionPlugin::CtxData::addNumberIterations(const unsigned int number,
+		ProgramCtx& ctx) {
+	if (number == 0)
+		iterationType = INFINITE;
+	else {
+		iterationType = FIXED;
+		ctx.config.setOption("RepeatEvaluation", number);
+		numberIterations = number;
+	}
+}
+
+void ActionPlugin::CtxData::addDurationIterations(
+		const std::string & string_of_duration) {
+	if (string_of_duration.length() == 0)
+		return;
+	if (string_of_duration[0] == '-')
+		return;
+
+	if (string_of_duration == "0")
+		iterationType = INFINITE;
+	else {
+		iterationType = FIXED;
+		timeDuration = boost::posix_time::duration_from_string(
+				string_of_duration);
+		startingTime = boost::posix_time::second_clock::local_time();
+	}
+}
+
 ActionPlugin::ActionPlugin() :
 		PluginInterface() {
 #warning without it there isn t Segmentation Fault
@@ -233,32 +262,17 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		if (option == "--action-enable") {
 			ctxdata.enabled = true;
 			processed = true;
-		} else if (option.find("--acthexNumberIterations=") != std::string::npos) {
-			std::string string_of_number = option.substr(20);
+		} else if (option.find("--acthexNumberIterations=")
+				!= std::string::npos) {
+			const std::string string_of_number = option.substr(25);
 			unsigned int number;
 			qi::parse(string_of_number.begin(), string_of_number.end(), number);
-			if (number == 0)
-				ctxdata.iterationType = INFINITE;
-			else {
-				ctxdata.iterationType = FIXED;
-				ctx.config.setOption("RepeatEvaluation", number);
-				ctxdata.numberIterations = number;
-			}
+			ctxdata.addNumberIterations(number, ctx);
 			processed = true;
-		} else if (option.find("--acthexDurationIterations=") != std::string::npos) {
-			const std::string string_of_duration = option.substr(22);
-			if (string_of_duration.length() == 0)
-				continue;
-			else if (string_of_duration[0] == '-')
-				continue;
-			else if (string_of_duration == "0")
-				ctxdata.iterationType = INFINITE;
-			else {
-				ctxdata.iterationType = FIXED;
-				ctxdata.timeDuration = boost::posix_time::duration_from_string(string_of_duration);
-				ctxdata.startingTime =
-						boost::posix_time::second_clock::local_time();
-			}
+		} else if (option.find("--acthexDurationIterations=")
+				!= std::string::npos) {
+			const std::string string_of_duration = option.substr(27);
+			ctxdata.addDurationIterations(string_of_duration);
 			processed = true;
 		}
 
@@ -305,11 +319,16 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 	std::vector < HexParserModulePtr > ret;
 	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
 
-	if (ctxdata.enabled)
+	if (ctxdata.enabled) {
 		ret.push_back(
 				HexParserModulePtr(
 						new ActionPluginParserModule<HexParserModule::HEADATOM>(
 								ctx)));
+		ret.push_back(
+				HexParserModulePtr(
+						new ActionPluginParserModuleForBuiltInConstants<
+								HexParserModule::TOPLEVEL>(ctx)));
+	}
 
 	return ret;
 }
