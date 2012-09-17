@@ -8,7 +8,7 @@
 #ifndef BEST_MODEL_SELECTOR_H_
 #define BEST_MODEL_SELECTOR_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -28,8 +28,8 @@ public:
 	// and must select the position of an Iterator (always received as a parameter)
 	// indicating the desired BestModel
 	virtual void getBestModel(
-			ActionPlugin::CtxData::BestModelsContainer::const_iterator&,
-			const ActionPlugin::CtxData::BestModelsContainer&) = 0;
+			ActionPluginCtxData::BestModelsContainer::const_iterator&,
+			const ActionPluginCtxData::BestModelsContainer&) = 0;
 private:
 	// the name of this Selector, will be used to invoke it
 	std::string name;

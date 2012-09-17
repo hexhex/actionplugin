@@ -8,13 +8,11 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-
 #include "acthex/PluginActionBase.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
-PluginActionBase::~PluginActionBase()
-{
+PluginActionBase::~PluginActionBase() {
 }
 
 DLVHEX_NAMESPACE_END

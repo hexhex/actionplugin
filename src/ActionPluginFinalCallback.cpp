@@ -14,6 +14,7 @@
 #endif // HAVE_CONFIG_H
 #include "acthex/ActionPluginFinalCallback.h"
 
+#include "acthex/ActionPlugin.h"
 #include "acthex/ActionScheduler.h"
 #include "acthex/PluginActionBase.h"
 #include "acthex/BestModelSelector.h"
@@ -22,14 +23,16 @@
 DLVHEX_NAMESPACE_BEGIN
 
 ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx) :
-		programCtx(ctx), ctxData(ctx.getPluginData<ActionPlugin>()), registryPtr(ctx.registry()) {
+		programCtx(ctx), ctxData(ctx.getPluginData<ActionPlugin>()), registryPtr(
+				ctx.registry()) {
 }
 
 void ActionPluginFinalCallback::operator()() {
 	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
 
 #warning I ve to call the BestModelSelection function of the specified ActionAtom
-	 ctxData.nameBestModelSelectorMap["default"]->getBestModel(ctxData.iteratorBestModel, ctxData.bestModelsContainer);
+	ctxData.nameBestModelSelectorMap["default"]->getBestModel(
+			ctxData.iteratorBestModel, ctxData.bestModelsContainer);
 
 	std::cerr << "\nBestModel selected:" << std::endl;
 	(*ctxData.iteratorBestModel)->interpretation->print(std::cerr);
@@ -47,13 +50,14 @@ void ActionPluginFinalCallback::operator()() {
 			itMMOE != multimapOfExecution.end(); itMMOE++) {
 		std::cerr << itMMOE->first << "\t\t";
 		const Tuple& tempTuple = itMMOE->second;
-		ActionPlugin::printTuple(tempTuple, registryPtr);
+		ActionScheduler::printTuple(tempTuple, registryPtr);
 	}
 
 #warning I ve to call the executionModeRewriter function of the specified ActionAtom
 	std::cerr << "\nCall the executionModeRewriter" << std::endl;
 	std::list < std::set<Tuple> > listOfExecution;
-	ctxData.nameExecutionModeRewriterMap["default"]->rewrite(multimapOfExecution, listOfExecution);
+	ctxData.nameExecutionModeRewriterMap["default"]->rewrite(
+			multimapOfExecution, listOfExecution);
 
 	std::cerr << "\nThe ListOfExecution:" << std::endl;
 	std::list<std::set<Tuple> >::iterator itLOE;
@@ -63,7 +67,7 @@ void ActionPluginFinalCallback::operator()() {
 		for (std::set<Tuple>::iterator itLOEs = tempSet.begin();
 				itLOEs != tempSet.end(); itLOEs++) {
 			const Tuple& tempTuple = (*itLOEs);
-			ActionPlugin::printTuple(tempTuple, registryPtr);
+			ActionScheduler::printTuple(tempTuple, registryPtr);
 		}
 	}
 
@@ -104,9 +108,9 @@ void ActionPluginFinalCallback::operator()() {
 					tempTuple.begin() + 1, tempTuple.end());
 
 			std::cerr << "tempTuple: ";
-			ActionPlugin::printTuple(tempTuple, registryPtr);
+			ActionScheduler::printTuple(tempTuple, registryPtr);
 			std::cerr << "tupleForExecute: ";
-			ActionPlugin::printTuple(tupleForExecute, registryPtr);
+			ActionScheduler::printTuple(tupleForExecute, registryPtr);
 
 			std::map<std::string, PluginActionBasePtr>::iterator it =
 					ctxData.namePluginActionBaseMap.find(

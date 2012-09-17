@@ -12,7 +12,7 @@
 #ifndef ACTION_PLUGIN_FINAL_CALLBACK_H_
 #define ACTION_PLUGIN_FINAL_CALLBACK_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 #include "dlvhex2/PluginInterface.h"
 
@@ -26,7 +26,7 @@ public:
 	virtual void operator()();
 protected:
 	ProgramCtx& programCtx;
-	ActionPlugin::CtxData& ctxData;
+	ActionPluginCtxData& ctxData;
 	const RegistryPtr registryPtr;
 };
 

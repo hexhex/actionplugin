@@ -8,11 +8,13 @@
 #ifndef ACTION_PLUGIN_PARSER_MODULE_FOR_BUILT_IN_CONSTANTS_H_
 #define ACTION_PLUGIN_PARSER_MODULE_FOR_BUILT_IN_CONSTANTS_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 #include "dlvhex2/HexGrammar.h"
 #include "dlvhex2/Printer.h"
 #include "dlvhex2/HexParserModule.h"
+
+#include <boost/lexical_cast.hpp>
 
 DLVHEX_NAMESPACE_BEGIN
 
@@ -20,13 +22,10 @@ namespace qi = boost::spirit::qi;
 
 class ActionPluginParserModuleSemanticsForBuiltInConstants: public HexGrammarSemantics {
 public:
-	ActionPlugin::CtxData& ctxdata;
+	ActionPluginCtxData& ctxData;
 
 public:
-	ActionPluginParserModuleSemanticsForBuiltInConstants(ProgramCtx& ctx) :
-			HexGrammarSemantics(ctx), ctxdata(ctx.getPluginData<ActionPlugin>()) {
-	}
-	;
+	ActionPluginParserModuleSemanticsForBuiltInConstants(ProgramCtx& ctx);
 
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
@@ -67,13 +66,97 @@ struct sem<
 		DBGLOG(DBG, "stored atom " << atom << " which got id " << target);
 	}
 
+//	void operator()(ActionPluginParserModuleSemanticsForBuiltInConstants& mgr,
+//			const boost::fusion::vector2<std::string,
+//					boost::variant<
+//							boost::fusion::vector2<std::string,
+//									const unsigned int>, boost::fusion::vector2<std::string, const char> > >
+//			/*const boost::fusion::vector2< std::string, const std::vector<char, std::allocator<char> > >*/& source,
+//			ID& target) {
+//
+//		std::cerr << "\n\n\nAAAA\t" << boost::fusion::at_c < 1
+//				> (source).which() << "\n\n\n" << std::endl;
+//		if (boost::fusion::at_c < 1 > (source).which() == 0) {
+//
+//			//std::cerr << "\n\n" << boost::fusion::at_c < 0 > (boost::get<boost::fusion::vector2<std::string, const unsigned int> > (boost::fusion::at_c < 1 > (source))) << "\n" << std::endl;
+//			std::string typeOfIteration = boost::fusion::at_c < 0
+//					> (boost::get
+//							< boost::fusion::vector2<std::string,
+//									const unsigned int>
+//							> (boost::fusion::at_c < 1 > (source)));
+//
+//			std::cerr << "\n\n" << typeOfIteration << "\n" << std::endl;
+//
+//			mgr.ctxdata.addNumberIterations(
+//					boost::fusion::at_c < 1
+//							> (boost::get
+//									< boost::fusion::vector2<std::string,
+//											const unsigned int>
+//									> (boost::fusion::at_c < 1 > (source))),
+//					mgr.ctx);
+//		} else if (boost::fusion::at_c < 1 > (source).which() == 1) {
+//
+//			std::string typeOfIteration = boost::get < std::string
+//					> (boost::fusion::at_c < 1 > (source));
+//
+//			std::cerr << "\n\n" << typeOfIteration << "\n" << std::endl;
+//
+//			//mgr.ctxdata.addDurationIterations
+//		} else
+//			throw PluginError("Built-in Constant not found");
+//
+//	}
 	void operator()(ActionPluginParserModuleSemanticsForBuiltInConstants& mgr,
-			const boost::fusion::vector3<std::string, std::string, const unsigned int> & source,
-			ID& target) {
+			const boost::fusion::vector3<std::string, std::string,
+			/*boost::variant<const unsigned int, boost::fusion::vector2<const char, const char> /*>*/
+			const std::vector<char> > & source, ID& target) {
 
-		mgr.ctxdata.addNumberIterations(boost::fusion::at_c < 2 > (source), mgr.ctx);
+		std::string typeOfIteration = boost::fusion::at_c < 1 > (source);
+
+		std::cerr << "\n\n" << typeOfIteration << std::endl;
+
+		if (typeOfIteration == "NumberIterations") {
+
+//			if (boost::fusion::at_c < 2 > (source).which() == 1)
+//				throw PluginError("Built-in Constant not found");
+//
+//			const unsigned int number = boost::get<const unsigned int>(
+//					boost::fusion::at_c < 2 > (source));
+//
+//			std::cerr << number << "\n" << std::endl;
+//
+//			mgr.ctxdata.addNumberIterations(number, mgr.ctx);
+
+		} else if (typeOfIteration == "DurationIterations") {
+
+//			if (boost::fusion::at_c < 2 > (source).which() == 0) {
+//				//number
+//				const unsigned int duration = boost::get<const unsigned int>(
+//						boost::fusion::at_c < 2 > (source));
+//
+//				std::cerr << duration << "\n" << std::endl;
+//
+//				mgr.ctxdata.addDurationIterations(
+//						boost::lexical_cast < std::string > (duration));
+//
+//			} else {
+//				//string
+//				//std::string duration = boost::get < std::string> (boost::fusion::at_c < 2 > (source)));
+//				//std::cerr << duration << "\n" << std::endl;
+//				const char first = boost::fusion::at_c < 0 > (boost::get < boost::fusion::vector2<const char, const char>
+//						> (boost::fusion::at_c < 2 > (source)));
+//				std::cerr << first << "\n" << std::endl;
+//
+////				mgr.ctxdata.addDurationIterations(
+////						boost::get<const std::vector<char, std::allocator<char> > >(
+////								boost::fusion::at_c < 2 > (source)));
+//			}
+
+		} else
+			throw PluginError("Built-in Constant not found");
 
 	}
+
 };
 
 namespace {
@@ -91,13 +174,28 @@ public HexGrammarBase<Iterator, Skipper> {
 			ActionPluginParserModuleSemanticsForBuiltInConstants& sem) :
 			Base(sem), sem(sem) {
 		typedef ActionPluginParserModuleSemanticsForBuiltInConstants Sem;
+//		builtInConstantsPrefixAtom = //(qi::string("#acthex") >> +qi::char_("0-9:,.")
+//				(qi::string("#acthex")
+//						>> ((qi::string("NumberIterations") >> qi::lit('=')
+//								>> qi::uint_)
+//								| (qi::string("DurationIterations")
+//									//	>> qi::lit('=')
+//										//>> qi::char_("0-9:,.")
+//										>> qi::char_("0-9") //>> qi::char_(":,.")
+//								//>> qi::string("VALUE")
+//								//>> +qi::char_("0-9:,.")
+//								)) >> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(
+//						sem)];
+
 		builtInConstantsPrefixAtom =
-				(qi::string("#acthex") >> qi::string("NumberIterations") >> qi::lit('=')
-								>> qi::uint_/*
-								| (qi::string("DurationIterations")
-										>> qi::lit('=')
-										>> *(qi::char_("0-9:,.")))*/
-						>> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(sem)];
+				(qi::string("#acthex")
+						>> (qi::string("NumberIterations")
+								| qi::string("DurationIterations"))
+						//>> qi::lit('=') >> (qi::uint_ | qi::string("VALUE"))
+						>> qi::lit('=')
+						//>> (qi::uint_ | (qi::char_("0-9") >> qi::char_(":,.")))
+						>> +qi::char_("0-9:,.") >> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(
+						sem)];
 
 #ifdef BOOST_SPIRIT_DEBUG
 		BOOST_SPIRIT_DEBUG_NODE(builtInConstantsPrefixAtom);

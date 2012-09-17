@@ -8,7 +8,7 @@
 #ifndef ACTION_PLUGIN_PARSER_MODULE_H_
 #define ACTION_PLUGIN_PARSER_MODULE_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 #include "dlvhex2/HexGrammar.h"
 #include "dlvhex2/Printer.h"
@@ -20,13 +20,10 @@ namespace qi = boost::spirit::qi;
 
 class ActionPluginParserModuleSemantics: public HexGrammarSemantics {
 public:
-	ActionPlugin::CtxData& ctxdata;
+	ActionPluginCtxData& ctxData;
 
 public:
-	ActionPluginParserModuleSemantics(ProgramCtx& ctx) :
-			HexGrammarSemantics(ctx), ctxdata(ctx.getPluginData<ActionPlugin>()) {
-	}
-	;
+	ActionPluginParserModuleSemantics(ProgramCtx& ctx);
 
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
@@ -81,8 +78,8 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		std::cerr << "\nThe IdActionMap:" << std::endl;
 		std::map<ID, ActionPtr>::iterator itIAM;
-		for (itIAM = mgr.ctxdata.idActionMap.begin();
-				itIAM != mgr.ctxdata.idActionMap.end(); itIAM++) {
+		for (itIAM = mgr.ctxData.idActionMap.begin();
+				itIAM != mgr.ctxData.idActionMap.end(); itIAM++) {
 			printer.print(itIAM->first);
 			std::cerr << "\t\t";
 			printer.print(itIAM->second->getAuxId());
@@ -92,8 +89,9 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		std::cerr << std::endl;
 
-		if (mgr.ctxdata.idActionMap.count(id_0) == 0)
-			throw PluginError("Action '" + reg->getTermStringByID(id_0) + "' not found");
+		if (mgr.ctxData.idActionMap.count(id_0) == 0)
+			throw PluginError(
+					"Action '" + reg->getTermStringByID(id_0) + "' not found");
 
 		std::cerr << "original:\t";
 
@@ -153,7 +151,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		std::cerr << "rewritten:\t";
 
-		printer.print(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
+		printer.print(mgr.ctxData.idActionMap.find(id_0)->second->getAuxId());
 
 		std::cerr << '(';
 
@@ -216,7 +214,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 
 		Tuple& tuple = oatom.tuple;
 
-		tuple.push_back(mgr.ctxdata.idActionMap.find(id_0)->second->getAuxId());
+		tuple.push_back(mgr.ctxData.idActionMap.find(id_0)->second->getAuxId());
 		tuple.push_back(id_0);
 
 		if (!!boost::fusion::at_c < 1 > (source)
@@ -226,11 +224,11 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		}
 
 		if (boost::fusion::at_c < 2 > (source) == "b")
-			tuple.push_back(mgr.ctxdata.id_brave);
+			tuple.push_back(mgr.ctxData.id_brave);
 		else if (boost::fusion::at_c < 2 > (source) == "c")
-			tuple.push_back(mgr.ctxdata.id_cautious);
+			tuple.push_back(mgr.ctxData.id_cautious);
 		else if (boost::fusion::at_c < 2 > (source) == "c_p")
-			tuple.push_back(mgr.ctxdata.id_preferred_cautious);
+			tuple.push_back(mgr.ctxData.id_preferred_cautious);
 		else {
 			assert(true);
 		}
@@ -238,7 +236,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		if (!!boost::fusion::at_c < 3 > (source))
 			tuple.push_back(boost::fusion::at_c < 3 > (source).get());
 		else
-			tuple.push_back(mgr.ctxdata.id_default_precedence);
+			tuple.push_back(mgr.ctxData.id_default_precedence);
 
 		if (!!boost::fusion::at_c < 4 > (source)) {
 
@@ -248,7 +246,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 						boost::fusion::at_c < 0
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else
-				tuple.push_back(mgr.ctxdata.id_default_weight_with_level);
+				tuple.push_back(mgr.ctxData.id_default_weight_with_level);
 
 			if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
@@ -256,11 +254,11 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 						boost::fusion::at_c < 1
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else
-				tuple.push_back(mgr.ctxdata.id_default_level_with_weight);
+				tuple.push_back(mgr.ctxData.id_default_level_with_weight);
 
 		} else {
-			tuple.push_back(mgr.ctxdata.id_default_weight_without_level);
-			tuple.push_back(mgr.ctxdata.id_default_level_without_weight);
+			tuple.push_back(mgr.ctxData.id_default_weight_without_level);
+			tuple.push_back(mgr.ctxData.id_default_level_without_weight);
 		}
 
 		createAtom(reg, oatom, target);

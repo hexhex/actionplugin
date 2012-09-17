@@ -8,7 +8,7 @@
 #ifndef ACTION_PLUGIN_INTERFACE_H_
 #define ACTION_PLUGIN_INTERFACE_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 #include "acthex/PluginActionBase.h"
 #include "acthex/BestModelSelector.h"
 #include "acthex/ExecutionModeRewriter.h"
@@ -85,9 +85,8 @@ public:
 		}
 	protected:
 		// The function that must be overridden by the creator of the Action to execute the own code
-		virtual void execute(typename Derived::Environment&,
-				const RegistryPtr, const Tuple&,
-				const InterpretationConstPtr) = 0;
+		virtual void execute(typename Derived::Environment&, const RegistryPtr,
+				const Tuple&, const InterpretationConstPtr) = 0;
 	};
 
 	/**
@@ -134,8 +133,8 @@ public:
 				BestModelSelector(name) {
 		}
 		virtual void getBestModel(
-				dlvhex::ActionPlugin::CtxData::BestModelsContainer::const_iterator& iteratorBestModel,
-				const dlvhex::ActionPlugin::CtxData::BestModelsContainer& bestModelsContainer) {
+				ActionPluginCtxData::BestModelsContainer::const_iterator& iteratorBestModel,
+				const ActionPluginCtxData::BestModelsContainer& bestModelsContainer) {
 			iteratorBestModel = bestModelsContainer.begin();
 		}
 	};
@@ -198,41 +197,7 @@ public:
 
 	// Used to activate the Plugin only if "--action-enable" option is selected
 	virtual void processOptions(std::list<const char*>& pluginOptions,
-			ProgramCtx& ctx) {
-		std::cerr << "processOptions of ActionPluginInterface" << std::endl;
-
-		ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
-
-		typedef std::list<const char*>::iterator Iterator;
-		Iterator it;
-
-		it = pluginOptions.begin();
-		while (it != pluginOptions.end()) {
-			bool processed = false;
-			const std::string str(*it);
-			if (str == "--action-enable") {
-				ctxdata.enabled = true;
-				processed = true;
-			}
-
-			if (processed) {
-				// return value of erase: element after it, maybe end()
-				DBGLOG(DBG,
-						"ActionPluginInterface successfully processed option "
-								<< str);
-				it = pluginOptions.erase(it);
-			} else {
-				it++;
-			}
-
-		}
-
-		if (ctxdata.enabled)
-			// Register the Action in the ActionPlugin
-			ctx.getPluginData<ActionPlugin>().registerPlugin(this->create(ctx),
-					ctx);
-
-	}
+			ProgramCtx& ctx);
 
 protected:
 	// Must be overridden by the Plugins to instantiate themselves

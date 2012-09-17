@@ -13,8 +13,8 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionPluginModelCallback::ActionPluginModelCallback(ActionPlugin::CtxData& ctxData,
-		const RegistryPtr registryPtr) :
+ActionPluginModelCallback::ActionPluginModelCallback(
+		ActionPluginCtxData& ctxData, const RegistryPtr registryPtr) :
 		ctxData(ctxData), registryPtr(registryPtr) {
 }
 
@@ -29,7 +29,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	answerSetPtr->interpretation->print(std::cerr);
 	std::cerr << std::endl;
 
-	ActionPlugin::CtxData::LevelsAndWeights levelsAndWeights;
+	ActionPluginCtxData::LevelsAndWeights levelsAndWeights;
 
 	ctxData.myAuxiliaryPredicateMask.updateMask();
 
@@ -38,8 +38,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
-	intr->getStorage() |=
-			ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
+	intr->getStorage() |= ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= answerSetPtr->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;
@@ -74,7 +73,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	}
 
 	// eliminates eventual levels with weight 0 in levelsAndWeights
-	ActionPlugin::CtxData::LevelsAndWeights::iterator itLAW =
+	ActionPluginCtxData::LevelsAndWeights::iterator itLAW =
 			levelsAndWeights.begin();
 	while (itLAW != levelsAndWeights.end())
 		if (itLAW->second == 0)
@@ -138,7 +137,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	}
 
 	std::cerr << "\nThe bestModelsContainer:" << std::endl;
-	ActionPlugin::CtxData::BestModelsContainer::iterator itBMC;
+	ActionPluginCtxData::BestModelsContainer::iterator itBMC;
 	for (itBMC = ctxData.bestModelsContainer.begin();
 			itBMC != ctxData.bestModelsContainer.end(); itBMC++) {
 		(*itBMC)->interpretation->print(std::cerr);
@@ -162,8 +161,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 // return -1 if it isn't a BestModel
 // return 1 if it's a BestModel and it's better than the AnswerSets in bestModelsContainer
 int ActionPluginModelCallback::isABestModel(
-		ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeightsBestModels,
-		ActionPlugin::CtxData::LevelsAndWeights& levelsAndWeights) {
+		ActionPluginCtxData::LevelsAndWeights& levelsAndWeightsBestModels,
+		ActionPluginCtxData::LevelsAndWeights& levelsAndWeights) {
 
 	// the last level that I've seen
 	int lastLevelSeen = -1;
@@ -178,7 +177,7 @@ int ActionPluginModelCallback::isABestModel(
 
 	std::cerr << "before for" << std::endl;
 
-	ActionPlugin::CtxData::LevelsAndWeights::reverse_iterator ritLAW;
+	ActionPluginCtxData::LevelsAndWeights::reverse_iterator ritLAW;
 	int first, second;
 	for (ritLAW = levelsAndWeightsBestModels.rbegin();
 			ritLAW != levelsAndWeightsBestModels.rend(); ritLAW++) {
@@ -194,7 +193,7 @@ int ActionPluginModelCallback::isABestModel(
 
 		//if there is a level in levelsAndWeights that is smallest than the lastLevelSeen and greater than the current level
 		if (lastLevelSeen != -1)
-			for (ActionPlugin::CtxData::LevelsAndWeights::reverse_iterator ritLAW2 =
+			for (ActionPluginCtxData::LevelsAndWeights::reverse_iterator ritLAW2 =
 					levelsAndWeights.rbegin();
 					ritLAW2 != levelsAndWeights.rend(); ritLAW2++)
 				if (ritLAW2->first < lastLevelSeen && ritLAW2->first > first)

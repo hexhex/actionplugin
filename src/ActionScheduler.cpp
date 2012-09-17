@@ -10,11 +10,9 @@
 #endif // HAVE_CONFIG_H
 #include "acthex/ActionScheduler.h"
 
-#include "acthex/ActionPlugin.h"
-
 DLVHEX_NAMESPACE_BEGIN
 
-ActionScheduler::ActionScheduler(ActionPlugin::CtxData& ctxData,
+ActionScheduler::ActionScheduler(ActionPluginCtxData& ctxData,
 		const RegistryPtr registryPtr) :
 		ctxData(ctxData), registryPtr(registryPtr) {
 }
@@ -29,8 +27,7 @@ void ActionScheduler::executionModeController(
 
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
-	intr->getStorage() |=
-			ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
+	intr->getStorage() |= ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= bestModel->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;
@@ -63,13 +60,13 @@ void ActionScheduler::executionModeController(
 				if (!isPresentInAllAnswerset(action_tuple)) {
 					std::cerr
 							<< "This action atom isn't present in all AnswerSet: ";
-					ActionPlugin::printTuple(action_tuple, registryPtr);
+					ActionScheduler::printTuple(action_tuple, registryPtr);
 					continue;
 				} else if (id_actionOption == ctxData.id_preferred_cautious)
 					if (!isPresentInAllTheBestModelsAnswerset(action_tuple)) {
 						std::cerr
 								<< "This action atom isn't present in all BestModels AnswerSet: ";
-						ActionPlugin::printTuple(action_tuple, registryPtr);
+						ActionScheduler::printTuple(action_tuple, registryPtr);
 						continue;
 					} else
 						throw PluginError(
@@ -91,7 +88,7 @@ bool ActionScheduler::isPresentInAllAnswerset(const Tuple& action_tuple) {
 	if (!isPresentInAllTheBestModelsAnswerset(action_tuple))
 		return false;
 
-	ActionPlugin::CtxData::BestModelsContainer::const_iterator itBMC;
+	ActionPluginCtxData::BestModelsContainer::const_iterator itBMC;
 	for (itBMC = ctxData.notBestModelsContainer.begin();
 			itBMC != ctxData.notBestModelsContainer.end(); itBMC++)
 		if (!thisAnswerSetContainsThisAction(*itBMC, action_tuple))
@@ -104,7 +101,7 @@ bool ActionScheduler::isPresentInAllAnswerset(const Tuple& action_tuple) {
 bool ActionScheduler::isPresentInAllTheBestModelsAnswerset(
 		const Tuple& action_tuple) {
 
-	ActionPlugin::CtxData::BestModelsContainer::const_iterator itBMC;
+	ActionPluginCtxData::BestModelsContainer::const_iterator itBMC;
 	for (itBMC = ctxData.bestModelsContainer.begin();
 			itBMC != ctxData.bestModelsContainer.end(); itBMC++)
 		if (!(thisAnswerSetContainsThisAction(*itBMC, action_tuple)))
@@ -119,8 +116,7 @@ bool ActionScheduler::thisAnswerSetContainsThisAction(
 
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
-	intr->getStorage() |=
-			ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
+	intr->getStorage() |= ctxData.myAuxiliaryPredicateMask.mask()->getStorage();
 	intr->getStorage() &= answerSetPtr->interpretation->getStorage();
 
 	Interpretation::TrueBitIterator bit, bit_end;

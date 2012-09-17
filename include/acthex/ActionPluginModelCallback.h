@@ -9,7 +9,7 @@
 #ifndef ACTION_PLUGIN_MODEL_CALLBACK_H_
 #define ACTION_PLUGIN_MODEL_CALLBACK_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 #include "dlvhex2/PluginInterface.h"
 
@@ -17,14 +17,14 @@ DLVHEX_NAMESPACE_BEGIN
 
 class ActionPluginModelCallback: public ModelCallback {
 public:
-	ActionPluginModelCallback(ActionPlugin::CtxData&, const RegistryPtr);
+	ActionPluginModelCallback(ActionPluginCtxData&, const RegistryPtr);
 	virtual ~ActionPluginModelCallback();
 	// This function will be called for each AnswerSet
 	virtual bool operator()(AnswerSetPtr);
 protected:
-	int isABestModel(ActionPlugin::CtxData::LevelsAndWeights&,
-			ActionPlugin::CtxData::LevelsAndWeights&);
-	ActionPlugin::CtxData& ctxData;
+	int isABestModel(ActionPluginCtxData::LevelsAndWeights&,
+			ActionPluginCtxData::LevelsAndWeights&);
+	ActionPluginCtxData& ctxData;
 	const RegistryPtr registryPtr;
 };
 

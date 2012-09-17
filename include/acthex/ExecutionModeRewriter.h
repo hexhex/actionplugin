@@ -8,7 +8,7 @@
 #ifndef EXECUTION_MODE_REWRITER_H_
 #define EXECUTION_MODE_REWRITER_H_
 
-#include "acthex/ActionPlugin.h"
+#include "acthex/ActionPluginCtxData.h"
 
 DLVHEX_NAMESPACE_BEGIN
 

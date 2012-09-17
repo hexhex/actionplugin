@@ -32,137 +32,18 @@
 #define ACTION_PLUGIN_H
 
 #include "acthex/Action.h"
+#include "acthex/ActionPluginCtxData.h"
 
 #include "dlvhex2/PlatformDefinitions.h"
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/HexParserModule.h"
 #include "dlvhex2/ProgramCtx.h"
-#include "dlvhex2/Registry.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
-//Forward declarations
-class ActionPluginInterface;
-typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
-#warning could we put PluginActionBase in ActionPluginInterface?
-class PluginActionBase;
-typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
-class BestModelSelector;
-typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
-class ExecutionModeRewriter;
-typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
-
-// An enum to specify the type of Iteration
-enum IterationType {
-	DEFAULT, INFINITE, FIXED
-};
-
 class ActionPlugin: public PluginInterface {
 public:
-
-	// stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
-	class CtxData: public PluginData {
-	public:
-		// whether plugin is enabled
-		bool enabled;
-
-		// for fast detection whether an ID is this plugin's responsitility to display
-		PredicateMask myAuxiliaryPredicateMask;
-
-		// ids stored in Registry that represent the action options
-		ID id_brave;
-		ID id_cautious;
-		ID id_preferred_cautious;
-
-		// ids stored in Registry that represent the default values for precedence, weight and level
-		ID id_default_precedence;
-		ID id_default_weight_with_level;
-		ID id_default_weight_without_level;
-		ID id_default_level_with_weight;
-		ID id_default_level_without_weight;
-
-		// a map that stores for each ID the corresponding action
-		typedef std::map<ID, ActionPtr> IDActionMap;
-		IDActionMap idActionMap;
-
-		typedef std::map<int, int> LevelsAndWeights;
-		// a map that contains for each level the weight
-		LevelsAndWeights levelsAndWeightsBestModels;
-
-		typedef std::list<AnswerSetPtr> BestModelsContainer;
-		// the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
-		BestModelsContainer bestModelsContainer;
-
-		// the AnswerSets that aren't Best Models
-		BestModelsContainer notBestModelsContainer;
-
-		// an iterator that identifies the position of the BestModel in BestModelsContainer
-		BestModelsContainer::const_iterator iteratorBestModel;
-
-		CtxData();
-
-		virtual ~CtxData();
-
-		// add Actions to idActionMap and myAuxiliaryPredicateMask
-		void addAction(const ID &, const ActionPtr);
-
-		typedef std::map<std::string, PluginActionBasePtr> NamePluginActionBaseMap;
-		// a map that contains the name and a pointer to the corresponding Action
-		NamePluginActionBaseMap namePluginActionBaseMap;
-
-		// called by Actions to register themselves
-		void registerPlugin(ActionPluginInterfacePtr, ProgramCtx&);
-
-		// makes the plugin ready to execute another iteration
-		void clearDataStructures();
-
-		// the type of Iteration (an enum)
-		IterationType iterationType;
-
-		// if we have to execute another Iteration
-		bool continueIteration;
-
-		// if we have to stop the Iterations
-		bool stopIteration;
-
-		// ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
-		ID id_continue;
-		ID id_stop;
-
-		// creates the Actions "#continueIteration" and "#stopIteration"
-		void createAndInsertContinueAndStopActions(RegistryPtr);
-
-		// a integer that specify the number of Iterations
-		// will be used only if both (number and time) are specified
-		int numberIterations;
-
-		// the time after which the Iterations must stop
-		boost::posix_time::time_duration timeDuration;
-
-		// the time when the ActionPlugin starts
-		boost::posix_time::ptime startingTime;
-
-		typedef std::map<std::string, BestModelSelectorPtr> NameBestModelSelectorMap;
-		// a map that contains the name and a pointer to the corresponding BestModelSelector
-		NameBestModelSelectorMap nameBestModelSelectorMap;
-
-		typedef std::map<std::string, ExecutionModeRewriterPtr> NameExecutionModeRewriterMap;
-		// a map that contains the name and a pointer to the corresponding ExecutionModeRewriter
-		NameExecutionModeRewriterMap nameExecutionModeRewriterMap;
-
-		//
-		void addNumberIterations(const unsigned int, ProgramCtx&);
-		void addDurationIterations(const std::string & string_of_duration);
-
-	private:
-		// Utility functions used to register all parts of a Plugin of the ActionPlugin
-		void registerActionsOfPlugin(std::vector<PluginActionBasePtr>,
-				RegistryPtr);
-		void registerBestModelSelectorsOfPlugin(
-				std::vector<BestModelSelectorPtr>);
-		void registerExecutionModeRewritersOfPlugin(
-				std::vector<ExecutionModeRewriterPtr>);
-	};
+	typedef ActionPluginCtxData CtxData;
 
 	ActionPlugin();
 	virtual ~ActionPlugin();
@@ -183,23 +64,6 @@ public:
 	virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
 
 	virtual void setupProgramCtx(ProgramCtx&);
-
-	// Utility function that prints a Tuple on standard error
-	static void printTuple(const Tuple& tuple, const RegistryPtr registryPtr) {
-		bool first = true;
-		for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
-				it++) {
-			if (first)
-				first = !first;
-			else
-				std::cerr << ", ";
-			if (it->isConstantTerm() || it->isVariableTerm())
-				std::cerr << registryPtr->getTermStringByID(*it);
-			else
-				std::cerr << it->address;
-		}
-		std::cerr << std::endl;
-	}
 
 };
 typedef boost::shared_ptr<ActionPlugin::CtxData> CtxDataPtr;
