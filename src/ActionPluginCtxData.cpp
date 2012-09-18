@@ -19,7 +19,7 @@ DLVHEX_NAMESPACE_BEGIN
 ActionPluginCtxData::ActionPluginCtxData() :
 		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap(), iterationType(
 				DEFAULT), continueIteration(false), stopIteration(false), numberIterations(
-				-1), nameBestModelSelectorMap(), nameExecutionModeRewriterMap() {
+				-1), timeDuration(boost::posix_time::not_a_date_time),iterationFromBuiltInConstant(false), nameBestModelSelectorMap(), nameExecutionModeRewriterMap() {
 }
 
 ActionPluginCtxData::~ActionPluginCtxData() {
@@ -171,7 +171,17 @@ void ActionPluginCtxData::createAndInsertContinueAndStopActions(
 // it's called when we find the command line option --acthexNumberIterations
 // or a built in constant #acthexNumberIterations
 void ActionPluginCtxData::addNumberIterations(const unsigned int number,
-		ProgramCtx& ctx) {
+		ProgramCtx& ctx, bool fromBuiltInConstant) {
+
+	if (fromBuiltInConstant && !iterationFromBuiltInConstant) {
+
+		timeDuration = boost::posix_time::not_a_date_time;
+
+		iterationFromBuiltInConstant = true;
+
+	} else if (numberIterations != -1)
+		throw PluginError("Duplicate values for acthexNumberIterations");
+
 	if (number == 0)
 		iterationType = INFINITE;
 	else {
@@ -179,32 +189,65 @@ void ActionPluginCtxData::addNumberIterations(const unsigned int number,
 		ctx.config.setOption("RepeatEvaluation", number);
 		numberIterations = number;
 	}
+
 }
+
+//// function that set the Duration of Iterations
+//// it's called when we find the command line option --acthexDurationIterations
+//// or a built in constant #acthexDurationIterations
+//void ActionPluginCtxData::addDurationIterations(
+//		const std::string & string_of_duration, bool fromBuiltInConstant) {
+//
+//	if (fromBuiltInConstant && !iterationFromBuiltInConstant) {
+//
+//		if (numberIterations != -1)
+//			if (!iterationFromBuiltInConstant)
+//				numberIterations = -1;
+//			else
+//				throw PluginError(
+//						"Duplicate values for acthexNumberIterations");
+//
+//		if (!timeDuration.is_not_a_date_time())
+//			if (iterationFromBuiltInConstant)
+//				throw PluginError(
+//						"Duplicate values for acthexDurationIterations");
+//
+//		iterationFromBuiltInConstant = true;
+//
+//	} else if (!timeDuration.is_not_a_date_time())
+//		throw PluginError("Duplicate values for acthexDurationIterations");
+//
+//	if (string_of_duration.length() == 0)
+//		return;
+//	if (string_of_duration[0] == '-')
+//		return;
+//
+//	if (string_of_duration == "0")
+//		iterationType = INFINITE;
+//	else {
+//		iterationType = FIXED;
+//		timeDuration = boost::posix_time::duration_from_string(
+//				string_of_duration);
+//		startingTime = boost::posix_time::second_clock::local_time();
+//	}
+//
+//}
 
 // function that set the Duration of Iterations
 // it's called when we find the command line option --acthexDurationIterations
 // or a built in constant #acthexDurationIterations
-void ActionPluginCtxData::addDurationIterations(
-		const std::string & string_of_duration) {
-	if (string_of_duration.length() == 0)
-		return;
-	if (string_of_duration[0] == '-')
-		return;
+void ActionPluginCtxData::addDurationIterations(unsigned int duration,
+		bool fromBuiltInConstant) {
 
-	if (string_of_duration == "0")
-		iterationType = INFINITE;
-	else {
-		iterationType = FIXED;
-		timeDuration = boost::posix_time::duration_from_string(
-				string_of_duration);
-		startingTime = boost::posix_time::second_clock::local_time();
-	}
-}
+	if (fromBuiltInConstant && !iterationFromBuiltInConstant) {
 
-// function that set the Duration of Iterations
-// it's called when we find the command line option --acthexDurationIterations
-// or a built in constant #acthexDurationIterations
-void ActionPluginCtxData::addDurationIterations(unsigned int duration) {
+		numberIterations = -1;
+
+		iterationFromBuiltInConstant = true;
+
+	} else if (!timeDuration.is_not_a_date_time())
+		throw PluginError("Duplicate values for acthexDurationIterations");
+
 	if (duration == 0)
 		iterationType = INFINITE;
 	else {
@@ -212,6 +255,7 @@ void ActionPluginCtxData::addDurationIterations(unsigned int duration) {
 		timeDuration = boost::posix_time::seconds(duration);
 		startingTime = boost::posix_time::second_clock::local_time();
 	}
+
 }
 
 DLVHEX_NAMESPACE_END

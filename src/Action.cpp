@@ -13,9 +13,8 @@
 DLVHEX_NAMESPACE_BEGIN
 
 Action::Action() :
-		predicate("") {
+		predicate(""), aux_id(ID_FAIL) {
 }
-#warning maybe it s better to initialize aux_id at null
 
 Action::Action(std::string predicate, ID aux_id) :
 		predicate(predicate), aux_id(aux_id) {

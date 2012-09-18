@@ -129,7 +129,7 @@ struct sem<
 
 			const unsigned int number = boost::fusion::at_c < 2 > (source);
 			std::cerr << number << "\n" << std::endl;
-			mgr.ctxData.addNumberIterations(number, mgr.ctx);
+			mgr.ctxData.addNumberIterations(number, mgr.ctx, true);
 
 		} else if (typeOfIteration == "DurationIterations") {
 
@@ -159,7 +159,7 @@ struct sem<
 #warning Duration specified in seconds
 			const unsigned int duration = boost::fusion::at_c < 2 > (source);
 			std::cerr << duration << "\n" << std::endl;
-			mgr.ctxData.addDurationIterations(duration);
+			mgr.ctxData.addDurationIterations(duration, true);
 
 		} else
 			throw PluginError("Built-in Constant not found");

@@ -136,7 +136,7 @@ void ActionPluginFinalCallback::operator()() {
 	else if (ctxData.iterationType == INFINITE)
 		programCtx.config.setOption("RepeatEvaluation", 1);
 	else if (ctxData.iterationType == FIXED) {
-		if (!ctxData.startingTime.is_not_a_date_time()) {
+		if (!ctxData.timeDuration.is_not_a_date_time()) {
 			boost::posix_time::time_duration diff =
 					boost::posix_time::second_clock::local_time()
 							- ctxData.startingTime;

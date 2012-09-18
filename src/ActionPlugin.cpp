@@ -93,7 +93,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 				throw PluginError("Wrong value for --acthexNumberIterations");
 			}
 			//qi::parse(string_of_number.begin(), string_of_number.end(), number);
-			ctxdata.addNumberIterations(number, ctx);
+			ctxdata.addNumberIterations(number, ctx, false);
 			processed = true;
 		} else if (option.find("--acthexDurationIterations=")
 				!= std::string::npos) {
@@ -108,7 +108,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 						<< std::endl;
 				throw PluginError("Wrong value for --acthexDurationIterations");
 			}
-			ctxdata.addDurationIterations(duration);
+			ctxdata.addDurationIterations(duration, false);
 			//ctxdata.addDurationIterations(string_of_duration);
 			processed = true;
 		}

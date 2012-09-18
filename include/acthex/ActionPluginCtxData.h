@@ -126,12 +126,15 @@ public:
 	// function that set the Number of Iterations
 	// it's called when we find the command line option --acthexNumberIterations
 	// or a built in constant #acthexNumberIterations
-	void addNumberIterations(const unsigned int, ProgramCtx&);
+	void addNumberIterations(const unsigned int, ProgramCtx&, bool);
 	// function that set the Duration of Iterations
 	// it's called when we find the command line option --acthexDurationIterations
 	// or a built in constant #acthexDurationIterations
-	void addDurationIterations(const std::string &);
-	void addDurationIterations(unsigned int);
+//	void addDurationIterations(const std::string &, bool);
+	void addDurationIterations(unsigned int, bool);
+
+	// if we changed the value of Iteration from Built-in Constant
+	bool iterationFromBuiltInConstant;
 
 private:
 	// Utility functions used to register all parts of a Plugin of the ActionPlugin
