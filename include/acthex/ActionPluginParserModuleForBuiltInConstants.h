@@ -109,7 +109,7 @@ struct sem<
 	void operator()(ActionPluginParserModuleSemanticsForBuiltInConstants& mgr,
 			const boost::fusion::vector3<std::string, std::string,
 			/*boost::variant<const unsigned int, boost::fusion::vector2<const char, const char> /*>*/
-			const std::vector<char> > & source, ID& target) {
+			const unsigned int> & source, ID& target) {
 
 		std::string typeOfIteration = boost::fusion::at_c < 1 > (source);
 
@@ -126,6 +126,10 @@ struct sem<
 //			std::cerr << number << "\n" << std::endl;
 //
 //			mgr.ctxdata.addNumberIterations(number, mgr.ctx);
+
+			const unsigned int number = boost::fusion::at_c < 2 > (source);
+			std::cerr << number << "\n" << std::endl;
+			mgr.ctxData.addNumberIterations(number, mgr.ctx);
 
 		} else if (typeOfIteration == "DurationIterations") {
 
@@ -151,6 +155,11 @@ struct sem<
 ////						boost::get<const std::vector<char, std::allocator<char> > >(
 ////								boost::fusion::at_c < 2 > (source)));
 //			}
+
+#warning Duration specified in seconds
+			const unsigned int duration = boost::fusion::at_c < 2 > (source);
+			std::cerr << duration << "\n" << std::endl;
+			mgr.ctxData.addDurationIterations(duration);
 
 		} else
 			throw PluginError("Built-in Constant not found");
@@ -187,15 +196,15 @@ public HexGrammarBase<Iterator, Skipper> {
 //								)) >> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(
 //						sem)];
 
-		builtInConstantsPrefixAtom =
-				(qi::string("#acthex")
-						>> (qi::string("NumberIterations")
-								| qi::string("DurationIterations"))
-						//>> qi::lit('=') >> (qi::uint_ | qi::string("VALUE"))
-						>> qi::lit('=')
-						//>> (qi::uint_ | (qi::char_("0-9") >> qi::char_(":,.")))
-						>> +qi::char_("0-9:,.") >> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(
-						sem)];
+		builtInConstantsPrefixAtom = (qi::string("#acthex")
+				>> (qi::string("NumberIterations")
+						| qi::string("DurationIterations"))
+				//>> qi::lit('=') >> (qi::uint_ | qi::string("VALUE"))
+				>> qi::lit('=')
+				//>> (qi::uint_ | (qi::char_("0-9") >> qi::char_(":,.")))
+				//>> +qi::char_("0-9:,.")
+				>> qi::uint_ >> qi::lit('.'))[Sem::builtInConstantsPrefixAtom(
+				sem)];
 
 #ifdef BOOST_SPIRIT_DEBUG
 		BOOST_SPIRIT_DEBUG_NODE(builtInConstantsPrefixAtom);

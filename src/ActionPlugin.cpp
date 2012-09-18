@@ -86,13 +86,30 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 				!= std::string::npos) {
 			const std::string string_of_number = option.substr(25);
 			unsigned int number;
-			qi::parse(string_of_number.begin(), string_of_number.end(), number);
+			try {
+				number = boost::lexical_cast<unsigned int>(string_of_number);
+			} catch (boost::bad_lexical_cast& e) {
+				std::cerr << string_of_number << " isn't a number" << std::endl;
+				throw PluginError("Wrong value for --acthexNumberIterations");
+			}
+			//qi::parse(string_of_number.begin(), string_of_number.end(), number);
 			ctxdata.addNumberIterations(number, ctx);
 			processed = true;
 		} else if (option.find("--acthexDurationIterations=")
 				!= std::string::npos) {
 			const std::string string_of_duration = option.substr(27);
-			ctxdata.addDurationIterations(string_of_duration);
+#warning Duration specified in seconds
+			unsigned int duration;
+			try {
+				duration = boost::lexical_cast<unsigned int>(
+						string_of_duration);
+			} catch (boost::bad_lexical_cast& e) {
+				std::cerr << string_of_duration << " isn't a number"
+						<< std::endl;
+				throw PluginError("Wrong value for --acthexDurationIterations");
+			}
+			ctxdata.addDurationIterations(duration);
+			//ctxdata.addDurationIterations(string_of_duration);
 			processed = true;
 		}
 

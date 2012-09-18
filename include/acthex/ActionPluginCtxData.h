@@ -130,7 +130,8 @@ public:
 	// function that set the Duration of Iterations
 	// it's called when we find the command line option --acthexDurationIterations
 	// or a built in constant #acthexDurationIterations
-	void addDurationIterations(const std::string & string_of_duration);
+	void addDurationIterations(const std::string &);
+	void addDurationIterations(unsigned int);
 
 private:
 	// Utility functions used to register all parts of a Plugin of the ActionPlugin

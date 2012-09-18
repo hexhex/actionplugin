@@ -43,9 +43,10 @@
 
 				\verb|NUMBER| must be an integer number that expresses the number of iterations that the program will have to do (0 expresses that the iterations must continue indefinitely);
 
-			\item with \verb|--acthexDurationIterations=TIME| (command line option) or \verb|#acthexDurationIterations=TIME.| (built-in constant)
+			\item with \verb|--acthexDurationIterations=DURATION| (command line option) or \verb|#acthexDurationIterations=DURATION.| (built-in constant)
 
-				\verb|TIME| must be a time duration (represented in a string in this format ``h[h][:mm][:ss][.fff]''; accepted delimiters are ``\-:,.'') after which the iterations must end (0 expresses that the iterations must continue indefinitely); obviously at the end of the current iteration (we verify at the end of each iteration if the time is over).
+				\verb|DURATION| must be a time duration (expressed in seconds) after which the iterations must end (0 expresses that the iterations must continue indefinitely); obviously at the end of the current iteration (we verify at the end of each iteration if the time is over).
+%represented in a string in this format ``h[h][:mm][:ss][.fff]''; accepted delimiters are ``\-:,.''
 		\end{itemize}
 
 		If are specified both \verb|acthexNumIterations| and \verb|acthexDurationIterations| from command line options or both with built-in constant, they must be considered in OR (the program will end when it made ​​the specified number of iterations or when the specified time has passed).

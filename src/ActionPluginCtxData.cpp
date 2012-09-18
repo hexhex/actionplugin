@@ -201,4 +201,17 @@ void ActionPluginCtxData::addDurationIterations(
 	}
 }
 
+// function that set the Duration of Iterations
+// it's called when we find the command line option --acthexDurationIterations
+// or a built in constant #acthexDurationIterations
+void ActionPluginCtxData::addDurationIterations(unsigned int duration) {
+	if (duration == 0)
+		iterationType = INFINITE;
+	else {
+		iterationType = FIXED;
+		timeDuration = boost::posix_time::seconds(duration);
+		startingTime = boost::posix_time::second_clock::local_time();
+	}
+}
+
 DLVHEX_NAMESPACE_END
