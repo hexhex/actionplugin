@@ -40,7 +40,7 @@
 #include "acthex/ActionPluginInterface.h"
 #include "acthex/ActionPluginParserModuleForBuiltInConstants.h"
 
-#include "dlvhex2/PredicateMask.h"
+#include <dlvhex2/PredicateMask.h>
 
 #include <boost/date_time/posix_time/time_parsers.hpp>
 
@@ -49,7 +49,7 @@ DLVHEX_NAMESPACE_BEGIN
 ActionPlugin::ActionPlugin() :
 		PluginInterface() {
 #warning without it there isn t Segmentation Fault
-//	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
+	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
 }
 
 ActionPlugin::~ActionPlugin() {
