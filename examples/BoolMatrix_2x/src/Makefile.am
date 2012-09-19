@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 	$(DLVHEX_CFLAGS)
 
 libdlvhexplugin_boolMatrix_action_la_SOURCES = BoolMatrixActionPlugin.cpp TGAImageMaker.cpp
-libdlvhexplugin_boolMatrix_action_la_LDFLAGS = -avoid-version -module # -L$(top_builddir)/src/ -rpath /
+libdlvhexplugin_boolMatrix_action_la_LDFLAGS = -avoid-version -module -L$(top_builddir)/src/ #-rpath /
 libdlvhexplugin_boolMatrix_action_la_LIBADD = -ldlvhex-action $(DLVHEX_LIBS)
 
 libdlvhexplugin-boolMatrix_action-static.la: $(libdlvhexplugin_boolMatrix_action_la_OBJECTS)
