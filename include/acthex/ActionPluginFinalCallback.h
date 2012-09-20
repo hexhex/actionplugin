@@ -25,6 +25,24 @@ public:
 	}
 	virtual void operator()();
 protected:
+	// function that fill the multimap (passed as parameter)
+	// with Precedence attribute and Action Tuple
+	// checking the Action Option attribute
+	void executionModeController(std::multimap<int, Tuple>&);
+	// function that check if the order of execution of Actions
+	// in the List, based on their Precedence attribute, is correct
+	// and if in the List there are all the Actions
+	bool checkIfTheListIsCorrect(const std::multimap<int, Tuple>&,
+			const std::list<std::set<Tuple> >&);
+	// Utility functions
+	bool isPresentInAllAnswerset(const Tuple&);
+	bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
+	bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
+	bool checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>&,
+			const std::set<Tuple>&) const;
+	// Utility function that prints a Tuple on standard error
+	void printTuple(const Tuple& tuple, const RegistryPtr registryPtr);
+
 	ProgramCtx& programCtx;
 	ActionPluginCtxData& ctxData;
 	const RegistryPtr registryPtr;

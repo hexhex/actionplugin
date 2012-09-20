@@ -1,24 +1,24 @@
 /**
- * @file ExecutionModeRewriter.h
+ * @file ExecutionScheduleBuilder.h
  * @author Stefano Germano
  *
  * @brief Base class to implement a Scheduler for the Actions with the same Precedence attribute
  */
 
-#ifndef EXECUTION_MODE_REWRITER_H_
-#define EXECUTION_MODE_REWRITER_H_
+#ifndef EXECUTION_SCHEDULE_BUILDER_H_
+#define EXECUTION_SCHEDULE_BUILDER_H_
 
 #include "acthex/ActionPluginCtxData.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
-class ExecutionModeRewriter {
+class ExecutionScheduleBuilder {
 public:
-	ExecutionModeRewriter(std::string name) :
+	ExecutionScheduleBuilder(std::string name) :
 			name(name) {
 	}
 
-	virtual ~ExecutionModeRewriter();
+	virtual ~ExecutionScheduleBuilder();
 
 	std::string getName() const {
 		return name;
@@ -33,8 +33,8 @@ private:
 	// the name of this Scheduler, will be used to invoke it
 	std::string name;
 };
-typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
+typedef boost::shared_ptr<ExecutionScheduleBuilder> ExecutionScheduleBuilderPtr;
 
 DLVHEX_NAMESPACE_END
 
-#endif /* EXECUTION_MODE_REWRITER_H_ */
+#endif /* EXECUTION_SCHEDULE_BUILDER_H_ */

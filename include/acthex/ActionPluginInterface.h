@@ -11,7 +11,7 @@
 #include "acthex/ActionPluginCtxData.h"
 #include "acthex/PluginActionBase.h"
 #include "acthex/BestModelSelector.h"
-#include "acthex/ExecutionModeRewriter.h"
+#include "acthex/ExecutionScheduleBuilder.h"
 
 #include "dlvhex2/PluginInterface.h"
 #include "dlvhex2/PlatformDefinitions.h"
@@ -148,11 +148,11 @@ public:
 		return allBestModelSelectors;
 	}
 
-	// A default implementation of ExecutionModeRewriter
-	class DefaultExecutionModeRewriter: public ExecutionModeRewriter {
+	// A default implementation of ExecutionScheduleBuilder
+	class DefaultExecutionScheduleBuilder: public ExecutionScheduleBuilder {
 	public:
-		DefaultExecutionModeRewriter(std::string name) :
-				ExecutionModeRewriter(name) {
+		DefaultExecutionScheduleBuilder(std::string name) :
+			ExecutionScheduleBuilder(name) {
 		}
 		virtual void rewrite(
 				const std::multimap<int, Tuple>& multimapOfExecution,
@@ -186,13 +186,13 @@ public:
 		}
 	};
 
-	// Will be called by ActionPlugin to collect the ExecutionModeRewriters
-	virtual std::vector<ExecutionModeRewriterPtr> getAllExecutionModeRewriters() const {
-		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters;
-		ExecutionModeRewriterPtr executionModeRewriterPtr(
-				new DefaultExecutionModeRewriter("default"));
-		allExecutionModeRewriters.push_back(executionModeRewriterPtr);
-		return allExecutionModeRewriters;
+	// Will be called by ActionPlugin to collect the ExecutionScheduleBuilders
+	virtual std::vector<ExecutionScheduleBuilderPtr> getAllExecutionScheduleBuilders() const {
+		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders;
+		ExecutionScheduleBuilderPtr executionScheduleBuilderPtr(
+				new DefaultExecutionScheduleBuilder("default"));
+		allExecutionScheduleBuilders.push_back(executionScheduleBuilderPtr);
+		return allExecutionScheduleBuilders;
 	}
 
 	// Used to activate the Plugin only if "--action-enable" option is selected

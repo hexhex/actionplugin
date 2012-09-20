@@ -48,7 +48,6 @@ DLVHEX_NAMESPACE_BEGIN
 
 ActionPlugin::ActionPlugin() :
 		PluginInterface() {
-#warning without it there isn t Segmentation Fault
 	setNameVersion("dlvhex-actionplugin", 2, 0, 0);
 }
 
@@ -206,22 +205,3 @@ IMPLEMENT_PLUGINABIVERSIONFUNCTION
 extern "C" void * PLUGINIMPORTFUNCTION() {
 return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
 }
-
-//// this would be the code to use this plugin as a "real" plugin in a .so file
-//// but we directly use it in dlvhex.cpp
-//#if 0
-//ActionPlugin theActionPlugin;
-//
-//// return plain C type s.t. all compilers and linkers will like this code
-//extern "C"
-//void * PLUGINIMPORTFUNCTION()
-//{
-//	return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
-//}
-//
-//#endif
-///* vim: set noet sw=2 ts=2 tw=80: */
-//
-//// Local Variables:
-//// mode: C++
-//// End:

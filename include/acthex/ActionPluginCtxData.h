@@ -25,8 +25,8 @@ class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 class BestModelSelector;
 typedef boost::shared_ptr<BestModelSelector> BestModelSelectorPtr;
-class ExecutionModeRewriter;
-typedef boost::shared_ptr<ExecutionModeRewriter> ExecutionModeRewriterPtr;
+class ExecutionScheduleBuilder;
+typedef boost::shared_ptr<ExecutionScheduleBuilder> ExecutionScheduleBuilderPtr;
 
 // An enum to specify the type of Iteration
 enum IterationType {
@@ -119,9 +119,9 @@ public:
 	// a map that contains the name and a pointer to the corresponding BestModelSelector
 	NameBestModelSelectorMap nameBestModelSelectorMap;
 
-	typedef std::map<std::string, ExecutionModeRewriterPtr> NameExecutionModeRewriterMap;
-	// a map that contains the name and a pointer to the corresponding ExecutionModeRewriter
-	NameExecutionModeRewriterMap nameExecutionModeRewriterMap;
+	typedef std::map<std::string, ExecutionScheduleBuilderPtr> NameExecutionScheduleBuilderMap;
+	// a map that contains the name and a pointer to the corresponding ExecutionScheduleBuilder
+	NameExecutionScheduleBuilderMap nameExecutionScheduleBuilderMap;
 
 	// function that set the Number of Iterations
 	// it's called when we find the command line option --acthexNumberIterations
@@ -140,8 +140,8 @@ private:
 	// Utility functions used to register all parts of a Plugin of the ActionPlugin
 	void registerActionsOfPlugin(std::vector<PluginActionBasePtr>, RegistryPtr);
 	void registerBestModelSelectorsOfPlugin(std::vector<BestModelSelectorPtr>);
-	void registerExecutionModeRewritersOfPlugin(
-			std::vector<ExecutionModeRewriterPtr>);
+	void registerExecutionScheduleBuildersOfPlugin(
+			std::vector<ExecutionScheduleBuilderPtr>);
 };
 
 DLVHEX_NAMESPACE_END

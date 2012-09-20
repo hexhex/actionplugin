@@ -19,7 +19,7 @@ DLVHEX_NAMESPACE_BEGIN
 ActionPluginCtxData::ActionPluginCtxData() :
 		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap(), iterationType(
 				DEFAULT), continueIteration(false), stopIteration(false), numberIterations(
-				-1), timeDuration(boost::posix_time::not_a_date_time),iterationFromBuiltInConstant(false), nameBestModelSelectorMap(), nameExecutionModeRewriterMap() {
+				-1), timeDuration(boost::posix_time::not_a_date_time),iterationFromBuiltInConstant(false), nameBestModelSelectorMap(), nameExecutionScheduleBuilderMap() {
 }
 
 ActionPluginCtxData::~ActionPluginCtxData() {
@@ -30,7 +30,7 @@ ActionPluginCtxData::~ActionPluginCtxData() {
 	iteratorBestModel = bestModelsContainer.end();
 	namePluginActionBaseMap.clear();
 	nameBestModelSelectorMap.clear();
-	nameExecutionModeRewriterMap.clear();
+	nameExecutionScheduleBuilderMap.clear();
 }
 
 // add Actions to idActionMap and myAuxiliaryPredicateMask
@@ -54,8 +54,8 @@ void ActionPluginCtxData::registerPlugin(
 	registerBestModelSelectorsOfPlugin(
 			actionPluginInterfacePtr->getAllBestModelSelectors());
 
-	registerExecutionModeRewritersOfPlugin(
-			actionPluginInterfacePtr->getAllExecutionModeRewriters());
+	registerExecutionScheduleBuildersOfPlugin(
+			actionPluginInterfacePtr->getAllExecutionScheduleBuilders());
 
 }
 
@@ -109,17 +109,17 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 	}
 }
 
-// Utility functions used to register ExecutionModeRewriters of a Plugin
-void ActionPluginCtxData::registerExecutionModeRewritersOfPlugin(
-		std::vector<ExecutionModeRewriterPtr> allExecutionModeRewriters) {
+// Utility functions used to register ExecutionScheduleBuilders of a Plugin
+void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
+		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders) {
 
-	std::cerr << "\nregisterExecutionModeRewritersOfPlugin" << std::endl;
+	std::cerr << "\nregisterExecutionScheduleBuildersOfPlugin" << std::endl;
 
-	for (std::vector<ExecutionModeRewriterPtr>::iterator it =
-			allExecutionModeRewriters.begin();
-			it != allExecutionModeRewriters.end(); it++) {
-		nameExecutionModeRewriterMap.insert(
-				std::pair<std::string, ExecutionModeRewriterPtr>(
+	for (std::vector<ExecutionScheduleBuilderPtr>::iterator it =
+			allExecutionScheduleBuilders.begin();
+			it != allExecutionScheduleBuilders.end(); it++) {
+		nameExecutionScheduleBuilderMap.insert(
+				std::pair<std::string, ExecutionScheduleBuilderPtr>(
 						(*it)->getName(), (*it)));
 		std::cerr << "Inserted: " << (*it)->getName() << std::endl;
 	}
