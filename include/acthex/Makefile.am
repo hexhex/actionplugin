@@ -9,6 +9,8 @@ ACTIONHEADERS = \
 	BestModelSelector.h \
 	ExecutionScheduleBuilder.h \
 	BuiltInDeclarationsParserModule.h \
-	ActionPluginCtxData.h
+	ActionPluginCtxData.h \
+	DefaultBestModelSelector.h \
+	DefaultExecutionScheduleBuilder.h
 
 pkginclude_HEADERS = $(ACTIONHEADERS)

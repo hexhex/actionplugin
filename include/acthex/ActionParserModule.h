@@ -27,8 +27,8 @@ public:
 
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
-	struct actionPrefixAtom: SemanticActionBase<
-			ActionParserModuleSemantics, ID, actionPrefixAtom> {
+	struct actionPrefixAtom: SemanticActionBase<ActionParserModuleSemantics, ID,
+			actionPrefixAtom> {
 		actionPrefixAtom(ActionParserModuleSemantics& mgr) :
 				actionPrefixAtom::base_type(mgr) {
 		}
@@ -186,8 +186,11 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 				printer.print(
 						boost::fusion::at_c < 0
 								> (boost::fusion::at_c < 4 > (source).get()).get());
-			else
+			else if (!!boost::fusion::at_c < 1
+					> (boost::fusion::at_c < 4 > (source).get()))
 				std::cerr << '1';
+			else
+				std::cerr << '0';
 
 			std::cerr << ',';
 
@@ -196,9 +199,11 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 				printer.print(
 						boost::fusion::at_c < 1
 								> (boost::fusion::at_c < 4 > (source).get()).get());
-			else
+			else if (!!boost::fusion::at_c < 0
+					> (boost::fusion::at_c < 4 > (source).get()))
 				std::cerr << '1';
-
+			else
+				std::cerr << '0';
 		} else
 			std::cerr << "0,0";
 
@@ -245,16 +250,22 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 				tuple.push_back(
 						boost::fusion::at_c < 0
 								> (boost::fusion::at_c < 4 > (source).get()).get());
-			else
+			else if (!!boost::fusion::at_c < 1
+					> (boost::fusion::at_c < 4 > (source).get()))
 				tuple.push_back(mgr.ctxData.id_default_weight_with_level);
+			else
+				tuple.push_back(mgr.ctxData.id_default_weight_without_level);
 
 			if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
 				tuple.push_back(
 						boost::fusion::at_c < 1
 								> (boost::fusion::at_c < 4 > (source).get()).get());
-			else
+			else if (!!boost::fusion::at_c < 0
+					> (boost::fusion::at_c < 4 > (source).get()))
 				tuple.push_back(mgr.ctxData.id_default_level_with_weight);
+			else
+				tuple.push_back(mgr.ctxData.id_default_level_without_weight);
 
 		} else {
 			tuple.push_back(mgr.ctxData.id_default_weight_without_level);
@@ -305,8 +316,7 @@ struct ActionParserModuleGrammar: ActionParserModuleGrammarBase<
 // note: HexParserModuleGrammar =
 //       boost::spirit::qi::grammar<HexParserIterator, HexParserSkipper>
 		HexParserModuleGrammar {
-	typedef ActionParserModuleGrammarBase<HexParserIterator,
-			HexParserSkipper> GrammarBase;
+	typedef ActionParserModuleGrammarBase<HexParserIterator, HexParserSkipper> GrammarBase;
 	typedef HexParserModuleGrammar QiBase;
 
 	ActionParserModuleGrammar(ActionParserModuleSemantics& sem) :

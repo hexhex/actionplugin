@@ -11,7 +11,7 @@ using namespace std;
 
 //data structures
 struct Colour {
-	unsigned char r,g,b,a;
+	unsigned char r, g, b, a;
 };
 
 class TGAImageMaker {
@@ -24,21 +24,11 @@ public:
 	//Overridden Constructor
 	TGAImageMaker(unsigned int width, unsigned int height);
 
-	//Set all pixels at once
-	//void setAllPixels(Colour *pixels);
-
 	//set individual pixels
-	void setPixel(Colour inputcolor, unsigned int xposition, unsigned int yposition);
+	void setPixel(Colour inputcolor, unsigned int xposition,
+			unsigned int yposition);
 
 	void WriteImage(string filename);
-
-//General getters and setters
-
-// 	void setWidth(unsigned int width);
-// 	void setHeight(unsigned int height);
-// 
-// 	unsigned int getWidth();
-// 	unsigned int getHeight();
 
 private:
 
@@ -49,7 +39,7 @@ private:
 	unsigned int m_width;
 
 	//convert 2D to 1D indexing
-	unsigned int convert2dto1d(unsigned int x, unsigned int y); 
+	unsigned int convert2dto1d(unsigned int x, unsigned int y);
 
 };
 

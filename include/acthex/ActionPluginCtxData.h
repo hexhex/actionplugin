@@ -130,11 +130,14 @@ public:
 	// function that set the Duration of Iterations
 	// it's called when we find the command line option --acthexDurationIterations
 	// or a built in constant #acthexDurationIterations
-//	void addDurationIterations(const std::string &, bool);
 	void addDurationIterations(unsigned int, bool);
 
 	// if we changed the value of Iteration from Built-in Constant
 	bool iterationFromBuiltInConstant;
+
+	//insert DefaultBestModelSelector in nameBestModelSelectorMap
+	// and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
+	void insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
 private:
 	// Utility functions used to register all parts of a Plugin of the ActionPlugin

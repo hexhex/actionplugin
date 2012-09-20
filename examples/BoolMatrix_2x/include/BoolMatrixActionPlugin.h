@@ -2,7 +2,7 @@
  * @file BoolMatrixActionPlugin.h
  * @author Stefano Germano
  *
- * @brief ...
+ * @brief A simple Plugin that implements a boolean matrix
  */
 
 #ifndef BOOL_MATRIX_ACTION_PLUGIN_H_
@@ -22,14 +22,14 @@ public:
 	public:
 		Environment() {
 			name = "EnvironmentOfBoolMatrixActionPlugin";
-			
+
 			currentRows = 4;
 			currentColumns = 9;
 			createMatrix();
 
 			dimensionAlreadySet = false;
 			highestRowWithAdd = 0;
-			
+
 		}
 		virtual ~Environment();
 		void createImage(string);
@@ -54,36 +54,37 @@ public:
 
 	BoolMatrixActionPlugin() :
 			ActionPluginInterface() {
-				setNameVersion("libactionboolmatrix", 2, 0, 0);
-// 		setNameVersion(PACKAGE_TARNAME, BOOLMATRIXACTIONPLUGIN_VERSION_MAJOR,
-// 							BOOLMATRIXACTIONPLUGIN_VERSION_MINOR,
-// 							BOOLMATRIXACTIONPLUGIN_VERSION_MICRO);
+		setNameVersion("libactionboolmatrix", 2, 0, 0);
 	}
 
-	class BoolMatrixActionAtomRule30: public PluginActionAtom<BoolMatrixActionPlugin> {
+	class BoolMatrixActionAtomRule30: public PluginActionAtom<
+			BoolMatrixActionPlugin> {
 	public:
 		BoolMatrixActionAtomRule30();
 	private:
 		virtual void retrieve(const Environment& environment,
 				const Query& query, Answer& answer);
 	private:
-		bool getState(const Environment& environment, unsigned int row, unsigned int column);
+		bool getState(const Environment& environment, unsigned int row,
+				unsigned int column);
 	};
-	
-	class BoolMatrixActionAtomHaveToSetDimension: public PluginActionAtom<BoolMatrixActionPlugin> {
+
+	class BoolMatrixActionAtomHaveToSetDimension: public PluginActionAtom<
+			BoolMatrixActionPlugin> {
 	public:
 		BoolMatrixActionAtomHaveToSetDimension();
 	private:
 		virtual void retrieve(const Environment& environment,
-									 const Query& query, Answer& answer);
+				const Query& query, Answer& answer);
 	};
-	
-	class BoolMatrixActionAtomHighestRowWithAdd: public PluginActionAtom<BoolMatrixActionPlugin> {
+
+	class BoolMatrixActionAtomHighestRowWithAdd: public PluginActionAtom<
+			BoolMatrixActionPlugin> {
 	public:
 		BoolMatrixActionAtomHighestRowWithAdd();
 	private:
 		virtual void retrieve(const Environment& environment,
-									 const Query& query, Answer& answer);
+				const Query& query, Answer& answer);
 	};
 
 	class BoolMatrixAction: public PluginAction<BoolMatrixActionPlugin> {
@@ -93,8 +94,8 @@ public:
 		BoolMatrixAction();
 
 	protected:
-		void execute(Environment&, RegistryPtr,
-				const Tuple&, const InterpretationConstPtr);
+		void execute(Environment&, RegistryPtr, const Tuple&,
+				const InterpretationConstPtr);
 
 	};
 
@@ -110,7 +111,8 @@ protected:
 #warning a trick, maybe we should find a way remove it
 		ctx.getPluginEnvironment<BoolMatrixActionPlugin>();
 		std::cerr << "getPluginEnvironment done" << std::endl;
-		return boost::shared_ptr < BoolMatrixActionPlugin > (new BoolMatrixActionPlugin());
+		return boost::shared_ptr < BoolMatrixActionPlugin
+				> (new BoolMatrixActionPlugin());
 	}
 
 };

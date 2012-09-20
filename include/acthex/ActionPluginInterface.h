@@ -126,72 +126,61 @@ public:
 	virtual std::vector<PluginActionBasePtr> createActions(
 			ProgramCtx& ctx) const = 0;
 
-	// A default implementation of BestModelSelector
-	class DefaultBestModelSelector: public BestModelSelector {
-	public:
-		DefaultBestModelSelector(std::string name) :
-				BestModelSelector(name) {
-		}
-		virtual void getBestModel(
-				ActionPluginCtxData::BestModelsContainer::const_iterator& iteratorBestModel,
-				const ActionPluginCtxData::BestModelsContainer& bestModelsContainer) {
-			iteratorBestModel = bestModelsContainer.begin();
-		}
-	};
+//	// A default implementation of BestModelSelector
+//	class DefaultBestModelSelector: public BestModelSelector {
+//	public:
+//		DefaultBestModelSelector(std::string name) :
+//				BestModelSelector(name) {
+//		}
+//		virtual void getBestModel(
+//				ActionPluginCtxData::BestModelsContainer::const_iterator& iteratorBestModel,
+//				const ActionPluginCtxData::BestModelsContainer& bestModelsContainer) {
+//			iteratorBestModel = bestModelsContainer.begin();
+//		}
+//	};
 
 	// Will be called by ActionPlugin to collect the BestModelSelectors
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		std::vector<BestModelSelectorPtr> allBestModelSelectors;
-		BestModelSelectorPtr bestModelSelectorPtr(
-				new DefaultBestModelSelector("default"));
-		allBestModelSelectors.push_back(bestModelSelectorPtr);
 		return allBestModelSelectors;
 	}
 
-	// A default implementation of ExecutionScheduleBuilder
-	class DefaultExecutionScheduleBuilder: public ExecutionScheduleBuilder {
-	public:
-		DefaultExecutionScheduleBuilder(std::string name) :
-			ExecutionScheduleBuilder(name) {
-		}
-		virtual void rewrite(
-				const std::multimap<int, Tuple>& multimapOfExecution,
-				std::list<std::set<Tuple> >& listOfExecution) {
-
-			if (multimapOfExecution.empty())
-				return;
-
-			std::multimap<int, Tuple>::const_iterator it =
-					multimapOfExecution.begin();
-			int lastPrecedence = it->first;
-			std::set < Tuple > currentSet;
-			for (; it != multimapOfExecution.end(); it++) {
-
-//				std::cerr << "lastPrecedence: " << lastPrecedence << std::endl;
-//				std::cerr << "in multimap: " << it->first << " "
-//						<< registryPtr->getTermStringByID(it->second[0])
-//						<< std::endl;
-
-				if (it->first != lastPrecedence) {
-					listOfExecution.push_back(currentSet);
-					currentSet.clear();
-					lastPrecedence = it->first;
-				}
-				currentSet.insert(it->second);
-
-			}
-
-			listOfExecution.push_back(currentSet);
-
-		}
-	};
+//	// A default implementation of ExecutionScheduleBuilder
+//	class DefaultExecutionScheduleBuilder: public ExecutionScheduleBuilder {
+//	public:
+//		DefaultExecutionScheduleBuilder(std::string name) :
+//			ExecutionScheduleBuilder(name) {
+//		}
+//		virtual void rewrite(
+//				const std::multimap<int, Tuple>& multimapOfExecution,
+//				std::list<std::set<Tuple> >& listOfExecution) {
+//
+//			if (multimapOfExecution.empty())
+//				return;
+//
+//			std::multimap<int, Tuple>::const_iterator it =
+//					multimapOfExecution.begin();
+//			int lastPrecedence = it->first;
+//			std::set < Tuple > currentSet;
+//			for (; it != multimapOfExecution.end(); it++) {
+//
+//				if (it->first != lastPrecedence) {
+//					listOfExecution.push_back(currentSet);
+//					currentSet.clear();
+//					lastPrecedence = it->first;
+//				}
+//				currentSet.insert(it->second);
+//
+//			}
+//
+//			listOfExecution.push_back(currentSet);
+//
+//		}
+//	};
 
 	// Will be called by ActionPlugin to collect the ExecutionScheduleBuilders
 	virtual std::vector<ExecutionScheduleBuilderPtr> getAllExecutionScheduleBuilders() const {
 		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders;
-		ExecutionScheduleBuilderPtr executionScheduleBuilderPtr(
-				new DefaultExecutionScheduleBuilder("default"));
-		allExecutionScheduleBuilders.push_back(executionScheduleBuilderPtr);
 		return allExecutionScheduleBuilders;
 	}
 

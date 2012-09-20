@@ -11,6 +11,8 @@
 #include "acthex/ActionPluginCtxData.h"
 
 #include "acthex/ActionPluginInterface.h"
+#include "acthex/DefaultBestModelSelector.h"
+#include "acthex/DefaultExecutionScheduleBuilder.h"
 
 #include <boost/date_time/posix_time/time_parsers.hpp>
 
@@ -64,17 +66,26 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 		std::vector<PluginActionBasePtr> pluginActionBasePtrVector,
 		RegistryPtr reg) {
 
+	std::cerr << "\nregisterActionsOfPlugin" << std::endl;
+
+	std::string actionPredicate;
+
 	for (std::vector<PluginActionBasePtr>::iterator it =
 			pluginActionBasePtrVector.begin();
 			it != pluginActionBasePtrVector.end(); it++) {
 
-		const ID id = reg->storeConstantTerm((*it)->getPredicate());
+		actionPredicate = (*it)->getPredicate();
+
+		if(namePluginActionBaseMap.count(actionPredicate) > 0)
+			throw PluginError("There are 2 Actions with the same Predicate value");
+
+		const ID id = reg->storeConstantTerm(actionPredicate);
 
 		namePluginActionBaseMap.insert(
 				std::pair<std::string, PluginActionBasePtr>(
-						(*it)->getPredicate(), (*it)));
+						actionPredicate, (*it)));
 
-		std::cerr << "Inserted: " << (*it)->getPredicate() << std::endl;
+		std::cerr << "Inserted: " << actionPredicate << std::endl;
 
 		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
 
@@ -99,13 +110,23 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 
 	std::cerr << "\nregisterBestModelSelectorsOfPlugin" << std::endl;
 
+	std::string bestModelSelectorName;
+
 	for (std::vector<BestModelSelectorPtr>::iterator it =
 			allBestModelSelectors.begin(); it != allBestModelSelectors.end();
 			it++) {
+
+		bestModelSelectorName = (*it)->getName();
+
+		if(nameBestModelSelectorMap.count(bestModelSelectorName) > 0)
+			throw PluginError("There are 2 BestModelSelectors with the same Name value");
+
 		nameBestModelSelectorMap.insert(
-				std::pair<std::string, BestModelSelectorPtr>((*it)->getName(),
+				std::pair<std::string, BestModelSelectorPtr>(bestModelSelectorName,
 						(*it)));
-		std::cerr << "Inserted: " << (*it)->getName() << std::endl;
+
+		std::cerr << "Inserted: " << bestModelSelectorName << std::endl;
+
 	}
 }
 
@@ -115,13 +136,23 @@ void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 
 	std::cerr << "\nregisterExecutionScheduleBuildersOfPlugin" << std::endl;
 
+	std::string executionScheduleBuilderName;
+
 	for (std::vector<ExecutionScheduleBuilderPtr>::iterator it =
 			allExecutionScheduleBuilders.begin();
 			it != allExecutionScheduleBuilders.end(); it++) {
+
+		executionScheduleBuilderName = (*it)->getName();
+
+		if(nameExecutionScheduleBuilderMap.count(executionScheduleBuilderName) > 0)
+			throw PluginError("There are 2 ExecutionScheduleBuilders with the same Name value");
+
 		nameExecutionScheduleBuilderMap.insert(
 				std::pair<std::string, ExecutionScheduleBuilderPtr>(
-						(*it)->getName(), (*it)));
-		std::cerr << "Inserted: " << (*it)->getName() << std::endl;
+						executionScheduleBuilderName, (*it)));
+
+		std::cerr << "Inserted: " << executionScheduleBuilderName << std::endl;
+
 	}
 
 }
@@ -192,47 +223,6 @@ void ActionPluginCtxData::addNumberIterations(const unsigned int number,
 
 }
 
-//// function that set the Duration of Iterations
-//// it's called when we find the command line option --acthexDurationIterations
-//// or a built in constant #acthexDurationIterations
-//void ActionPluginCtxData::addDurationIterations(
-//		const std::string & string_of_duration, bool fromBuiltInConstant) {
-//
-//	if (fromBuiltInConstant && !iterationFromBuiltInConstant) {
-//
-//		if (numberIterations != -1)
-//			if (!iterationFromBuiltInConstant)
-//				numberIterations = -1;
-//			else
-//				throw PluginError(
-//						"Duplicate values for acthexNumberIterations");
-//
-//		if (!timeDuration.is_not_a_date_time())
-//			if (iterationFromBuiltInConstant)
-//				throw PluginError(
-//						"Duplicate values for acthexDurationIterations");
-//
-//		iterationFromBuiltInConstant = true;
-//
-//	} else if (!timeDuration.is_not_a_date_time())
-//		throw PluginError("Duplicate values for acthexDurationIterations");
-//
-//	if (string_of_duration.length() == 0)
-//		return;
-//	if (string_of_duration[0] == '-')
-//		return;
-//
-//	if (string_of_duration == "0")
-//		iterationType = INFINITE;
-//	else {
-//		iterationType = FIXED;
-//		timeDuration = boost::posix_time::duration_from_string(
-//				string_of_duration);
-//		startingTime = boost::posix_time::second_clock::local_time();
-//	}
-//
-//}
-
 // function that set the Duration of Iterations
 // it's called when we find the command line option --acthexDurationIterations
 // or a built in constant #acthexDurationIterations
@@ -255,6 +245,23 @@ void ActionPluginCtxData::addDurationIterations(unsigned int duration,
 		timeDuration = boost::posix_time::seconds(duration);
 		startingTime = boost::posix_time::second_clock::local_time();
 	}
+
+}
+
+void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder() {
+
+	std::vector<BestModelSelectorPtr> defaultBestModelSelectors;
+	BestModelSelectorPtr defaultBestModelSelectorPtr(
+			new DefaultBestModelSelector("default"));
+	defaultBestModelSelectors.push_back(defaultBestModelSelectorPtr);
+	registerBestModelSelectorsOfPlugin(defaultBestModelSelectors);
+
+
+	std::vector<ExecutionScheduleBuilderPtr> defaultExecutionScheduleBuilders;
+	ExecutionScheduleBuilderPtr defaultExecutionScheduleBuilderPtr(
+			new DefaultExecutionScheduleBuilder("default"));
+	defaultExecutionScheduleBuilders.push_back(defaultExecutionScheduleBuilderPtr);
+	registerExecutionScheduleBuildersOfPlugin(defaultExecutionScheduleBuilders);
 
 }
 

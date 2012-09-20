@@ -69,7 +69,8 @@ void ActionPlugin::printUsage(std::ostream& o) const {
 // (do not free the pointers, the const char* directly come from argv)
 void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		ProgramCtx& ctx) {
-	ActionPlugin::CtxData& ctxdata = ctx.getPluginData<ActionPlugin>();
+
+	ActionPlugin::CtxData& ctxData = ctx.getPluginData<ActionPlugin>();
 
 	typedef std::list<const char*>::iterator Iterator;
 	Iterator it;
@@ -79,7 +80,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		bool processed = false;
 		const std::string option(*it);
 		if (option == "--action-enable") {
-			ctxdata.enabled = true;
+			ctxData.enabled = true;
 			processed = true;
 		} else if (option.find("--acthexNumberIterations=")
 				!= std::string::npos) {
@@ -92,7 +93,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 				throw PluginError("Wrong value for --acthexNumberIterations");
 			}
 			//qi::parse(string_of_number.begin(), string_of_number.end(), number);
-			ctxdata.addNumberIterations(number, ctx, false);
+			ctxData.addNumberIterations(number, ctx, false);
 			processed = true;
 		} else if (option.find("--acthexDurationIterations=")
 				!= std::string::npos) {
@@ -107,7 +108,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 						<< std::endl;
 				throw PluginError("Wrong value for --acthexDurationIterations");
 			}
-			ctxdata.addDurationIterations(duration, false);
+			ctxData.addDurationIterations(duration, false);
 			//ctxdata.addDurationIterations(string_of_duration);
 			processed = true;
 		}
@@ -123,24 +124,25 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 
 	}
 
-	if (ctxdata.enabled) {
+	if (ctxData.enabled) {
 
 		RegistryPtr reg = ctx.registry();
 
-		ctxdata.id_brave = reg->storeConstantTerm("b");
-		ctxdata.id_cautious = reg->storeConstantTerm("c");
-		ctxdata.id_preferred_cautious = reg->storeConstantTerm("c_p");
+		ctxData.id_brave = reg->storeConstantTerm("b");
+		ctxData.id_cautious = reg->storeConstantTerm("c");
+		ctxData.id_preferred_cautious = reg->storeConstantTerm("c_p");
 
 		// so this kind of actions will be executed first (indeed will be put ​​in the first set)
-		ctxdata.id_default_precedence = ID::termFromInteger(0);
+		ctxData.id_default_precedence = ID::termFromInteger(0);
 		// because the action atom without weight and level don't have to influence the selection of BestModels
-		ctxdata.id_default_weight_without_level = ID::termFromInteger(0);
-		ctxdata.id_default_level_without_weight = ID::termFromInteger(0);
+		ctxData.id_default_weight_without_level = ID::termFromInteger(0);
+		ctxData.id_default_level_without_weight = ID::termFromInteger(0);
 		// so the user can avoid specifying one of them if he want that it value is set at 1
-		ctxdata.id_default_weight_with_level = ID::termFromInteger(1);
-		ctxdata.id_default_level_with_weight = ID::termFromInteger(1);
+		ctxData.id_default_weight_with_level = ID::termFromInteger(1);
+		ctxData.id_default_level_with_weight = ID::termFromInteger(1);
 
-		ctxdata.createAndInsertContinueAndStopActions(reg);
+		ctxData.createAndInsertContinueAndStopActions(reg);
+		ctxData.insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
 	}
 
