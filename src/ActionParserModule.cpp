@@ -1,20 +1,20 @@
 /**
- * @file ActionPluginParserModuleForBuiltInConstants.cpp
+ * @file ActionParserModule.cpp
  * @author Stefano Germano
  *
- * @brief Parser for the Built in Constants
+ * @brief Parser for the Actions
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif // HAVE_CONFIG_H
-#include "acthex/ActionPluginParserModuleForBuiltInConstants.h"
+#include "acthex/ActionParserModule.h"
 
 #include "acthex/ActionPlugin.h"
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionPluginParserModuleSemanticsForBuiltInConstants::ActionPluginParserModuleSemanticsForBuiltInConstants(
+ActionParserModuleSemantics::ActionParserModuleSemantics(
 		ProgramCtx& ctx) :
 		HexGrammarSemantics(ctx), ctxData(ctx.getPluginData<ActionPlugin>()) {
 }

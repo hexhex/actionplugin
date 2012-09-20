@@ -3,12 +3,12 @@ ACTIONHEADERS = \
 	ActionPluginInterface.h \
 	ActionPluginModelCallback.h \
 	ActionPluginFinalCallback.h \
-	ActionPluginParserModule.h \
+	ActionParserModule.h \
 	PluginActionBase.h \
 	ActionPlugin.h \
 	BestModelSelector.h \
 	ExecutionScheduleBuilder.h \
-	ActionPluginParserModuleForBuiltInConstants.h \
+	BuiltInDeclarationsParserModule.h \
 	ActionPluginCtxData.h
 
 pkginclude_HEADERS = $(ACTIONHEADERS)

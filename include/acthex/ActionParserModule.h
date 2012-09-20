@@ -1,12 +1,12 @@
 /**
- * @file ActionPluginParserModule.h
+ * @file ActionParserModule.h
  * @author Stefano Germano
  *
  * @brief Parser for the Actions
  */
 
-#ifndef ACTION_PLUGIN_PARSER_MODULE_H_
-#define ACTION_PLUGIN_PARSER_MODULE_H_
+#ifndef ACTION_PARSER_MODULE_H_
+#define ACTION_PARSER_MODULE_H_
 
 #include "acthex/ActionPluginCtxData.h"
 
@@ -18,18 +18,18 @@ DLVHEX_NAMESPACE_BEGIN
 
 namespace qi = boost::spirit::qi;
 
-class ActionPluginParserModuleSemantics: public HexGrammarSemantics {
+class ActionParserModuleSemantics: public HexGrammarSemantics {
 public:
 	ActionPluginCtxData& ctxData;
 
 public:
-	ActionPluginParserModuleSemantics(ProgramCtx& ctx);
+	ActionParserModuleSemantics(ProgramCtx& ctx);
 
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
 	struct actionPrefixAtom: SemanticActionBase<
-			ActionPluginParserModuleSemantics, ID, actionPrefixAtom> {
-		actionPrefixAtom(ActionPluginParserModuleSemantics& mgr) :
+			ActionParserModuleSemantics, ID, actionPrefixAtom> {
+		actionPrefixAtom(ActionParserModuleSemantics& mgr) :
 				actionPrefixAtom::base_type(mgr) {
 		}
 	};
@@ -38,7 +38,7 @@ public:
 // create semantic handler for above semantic action
 // (needs to be in globally specializable struct space)
 template<>
-struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
+struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 	void createAtom(RegistryPtr reg, OrdinaryAtom& atom, ID& target) {
 		// groundness
 		DBGLOG(DBG, "checking groundness of tuple " << printrange(atom.tuple));
@@ -61,7 +61,7 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 		DBGLOG(DBG, "stored atom " << atom << " which got id " << target);
 	}
 
-	void operator()(ActionPluginParserModuleSemantics& mgr,
+	void operator()(ActionParserModuleSemantics& mgr,
 			const boost::fusion::vector5<dlvhex::ID,
 					boost::optional<boost::optional<dlvhex::Tuple> >,
 					std::string, boost::optional<dlvhex::ID>,
@@ -269,17 +269,17 @@ struct sem<ActionPluginParserModuleSemantics::actionPrefixAtom> {
 namespace {
 
 template<typename Iterator, typename Skipper>
-struct ActionPluginParserModuleGrammarBase:
+struct ActionParserModuleGrammarBase:
 // we derive from the original hex grammar
 // -> we can reuse its rules
 public HexGrammarBase<Iterator, Skipper> {
 	typedef HexGrammarBase<Iterator, Skipper> Base;
 
-	ActionPluginParserModuleSemantics& sem;
+	ActionParserModuleSemantics& sem;
 
-	ActionPluginParserModuleGrammarBase(ActionPluginParserModuleSemantics& sem) :
+	ActionParserModuleGrammarBase(ActionParserModuleSemantics& sem) :
 			Base(sem), sem(sem) {
-		typedef ActionPluginParserModuleSemantics Sem;
+		typedef ActionParserModuleSemantics Sem;
 		actionPrefixAtom =
 				(qi::lit('#') >> Base::classicalAtomPredicate
 						>> -(qi::lit('[') >> -Base::terms >> qi::lit(']'))
@@ -299,42 +299,42 @@ public HexGrammarBase<Iterator, Skipper> {
 	qi::rule<Iterator, ID(), Skipper> actionPrefixAtom;
 };
 
-struct ActionPluginParserModuleGrammar: ActionPluginParserModuleGrammarBase<
+struct ActionParserModuleGrammar: ActionParserModuleGrammarBase<
 		HexParserIterator, HexParserSkipper>,
 // required for interface
 // note: HexParserModuleGrammar =
 //       boost::spirit::qi::grammar<HexParserIterator, HexParserSkipper>
 		HexParserModuleGrammar {
-	typedef ActionPluginParserModuleGrammarBase<HexParserIterator,
+	typedef ActionParserModuleGrammarBase<HexParserIterator,
 			HexParserSkipper> GrammarBase;
 	typedef HexParserModuleGrammar QiBase;
 
-	ActionPluginParserModuleGrammar(ActionPluginParserModuleSemantics& sem) :
+	ActionParserModuleGrammar(ActionParserModuleSemantics& sem) :
 			GrammarBase(sem), QiBase(GrammarBase::actionPrefixAtom) {
 	}
 };
-typedef boost::shared_ptr<ActionPluginParserModuleGrammar> ActionPluginParserModuleGrammarPtr;
+typedef boost::shared_ptr<ActionParserModuleGrammar> ActionParserModuleGrammarPtr;
 
 // moduletype = HexParserModule::HEADATOM
 template<enum HexParserModule::Type moduletype>
-class ActionPluginParserModule: public HexParserModule {
+class ActionParserModule: public HexParserModule {
 public:
 	// the semantics manager is stored/owned by this module!
-	ActionPluginParserModuleSemantics sem;
+	ActionParserModuleSemantics sem;
 	// we also keep a shared ptr to the grammar module here
-	ActionPluginParserModuleGrammarPtr grammarModule;
+	ActionParserModuleGrammarPtr grammarModule;
 
-	ActionPluginParserModule(ProgramCtx& ctx) :
+	ActionParserModule(ProgramCtx& ctx) :
 			HexParserModule(moduletype), sem(ctx) {
-		LOG(INFO, "constructed ActionPluginParserModule");
+		LOG(INFO, "constructed ActionParserModule");
 	}
 
 	virtual HexParserModuleGrammarPtr createGrammarModule() {
 		assert(
 				!grammarModule
 						&& "for simplicity (storing only one grammarModule pointer) we currently assume this will be called only once .. should be no problem to extend");
-		grammarModule.reset(new ActionPluginParserModuleGrammar(sem));
-		LOG(INFO, "created ActionPluginParserModuleGrammar");
+		grammarModule.reset(new ActionParserModuleGrammar(sem));
+		LOG(INFO, "created ActionParserModuleGrammar");
 		return grammarModule;
 	}
 };
@@ -343,4 +343,4 @@ public:
 
 DLVHEX_NAMESPACE_END
 
-#endif /* ACTION_PLUGIN_PARSER_MODULE_H_ */
+#endif /* ACTION_PARSER_MODULE_H_ */

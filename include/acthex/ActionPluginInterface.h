@@ -38,12 +38,12 @@ public:
 	};
 
 	// CRTP pattern
-	template<class Derived>
+	template<class UserPlugin>
 	// Base class to implement an External Atom
 	class PluginActionAtom: public PluginAtom {
 	public:
 		// the Environment of this Plugin
-		typedef typename Derived::Environment Environment;
+		typedef typename UserPlugin::Environment Environment;
 
 		PluginActionAtom(std::string name) :
 				PluginAtom(name, false) {
@@ -53,23 +53,23 @@ public:
 
 		// The function that will be called by dlvhex to evaluate the External Atom
 		void retrieve(const Query& query, Answer& answer) {
-			const typename Derived::Environment& environment =
-					query.ctx->getPluginEnvironment<Derived>();
+			const typename UserPlugin::Environment& environment =
+					query.ctx->getPluginEnvironment<UserPlugin>();
 			retrieve(environment, query, answer);
 		}
 	protected:
 		// The function that must be overridden by the creator of the External Atom to execute the own code
-		virtual void retrieve(const typename Derived::Environment&,
+		virtual void retrieve(const typename UserPlugin::Environment&,
 				const Query&, Answer&) = 0;
 	};
 
 	// CRTP pattern
-	template<class Derived>
+	template<class UserPlugin>
 	// Base class to implement an Action
 	class PluginAction: public PluginActionBase {
 	public:
 		// the Environment of this Plugin
-		typedef typename Derived::Environment Environment;
+		typedef typename UserPlugin::Environment Environment;
 
 		PluginAction(const std::string& predicate) :
 				PluginActionBase(predicate) {
@@ -79,13 +79,13 @@ public:
 		void execute(ProgramCtx& ctx,
 				const InterpretationConstPtr interpretationConstPtr,
 				const Tuple& tuple) {
-			typename Derived::Environment& environment =
-					ctx.getPluginEnvironment<Derived>();
+			typename UserPlugin::Environment& environment =
+					ctx.getPluginEnvironment<UserPlugin>();
 			execute(environment, ctx.registry(), tuple, interpretationConstPtr);
 		}
 	protected:
 		// The function that must be overridden by the creator of the Action to execute the own code
-		virtual void execute(typename Derived::Environment&, const RegistryPtr,
+		virtual void execute(typename UserPlugin::Environment&, const RegistryPtr,
 				const Tuple&, const InterpretationConstPtr) = 0;
 	};
 

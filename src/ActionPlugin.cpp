@@ -36,9 +36,9 @@
 
 #include "acthex/ActionPluginModelCallback.h"
 #include "acthex/ActionPluginFinalCallback.h"
-#include "acthex/ActionPluginParserModule.h"
+#include "acthex/ActionParserModule.h"
 #include "acthex/ActionPluginInterface.h"
-#include "acthex/ActionPluginParserModuleForBuiltInConstants.h"
+#include "acthex/BuiltInDeclarationsParserModule.h"
 
 #include <dlvhex2/PredicateMask.h>
 
@@ -158,11 +158,11 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 	if (ctxdata.enabled) {
 		ret.push_back(
 				HexParserModulePtr(
-						new ActionPluginParserModule<HexParserModule::HEADATOM>(
+						new ActionParserModule<HexParserModule::HEADATOM>(
 								ctx)));
 		ret.push_back(
 				HexParserModulePtr(
-						new ActionPluginParserModuleForBuiltInConstants<
+						new BuiltInDeclarationsParserModule<
 								HexParserModule::TOPLEVEL>(ctx)));
 	}
 
