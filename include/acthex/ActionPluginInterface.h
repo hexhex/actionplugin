@@ -85,8 +85,9 @@ public:
 		}
 	protected:
 		// The function that must be overridden by the creator of the Action to execute the own code
-		virtual void execute(typename UserPlugin::Environment&, const RegistryPtr,
-				const Tuple&, const InterpretationConstPtr) = 0;
+		virtual void execute(typename UserPlugin::Environment&,
+				const RegistryPtr, const Tuple&,
+				const InterpretationConstPtr) = 0;
 	};
 
 	/**
@@ -120,63 +121,23 @@ public:
 	 * HEX-program with the predicate \b &newatom1[]() and
 	 * \b &newatom2[]().
 	 */
-	virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx& ctx) const = 0;
+	virtual std::vector<PluginAtomPtr> createAtoms(ProgramCtx& ctx) const {
+		std::vector < PluginAtomPtr > allPluginAtoms;
+		return allPluginAtoms;
+	}
 
 	// Publish Actions to ActionPlugin
 	virtual std::vector<PluginActionBasePtr> createActions(
-			ProgramCtx& ctx) const = 0;
-
-//	// A default implementation of BestModelSelector
-//	class DefaultBestModelSelector: public BestModelSelector {
-//	public:
-//		DefaultBestModelSelector(std::string name) :
-//				BestModelSelector(name) {
-//		}
-//		virtual void getBestModel(
-//				ActionPluginCtxData::BestModelsContainer::const_iterator& iteratorBestModel,
-//				const ActionPluginCtxData::BestModelsContainer& bestModelsContainer) {
-//			iteratorBestModel = bestModelsContainer.begin();
-//		}
-//	};
+			ProgramCtx& ctx) const {
+		std::vector<PluginActionBasePtr> allPluginActions;
+		return allPluginActions;
+	}
 
 	// Will be called by ActionPlugin to collect the BestModelSelectors
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		std::vector<BestModelSelectorPtr> allBestModelSelectors;
 		return allBestModelSelectors;
 	}
-
-//	// A default implementation of ExecutionScheduleBuilder
-//	class DefaultExecutionScheduleBuilder: public ExecutionScheduleBuilder {
-//	public:
-//		DefaultExecutionScheduleBuilder(std::string name) :
-//			ExecutionScheduleBuilder(name) {
-//		}
-//		virtual void rewrite(
-//				const std::multimap<int, Tuple>& multimapOfExecution,
-//				std::list<std::set<Tuple> >& listOfExecution) {
-//
-//			if (multimapOfExecution.empty())
-//				return;
-//
-//			std::multimap<int, Tuple>::const_iterator it =
-//					multimapOfExecution.begin();
-//			int lastPrecedence = it->first;
-//			std::set < Tuple > currentSet;
-//			for (; it != multimapOfExecution.end(); it++) {
-//
-//				if (it->first != lastPrecedence) {
-//					listOfExecution.push_back(currentSet);
-//					currentSet.clear();
-//					lastPrecedence = it->first;
-//				}
-//				currentSet.insert(it->second);
-//
-//			}
-//
-//			listOfExecution.push_back(currentSet);
-//
-//		}
-//	};
 
 	// Will be called by ActionPlugin to collect the ExecutionScheduleBuilders
 	virtual std::vector<ExecutionScheduleBuilderPtr> getAllExecutionScheduleBuilders() const {

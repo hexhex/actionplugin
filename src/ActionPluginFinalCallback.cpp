@@ -29,8 +29,10 @@ ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx) :
 void ActionPluginFinalCallback::operator()() {
 	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
 
-#warning I ve to call the BestModelSelection function of the specified ActionAtom
-	ctxData.nameBestModelSelectorMap["default"]->getBestModel(
+	if(ctxData.nameBestModelSelectorMap.count(ctxData.bestModelSelectorSelected) == 0)
+		throw PluginError("The BestModelSelector chosen doesn't exist");
+
+	ctxData.nameBestModelSelectorMap[ctxData.bestModelSelectorSelected]->getBestModel(
 			ctxData.iteratorBestModel, ctxData.bestModelsContainer);
 
 	std::cerr << "\nBestModel selected:" << std::endl;
@@ -51,10 +53,12 @@ void ActionPluginFinalCallback::operator()() {
 		printTuple(tempTuple, registryPtr);
 	}
 
-#warning I ve to call the executionScheduleBuilder function of the specified ActionAtom
+	if(ctxData.nameExecutionScheduleBuilderMap.count(ctxData.executionScheduleBuilderSelected) == 0)
+		throw PluginError("The ExecutionScheduleBuilder chosen doesn't exist");
+
 	std::cerr << "\nCall the executionScheduleBuilder" << std::endl;
 	std::list < std::set<Tuple> > listOfExecution;
-	ctxData.nameExecutionScheduleBuilderMap["default"]->rewrite(
+	ctxData.nameExecutionScheduleBuilderMap[ctxData.executionScheduleBuilderSelected]->rewrite(
 			multimapOfExecution, listOfExecution);
 
 	std::cerr << "\nThe ListOfExecution:" << std::endl;

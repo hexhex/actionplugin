@@ -21,7 +21,9 @@ DLVHEX_NAMESPACE_BEGIN
 ActionPluginCtxData::ActionPluginCtxData() :
 		enabled(false), idActionMap(), levelsAndWeightsBestModels(), bestModelsContainer(), notBestModelsContainer(), iteratorBestModel(), namePluginActionBaseMap(), iterationType(
 				DEFAULT), continueIteration(false), stopIteration(false), numberIterations(
-				-1), timeDuration(boost::posix_time::not_a_date_time),iterationFromBuiltInConstant(false), nameBestModelSelectorMap(), nameExecutionScheduleBuilderMap() {
+				-1), timeDuration(boost::posix_time::not_a_date_time), iterationFromBuiltInConstant(
+				false), nameBestModelSelectorMap(), nameExecutionScheduleBuilderMap(), bestModelSelectorSelected(
+				"default"), executionScheduleBuilderSelected("default") {
 }
 
 ActionPluginCtxData::~ActionPluginCtxData() {
@@ -76,14 +78,15 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 
 		actionPredicate = (*it)->getPredicate();
 
-		if(namePluginActionBaseMap.count(actionPredicate) > 0)
-			throw PluginError("There are 2 Actions with the same Predicate value");
+		if (namePluginActionBaseMap.count(actionPredicate) > 0)
+			throw PluginError(
+					"There are 2 Actions with the same Predicate value");
 
 		const ID id = reg->storeConstantTerm(actionPredicate);
 
 		namePluginActionBaseMap.insert(
-				std::pair<std::string, PluginActionBasePtr>(
-						actionPredicate, (*it)));
+				std::pair<std::string, PluginActionBasePtr>(actionPredicate,
+						(*it)));
 
 		std::cerr << "Inserted: " << actionPredicate << std::endl;
 
@@ -118,12 +121,13 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 
 		bestModelSelectorName = (*it)->getName();
 
-		if(nameBestModelSelectorMap.count(bestModelSelectorName) > 0)
-			throw PluginError("There are 2 BestModelSelectors with the same Name value");
+		if (nameBestModelSelectorMap.count(bestModelSelectorName) > 0)
+			throw PluginError(
+					"There are 2 BestModelSelectors with the same Name value");
 
 		nameBestModelSelectorMap.insert(
-				std::pair<std::string, BestModelSelectorPtr>(bestModelSelectorName,
-						(*it)));
+				std::pair<std::string, BestModelSelectorPtr>(
+						bestModelSelectorName, (*it)));
 
 		std::cerr << "Inserted: " << bestModelSelectorName << std::endl;
 
@@ -144,8 +148,10 @@ void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 
 		executionScheduleBuilderName = (*it)->getName();
 
-		if(nameExecutionScheduleBuilderMap.count(executionScheduleBuilderName) > 0)
-			throw PluginError("There are 2 ExecutionScheduleBuilders with the same Name value");
+		if (nameExecutionScheduleBuilderMap.count(executionScheduleBuilderName)
+				> 0)
+			throw PluginError(
+					"There are 2 ExecutionScheduleBuilders with the same Name value");
 
 		nameExecutionScheduleBuilderMap.insert(
 				std::pair<std::string, ExecutionScheduleBuilderPtr>(
@@ -248,6 +254,8 @@ void ActionPluginCtxData::addDurationIterations(unsigned int duration,
 
 }
 
+//insert DefaultBestModelSelector in nameBestModelSelectorMap
+// and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
 void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder() {
 
 	std::vector<BestModelSelectorPtr> defaultBestModelSelectors;
@@ -256,12 +264,32 @@ void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionSched
 	defaultBestModelSelectors.push_back(defaultBestModelSelectorPtr);
 	registerBestModelSelectorsOfPlugin(defaultBestModelSelectors);
 
-
 	std::vector<ExecutionScheduleBuilderPtr> defaultExecutionScheduleBuilders;
 	ExecutionScheduleBuilderPtr defaultExecutionScheduleBuilderPtr(
 			new DefaultExecutionScheduleBuilder("default"));
-	defaultExecutionScheduleBuilders.push_back(defaultExecutionScheduleBuilderPtr);
+	defaultExecutionScheduleBuilders.push_back(
+			defaultExecutionScheduleBuilderPtr);
 	registerExecutionScheduleBuildersOfPlugin(defaultExecutionScheduleBuilders);
+
+}
+
+// Set the bestModelSelectorSelected
+void ActionPluginCtxData::setBestModelSelectorSelected(const std::string bestModelSelector) {
+
+	if(bestModelSelectorSelected != "default")
+		throw PluginError("Duplicate values for acthexBestModelSelector");
+
+	bestModelSelectorSelected = bestModelSelector;
+
+}
+
+//Set the executionScheduleBuilderSelected
+void ActionPluginCtxData::setExecutionScheduleBuilderSelected(const std::string executionScheduleBuilder) {
+
+	if(executionScheduleBuilder != "default")
+		throw PluginError("Duplicate values for acthexExecutionScheduleBuilder");
+
+	executionScheduleBuilderSelected = executionScheduleBuilder;
 
 }
 

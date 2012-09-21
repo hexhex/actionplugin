@@ -139,6 +139,18 @@ public:
 	// and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
 	void insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
+	// The name of BestModelSelector that will be used to select the BestModelSelector from NameBestModelSelectorMap
+	std::string bestModelSelectorSelected;
+
+	// The name of ExecutionScheduleBuilder that will be used to select the ExecutionScheduleBuilder from NameExecutionScheduleBuilderMap
+	std::string executionScheduleBuilderSelected;
+
+	// Set the bestModelSelectorSelected
+	void setBestModelSelectorSelected(const std::string);
+
+	//Set the executionScheduleBuilderSelected
+	void setExecutionScheduleBuilderSelected(const std::string);
+
 private:
 	// Utility functions used to register all parts of a Plugin of the ActionPlugin
 	void registerActionsOfPlugin(std::vector<PluginActionBasePtr>, RegistryPtr);

@@ -31,6 +31,7 @@ public:
 			std::list<std::set<Tuple> >& listOfExecution) = 0;
 private:
 	// the name of this Scheduler, will be used to invoke it
+	// must start with an alphabetic letter
 	std::string name;
 };
 typedef boost::shared_ptr<ExecutionScheduleBuilder> ExecutionScheduleBuilderPtr;

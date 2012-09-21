@@ -30,11 +30,11 @@ public:
 	// use SemanticActionBase to redirect semantic action call into globally
 	// specializable sem<T> struct space
 	struct builtInDeclarationsPrefixAtom: SemanticActionBase<
-	BuiltInDeclarationsParserModuleSemantics, ID,
-	builtInDeclarationsPrefixAtom> {
+			BuiltInDeclarationsParserModuleSemantics, ID,
+			builtInDeclarationsPrefixAtom> {
 		builtInDeclarationsPrefixAtom(
 				BuiltInDeclarationsParserModuleSemantics& mgr) :
-					builtInDeclarationsPrefixAtom::base_type(mgr) {
+				builtInDeclarationsPrefixAtom::base_type(mgr) {
 		}
 	};
 };
@@ -43,7 +43,7 @@ public:
 // (needs to be in globally specializable struct space)
 template<>
 struct sem<
-BuiltInDeclarationsParserModuleSemantics::builtInDeclarationsPrefixAtom> {
+		BuiltInDeclarationsParserModuleSemantics::builtInDeclarationsPrefixAtom> {
 	void createAtom(RegistryPtr reg, OrdinaryAtom& atom, ID& target) {
 		// groundness
 		DBGLOG(DBG, "checking groundness of tuple " << printrange(atom.tuple));
@@ -66,50 +66,10 @@ BuiltInDeclarationsParserModuleSemantics::builtInDeclarationsPrefixAtom> {
 		DBGLOG(DBG, "stored atom " << atom << " which got id " << target);
 	}
 
-//	void operator()(BuiltInDeclarationsParserModuleSemantics& mgr,
-//			const boost::fusion::vector2<std::string,
-//					boost::variant<
-//							boost::fusion::vector2<std::string,
-//									const unsigned int>, boost::fusion::vector2<std::string, const char> > >
-//			/*const boost::fusion::vector2< std::string, const std::vector<char, std::allocator<char> > >*/& source,
-//			ID& target) {
-//
-//		std::cerr << "\n\n\nAAAA\t" << boost::fusion::at_c < 1
-//				> (source).which() << "\n\n\n" << std::endl;
-//		if (boost::fusion::at_c < 1 > (source).which() == 0) {
-//
-//			//std::cerr << "\n\n" << boost::fusion::at_c < 0 > (boost::get<boost::fusion::vector2<std::string, const unsigned int> > (boost::fusion::at_c < 1 > (source))) << "\n" << std::endl;
-//			std::string typeOfIteration = boost::fusion::at_c < 0
-//					> (boost::get
-//							< boost::fusion::vector2<std::string,
-//									const unsigned int>
-//							> (boost::fusion::at_c < 1 > (source)));
-//
-//			std::cerr << "\n\n" << typeOfIteration << "\n" << std::endl;
-//
-//			mgr.ctxdata.addNumberIterations(
-//					boost::fusion::at_c < 1
-//							> (boost::get
-//									< boost::fusion::vector2<std::string,
-//											const unsigned int>
-//									> (boost::fusion::at_c < 1 > (source))),
-//					mgr.ctx);
-//		} else if (boost::fusion::at_c < 1 > (source).which() == 1) {
-//
-//			std::string typeOfIteration = boost::get < std::string
-//					> (boost::fusion::at_c < 1 > (source));
-//
-//			std::cerr << "\n\n" << typeOfIteration << "\n" << std::endl;
-//
-//			//mgr.ctxdata.addDurationIterations
-//		} else
-//			throw PluginError("Built-in Declaration not found");
-//
-//	}
 	void operator()(BuiltInDeclarationsParserModuleSemantics& mgr,
 			const boost::fusion::vector3<std::string, std::string,
-			/*boost::variant<const unsigned int, boost::fusion::vector2<const char, const char> /*>*/
-			const unsigned int> & source, ID& target) {
+					boost::variant<const unsigned int, std::string> > & source,
+			ID& target) {
 
 		std::string typeOfIteration = boost::fusion::at_c < 1 > (source);
 
@@ -117,49 +77,53 @@ BuiltInDeclarationsParserModuleSemantics::builtInDeclarationsPrefixAtom> {
 
 		if (typeOfIteration == "NumberIterations") {
 
-//			if (boost::fusion::at_c < 2 > (source).which() == 1)
-//				throw PluginError("Built-in Declaration not found");
-//
-//			const unsigned int number = boost::get<const unsigned int>(
-//					boost::fusion::at_c < 2 > (source));
-//
+//			const unsigned int number = boost::fusion::at_c < 2 > (source);
 //			std::cerr << number << "\n" << std::endl;
-//
-//			mgr.ctxdata.addNumberIterations(number, mgr.ctx);
+//			mgr.ctxData.addNumberIterations(number, mgr.ctx, true);
 
-			const unsigned int number = boost::fusion::at_c < 2 > (source);
+			if (boost::fusion::at_c < 2 > (source).which() == 1)
+				throw PluginError("Built-in Declaration not found");
+
+			const unsigned int number = boost::get<const unsigned int>(
+					boost::fusion::at_c < 2 > (source));
 			std::cerr << number << "\n" << std::endl;
 			mgr.ctxData.addNumberIterations(number, mgr.ctx, true);
 
 		} else if (typeOfIteration == "DurationIterations") {
 
-//			if (boost::fusion::at_c < 2 > (source).which() == 0) {
-//				//number
-//				const unsigned int duration = boost::get<const unsigned int>(
-//						boost::fusion::at_c < 2 > (source));
-//
-//				std::cerr << duration << "\n" << std::endl;
-//
-//				mgr.ctxdata.addDurationIterations(
-//						boost::lexical_cast < std::string > (duration));
-//
-//			} else {
-//				//string
-//				//std::string duration = boost::get < std::string> (boost::fusion::at_c < 2 > (source)));
-//				//std::cerr << duration << "\n" << std::endl;
-//				const char first = boost::fusion::at_c < 0 > (boost::get < boost::fusion::vector2<const char, const char>
-//						> (boost::fusion::at_c < 2 > (source)));
-//				std::cerr << first << "\n" << std::endl;
-//
-////				mgr.ctxdata.addDurationIterations(
-////						boost::get<const std::vector<char, std::allocator<char> > >(
-////								boost::fusion::at_c < 2 > (source)));
-//			}
+//			const unsigned int duration = boost::fusion::at_c < 2 > (source);
+//			std::cerr << duration << "\n" << std::endl;
+//			mgr.ctxData.addDurationIterations(duration, true);
 
 #warning Duration specified in seconds
-			const unsigned int duration = boost::fusion::at_c < 2 > (source);
+			if (boost::fusion::at_c < 2 > (source).which() == 1)
+				throw PluginError("Built-in Declaration not found");
+
+			const unsigned int duration = boost::get<const unsigned int>(
+					boost::fusion::at_c < 2 > (source));
 			std::cerr << duration << "\n" << std::endl;
 			mgr.ctxData.addDurationIterations(duration, true);
+
+		} else if (typeOfIteration == "BestModelSelector") {
+
+			if (boost::fusion::at_c < 2 > (source).which() == 0)
+				throw PluginError("Built-in Declaration not found");
+
+			std::string bestModelSelector = boost::get < std::string
+					> (boost::fusion::at_c < 2 > (source));
+			std::cerr << bestModelSelector << "\n" << std::endl;
+			mgr.ctxData.setBestModelSelectorSelected(bestModelSelector);
+
+		} else if (typeOfIteration == "ExecutionScheduleBuilder") {
+
+			if (boost::fusion::at_c < 2 > (source).which() == 0)
+				throw PluginError("Built-in Declaration not found");
+
+			std::string executionScheduleBuilder = boost::get < std::string
+					> (boost::fusion::at_c < 2 > (source));
+			std::cerr << executionScheduleBuilder << "\n" << std::endl;
+			mgr.ctxData.setExecutionScheduleBuilderSelected(
+					executionScheduleBuilder);
 
 		} else
 			throw PluginError("Built-in Declaration not found");
@@ -183,28 +147,15 @@ public HexGrammarBase<Iterator, Skipper> {
 			BuiltInDeclarationsParserModuleSemantics& sem) :
 			Base(sem), sem(sem) {
 		typedef BuiltInDeclarationsParserModuleSemantics Sem;
-//		builtInDeclarationsPrefixAtom = //(qi::string("#acthex") >> +qi::char_("0-9:,.")
-//				(qi::string("#acthex")
-//						>> ((qi::string("NumberIterations") >> qi::lit('=')
-//								>> qi::uint_)
-//								| (qi::string("DurationIterations")
-//									//	>> qi::lit('=')
-//										//>> qi::char_("0-9:,.")
-//										>> qi::char_("0-9") //>> qi::char_(":,.")
-//								//>> qi::string("VALUE")
-//								//>> +qi::char_("0-9:,.")
-//								)) >> qi::lit('.'))[Sem::builtInDeclarationsPrefixAtom(
-//						sem)];
 
-		builtInDeclarationsPrefixAtom = (qi::string("#acthex")
-				>> (qi::string("NumberIterations")
-						| qi::string("DurationIterations"))
-				//>> qi::lit('=') >> (qi::uint_ | qi::string("VALUE"))
-				>> qi::lit('=')
-				//>> (qi::uint_ | (qi::char_("0-9") >> qi::char_(":,.")))
-				//>> +qi::char_("0-9:,.")
-				>> qi::uint_ >> qi::lit('.'))[Sem::builtInDeclarationsPrefixAtom(
-				sem)];
+		builtInDeclarationsPrefixAtom =
+				(qi::string("#acthex")
+						>> (qi::string("NumberIterations")
+								| qi::string("DurationIterations")
+								| qi::string("BestModelSelector")
+								| qi::string("ExecutionScheduleBuilder"))
+						>> qi::lit('=') >> (qi::uint_ | Base::cident)
+						>> qi::lit('.'))[Sem::builtInDeclarationsPrefixAtom(sem)];
 
 #ifdef BOOST_SPIRIT_DEBUG
 		BOOST_SPIRIT_DEBUG_NODE(builtInDeclarationsPrefixAtom);
@@ -220,8 +171,8 @@ struct BuiltInDeclarationsParserModuleGrammar: BuiltInDeclarationsParserModuleGr
 // note: HexParserModuleGrammar =
 //       boost::spirit::qi::grammar<HexParserIterator, HexParserSkipper>
 		HexParserModuleGrammar {
-	typedef BuiltInDeclarationsParserModuleGrammarBase<
-			HexParserIterator, HexParserSkipper> GrammarBase;
+	typedef BuiltInDeclarationsParserModuleGrammarBase<HexParserIterator,
+			HexParserSkipper> GrammarBase;
 	typedef HexParserModuleGrammar QiBase;
 
 	BuiltInDeclarationsParserModuleGrammar(
@@ -249,8 +200,7 @@ public:
 		assert(
 				!grammarModule
 						&& "for simplicity (storing only one grammarModule pointer) we currently assume this will be called only once .. should be no problem to extend");
-		grammarModule.reset(
-				new BuiltInDeclarationsParserModuleGrammar(sem));
+		grammarModule.reset(new BuiltInDeclarationsParserModuleGrammar(sem));
 		LOG(INFO, "created BuiltInDeclarationsParserModuleGrammar");
 		return grammarModule;
 	}
