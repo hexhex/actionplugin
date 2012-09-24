@@ -89,7 +89,6 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 			try {
 				number = boost::lexical_cast<unsigned int>(string_of_number);
 			} catch (boost::bad_lexical_cast& e) {
-				std::cerr << string_of_number << " isn't a number" << std::endl;
 				throw PluginError("Wrong value for --acthexNumberIterations");
 			}
 			//qi::parse(string_of_number.begin(), string_of_number.end(), number);
@@ -104,8 +103,6 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 				duration = boost::lexical_cast<unsigned int>(
 						string_of_duration);
 			} catch (boost::bad_lexical_cast& e) {
-				std::cerr << string_of_duration << " isn't a number"
-						<< std::endl;
 				throw PluginError("Wrong value for --acthexDurationIterations");
 			}
 			ctxData.addDurationIterations(duration, false);

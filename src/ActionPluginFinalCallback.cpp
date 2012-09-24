@@ -27,41 +27,44 @@ ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx) :
 }
 
 void ActionPluginFinalCallback::operator()() {
-	std::cerr << "\nActionPluginFinalCallback called" << std::endl;
+	DBGLOG(DBG, "\nActionPluginFinalCallback called");
 
-	if(ctxData.nameBestModelSelectorMap.count(ctxData.bestModelSelectorSelected) == 0)
+	if (ctxData.nameBestModelSelectorMap.count(
+			ctxData.bestModelSelectorSelected) == 0)
 		throw PluginError("The BestModelSelector chosen doesn't exist");
 
 	ctxData.nameBestModelSelectorMap[ctxData.bestModelSelectorSelected]->getBestModel(
 			ctxData.iteratorBestModel, ctxData.bestModelsContainer);
 
-	std::cerr << "\nBestModel selected:" << std::endl;
-	(*ctxData.iteratorBestModel)->interpretation->print(std::cerr);
-	std::cerr << std::endl;
+	std::stringstream ss;
+	(*ctxData.iteratorBestModel)->interpretation->print(ss);
+	DBGLOG(DBG, "\nBestModel selected: " << ss.str());
 
-	std::cerr << "\nCall the executionModeController" << std::endl;
+	DBGLOG(DBG, "\nCall the executionModeController");
 	std::multimap<int, Tuple> multimapOfExecution;
 	executionModeController(multimapOfExecution);
 
-	std::cerr << "\nThe MultiMapOfExecution:" << std::endl;
-	std::cerr << "Precedence\tTuple" << std::endl;
+	DBGLOG(DBG, "\nThe MultiMapOfExecution:");
+	DBGLOG(DBG, "Precedence\tTuple");
 	std::multimap<int, Tuple>::iterator itMMOE;
 	for (itMMOE = multimapOfExecution.begin();
 			itMMOE != multimapOfExecution.end(); itMMOE++) {
-		std::cerr << itMMOE->first << "\t\t";
 		const Tuple& tempTuple = itMMOE->second;
-		printTuple(tempTuple, registryPtr);
+		std::stringstream ss;
+		printTuple(ss, tempTuple, registryPtr);
+		DBGLOG(DBG, itMMOE->first << "\t\t" << ss.str());
 	}
 
-	if(ctxData.nameExecutionScheduleBuilderMap.count(ctxData.executionScheduleBuilderSelected) == 0)
+	if (ctxData.nameExecutionScheduleBuilderMap.count(
+			ctxData.executionScheduleBuilderSelected) == 0)
 		throw PluginError("The ExecutionScheduleBuilder chosen doesn't exist");
 
-	std::cerr << "\nCall the executionScheduleBuilder" << std::endl;
+	DBGLOG(DBG, "\nCall the executionScheduleBuilder");
 	std::list < std::set<Tuple> > listOfExecution;
 	ctxData.nameExecutionScheduleBuilderMap[ctxData.executionScheduleBuilderSelected]->rewrite(
 			multimapOfExecution, listOfExecution);
 
-	std::cerr << "\nThe ListOfExecution:" << std::endl;
+	DBGLOG(DBG, "\nThe ListOfExecution:");
 	std::list<std::set<Tuple> >::iterator itLOE;
 	for (itLOE = listOfExecution.begin(); itLOE != listOfExecution.end();
 			itLOE++) {
@@ -69,23 +72,23 @@ void ActionPluginFinalCallback::operator()() {
 		for (std::set<Tuple>::iterator itLOEs = tempSet.begin();
 				itLOEs != tempSet.end(); itLOEs++) {
 			const Tuple& tempTuple = (*itLOEs);
-			printTuple(tempTuple, registryPtr);
+			std::stringstream ss;
+			printTuple(ss, tempTuple, registryPtr);
+			DBGLOG(DBG, ss.str());
 		}
 	}
 
-	std::cerr
-			<< "\nControl if the order of Set in the List corresponds to their precedence"
-			<< std::endl;
-	if (checkIfTheListIsCorrect(multimapOfExecution,
-			listOfExecution))
-		std::cerr << "The List is correct" << std::endl;
-	else {
-		std::cerr << "The List isn't correct" << std::endl;
+	DBGLOG(DBG,
+			"\nControl if the order of Set in the List corresponds to their precedence");
+	if (checkIfTheListIsCorrect(multimapOfExecution, listOfExecution)) {
+		DBGLOG(DBG, "The List is correct");
+	} else {
+		DBGLOG(DBG, "The List isn't correct");
 		throw PluginError(
 				"The order of Set in the ListOfExecution doens't correspond to their precedence");
 	}
 
-	std::cerr << "\nExecute the actions in the right order" << std::endl;
+	DBGLOG(DBG, "\nExecute the actions in the right order");
 
 	for (itLOE = listOfExecution.begin(); itLOE != listOfExecution.end();
 			itLOE++) {
@@ -109,10 +112,12 @@ void ActionPluginFinalCallback::operator()() {
 			tupleForExecute.insert(tupleForExecute.begin(),
 					tempTuple.begin() + 1, tempTuple.end());
 
-			std::cerr << "tempTuple: ";
-			printTuple(tempTuple, registryPtr);
-			std::cerr << "tupleForExecute: ";
-			printTuple(tupleForExecute, registryPtr);
+			std::stringstream ss;
+			printTuple(ss, tempTuple, registryPtr);
+			DBGLOG(DBG, "tupleForExecute: " << ss.str());
+			ss.str("");
+			printTuple(ss, tupleForExecute, registryPtr);
+			DBGLOG(DBG, "tempTuple: " << ss.str());
 
 			std::map<std::string, PluginActionBasePtr>::iterator it =
 					ctxData.namePluginActionBaseMap.find(
@@ -123,14 +128,16 @@ void ActionPluginFinalCallback::operator()() {
 						(*(ctxData.iteratorBestModel))->interpretation,
 						tupleForExecute);
 			else
-				std::cerr << "For the action '"
-						<< registryPtr->getTermStringByID(*tempTuple.begin())
-						<< "' wasn't found a definition" << std::endl;
+				DBGLOG(DBG,
+						"For the action '"
+								<< registryPtr->getTermStringByID(
+										*tempTuple.begin())
+								<< "' wasn't found a definition");
 
 		}
 	}
 
-	std::cerr << "\nCheck Iteration" << std::endl;
+	DBGLOG(DBG, "\nCheck Iteration");
 	if (ctxData.iterationType == DEFAULT && ctxData.continueIteration)
 		programCtx.config.setOption("RepeatEvaluation", 1);
 	else if (ctxData.iterationType != DEFAULT && ctxData.stopIteration)
@@ -155,13 +162,13 @@ void ActionPluginFinalCallback::operator()() {
 
 	if (programCtx.config.getOption("RepeatEvaluation") > 0) {
 
-		std::cerr << "\nClear data structures" << std::endl;
+		DBGLOG(DBG, "\nClear data structures");
 		ctxData.clearDataStructures();
 
 		ctxData.continueIteration = false;
 		ctxData.stopIteration = false;
 
-		std::cerr << "\nReset cache" << std::endl;
+		DBGLOG(DBG, "\nReset cache");
 		programCtx.resetCacheOfPlugins();
 
 	}
@@ -200,24 +207,28 @@ void ActionPluginFinalCallback::executionModeController(
 
 			precedence = tuple[precedence_position].address;
 
-			std::cerr << "actionOption: "
-					<< registryPtr->getTermStringByID(id_actionOption)
-					<< std::endl;
-			std::cerr << "Precedence: " << precedence << std::endl;
+			DBGLOG(DBG,
+					"actionOption: "
+							<< registryPtr->getTermStringByID(id_actionOption));
+			DBGLOG(DBG, "Precedence: " << precedence);
 
 			if (id_actionOption == ctxData.id_brave)
 				;
 			else if (id_actionOption == ctxData.id_cautious)
 				if (!isPresentInAllAnswerset(action_tuple)) {
-					std::cerr
-							<< "This action atom isn't present in all AnswerSet: ";
-					printTuple(action_tuple, registryPtr);
+					std::stringstream ss;
+					printTuple(ss, action_tuple, registryPtr);
+					DBGLOG(DBG,
+							"This action atom isn't present in all AnswerSet: "
+									<< ss.str());
 					continue;
 				} else if (id_actionOption == ctxData.id_preferred_cautious)
 					if (!isPresentInAllTheBestModelsAnswerset(action_tuple)) {
-						std::cerr
-								<< "This action atom isn't present in all BestModels AnswerSet: ";
-						printTuple(action_tuple, registryPtr);
+						std::stringstream ss;
+						printTuple(ss, action_tuple, registryPtr);
+						DBGLOG(DBG,
+								"This action atom isn't present in all BestModels AnswerSet: "
+										<< ss.str());
 						continue;
 					} else
 						throw PluginError(
@@ -234,7 +245,8 @@ void ActionPluginFinalCallback::executionModeController(
 
 }
 
-bool ActionPluginFinalCallback::isPresentInAllAnswerset(const Tuple& action_tuple) {
+bool ActionPluginFinalCallback::isPresentInAllAnswerset(
+		const Tuple& action_tuple) {
 
 	if (!isPresentInAllTheBestModelsAnswerset(action_tuple))
 		return false;
@@ -353,21 +365,20 @@ bool ActionPluginFinalCallback::checkIfThisSetsOfTupleContainsTheSameElements(
 
 }
 
-// Utility function that prints a Tuple on standard error
-void ActionPluginFinalCallback::printTuple(const Tuple& tuple, const RegistryPtr registryPtr) {
+// Utility function that prints a Tuple on the specified ostream
+void ActionPluginFinalCallback::printTuple(std::ostream& output,
+		const Tuple& tuple, const RegistryPtr registryPtr) {
 	bool first = true;
-	for (Tuple::const_iterator it = tuple.begin(); it != tuple.end();
-			it++) {
+	for (Tuple::const_iterator it = tuple.begin(); it != tuple.end(); it++) {
 		if (first)
 			first = !first;
 		else
-			std::cerr << ", ";
+			output << ", ";
 		if (it->isConstantTerm() || it->isVariableTerm())
-			std::cerr << registryPtr->getTermStringByID(*it);
+			output << registryPtr->getTermStringByID(*it);
 		else
-			std::cerr << it->address;
+			output << it->address;
 	}
-	std::cerr << std::endl;
 }
 
 DLVHEX_NAMESPACE_END

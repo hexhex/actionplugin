@@ -72,62 +72,61 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 
 		RegistryPtr reg = mgr.ctx.registry();
 
-		RawPrinter printer(std::cerr, reg);
-
 		const ID id_0 = boost::fusion::at_c < 0 > (source);
 
-		std::cerr << "\nThe IdActionMap:" << std::endl;
+		DBGLOG(DBG, "\nThe IdActionMap:");
 		std::map<ID, ActionPtr>::iterator itIAM;
 		for (itIAM = mgr.ctxData.idActionMap.begin();
 				itIAM != mgr.ctxData.idActionMap.end(); itIAM++) {
+			std::stringstream ss;
+			RawPrinter printer(ss, reg);
 			printer.print(itIAM->first);
-			std::cerr << "\t\t";
+			ss << "\t\t";
 			printer.print(itIAM->second->getAuxId());
-			std::cerr << "\t\t";
-			std::cerr << itIAM->second->getPredicate() << std::endl;
+			ss << "\t\t";
+			DBGLOG(DBG, ss.str() << itIAM->second->getPredicate());
 		}
-
-		std::cerr << std::endl;
 
 		if (mgr.ctxData.idActionMap.count(id_0) == 0)
 			throw PluginError(
 					"Action '" + reg->getTermStringByID(id_0) + "' not found");
 
-		std::cerr << "original:\t";
+		std::stringstream ss;
+		RawPrinter printer(ss, reg);
 
-		std::cerr << '#';
+		ss << '#';
 
 		printer.print(id_0);
 
 		if (!!boost::fusion::at_c < 1 > (source)) {
 
-			std::cerr << '[';
+			ss << '[';
 
 			if (!!boost::fusion::at_c < 1 > (source).get())
 				printer.printmany(
 						boost::fusion::at_c < 1 > (source).get().get(), ",");
 
-			std::cerr << ']';
+			ss << ']';
 
 		}
 
-		std::cerr << '{';
+		ss << '{';
 
-		std::cerr << boost::fusion::at_c < 2 > (source);
+		ss << boost::fusion::at_c < 2 > (source);
 
 		if (!!boost::fusion::at_c < 3 > (source)) {
 
-			std::cerr << ',';
+			ss << ',';
 
 			printer.print(boost::fusion::at_c < 3 > (source).get());
 
 		}
 
-		std::cerr << '}';
+		ss << '}';
 
 		if (!!boost::fusion::at_c < 4 > (source)) {
 
-			std::cerr << '[';
+			ss << '[';
 
 			if (!!boost::fusion::at_c < 0
 					> (boost::fusion::at_c < 4 > (source).get()))
@@ -135,7 +134,7 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 						boost::fusion::at_c < 0
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 
-			std::cerr << ':';
+			ss << ':';
 
 			if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
@@ -143,41 +142,41 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 						boost::fusion::at_c < 1
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 
-			std::cerr << ']';
+			ss << ']';
 
 		}
 
-		std::cerr << std::endl;
+		DBGLOG(DBG, "original:\t" << ss.str());
 
-		std::cerr << "rewritten:\t";
+		ss.str("");
 
 		printer.print(mgr.ctxData.idActionMap.find(id_0)->second->getAuxId());
 
-		std::cerr << '(';
+		ss << '(';
 
 		printer.print(id_0);
 
-		std::cerr << ',';
+		ss << ',';
 		if (!!boost::fusion::at_c < 1 > (source)
 				&& !!boost::fusion::at_c < 1 > (source).get()) {
 
 			printer.printmany(boost::fusion::at_c < 1 > (source).get().get(),
 					",");
 
-			std::cerr << ',';
+			ss << ',';
 
 		}
 
-		std::cerr << boost::fusion::at_c < 2 > (source);
+		ss << boost::fusion::at_c < 2 > (source);
 
-		std::cerr << ',';
+		ss << ',';
 
 		if (!!boost::fusion::at_c < 3 > (source))
 			printer.print(boost::fusion::at_c < 3 > (source).get());
 		else
-			std::cerr << '1';
+			ss << '1';
 
-		std::cerr << ',';
+		ss << ',';
 
 		if (!!boost::fusion::at_c < 4 > (source)) {
 
@@ -188,11 +187,11 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
-				std::cerr << '1';
+				ss << mgr.ctxData.id_default_weight_with_level;
 			else
-				std::cerr << '0';
+				ss << mgr.ctxData.id_default_weight_without_level;
 
-			std::cerr << ',';
+			ss << ',';
 
 			if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
@@ -201,17 +200,19 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 0
 					> (boost::fusion::at_c < 4 > (source).get()))
-				std::cerr << '1';
+				ss << mgr.ctxData.id_default_level_with_weight;
 			else
-				std::cerr << '0';
-		} else
-			std::cerr << "0,0";
+				ss << mgr.ctxData.id_default_level_without_weight;
+		} else {
+			ss << mgr.ctxData.id_default_weight_without_level;
+			ss << mgr.ctxData.id_default_level_without_weight;
+		}
 
-		std::cerr << ')';
+		ss << ')';
 
-		std::cerr << '.';
+		ss << '.';
 
-		std::cerr << std::endl;
+		DBGLOG(DBG, "rewritten:\t" << ss.str());
 
 		//Take the IDs, create OrdinaryAtom, store it in the Registry by using storeOrdinaryAtom and put in target the ID
 

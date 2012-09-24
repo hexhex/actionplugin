@@ -8,7 +8,15 @@
 #ifndef EXECUTION_SCHEDULE_BUILDER_H_
 #define EXECUTION_SCHEDULE_BUILDER_H_
 
-#include "acthex/ActionPluginCtxData.h"
+#include "dlvhex2/PlatformDefinitions.h"
+#include "dlvhex2/ID.h"
+
+#include <string>
+#include <map>
+#include <list>
+using namespace std;
+
+#include <boost/shared_ptr.hpp>
 
 DLVHEX_NAMESPACE_BEGIN
 

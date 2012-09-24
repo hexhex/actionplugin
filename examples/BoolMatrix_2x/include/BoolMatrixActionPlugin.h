@@ -20,17 +20,7 @@ public:
 
 	class Environment: public PluginEnvironment {
 	public:
-		Environment() {
-			name = "EnvironmentOfBoolMatrixActionPlugin";
-
-			currentRows = 4;
-			currentColumns = 9;
-			createMatrix();
-
-			dimensionAlreadySet = false;
-			highestRowWithAdd = 0;
-
-		}
+		Environment();
 		virtual ~Environment();
 		void createImage(string);
 		void print(string, string);
@@ -107,10 +97,10 @@ public:
 protected:
 
 	ActionPluginInterfacePtr create(ProgramCtx& ctx) {
-		std::cerr << "create in BoolMatrixActionPlugin" << std::endl;
+		DBGLOG(PLUGIN, "create in BoolMatrixActionPlugin");
 #warning a trick, maybe we should find a way remove it
 		ctx.getPluginEnvironment<BoolMatrixActionPlugin>();
-		std::cerr << "getPluginEnvironment done" << std::endl;
+		DBGLOG(PLUGIN, "getPluginEnvironment done");
 		return boost::shared_ptr < BoolMatrixActionPlugin
 				> (new BoolMatrixActionPlugin());
 	}

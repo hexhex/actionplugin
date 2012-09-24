@@ -73,7 +73,7 @@ struct sem<
 
 		std::string typeOfIteration = boost::fusion::at_c < 1 > (source);
 
-		std::cerr << "\n\n" << typeOfIteration << std::endl;
+		DBGLOG(DBG, "\n\n" << typeOfIteration);
 
 		if (typeOfIteration == "NumberIterations") {
 
@@ -86,7 +86,7 @@ struct sem<
 
 			const unsigned int number = boost::get<const unsigned int>(
 					boost::fusion::at_c < 2 > (source));
-			std::cerr << number << "\n" << std::endl;
+			DBGLOG(DBG, number << "\n");
 			mgr.ctxData.addNumberIterations(number, mgr.ctx, true);
 
 		} else if (typeOfIteration == "DurationIterations") {
@@ -101,7 +101,7 @@ struct sem<
 
 			const unsigned int duration = boost::get<const unsigned int>(
 					boost::fusion::at_c < 2 > (source));
-			std::cerr << duration << "\n" << std::endl;
+			DBGLOG(DBG, duration << "\n");
 			mgr.ctxData.addDurationIterations(duration, true);
 
 		} else if (typeOfIteration == "BestModelSelector") {
@@ -111,7 +111,7 @@ struct sem<
 
 			std::string bestModelSelector = boost::get < std::string
 					> (boost::fusion::at_c < 2 > (source));
-			std::cerr << bestModelSelector << "\n" << std::endl;
+			DBGLOG(DBG, bestModelSelector << "\n");
 			mgr.ctxData.setBestModelSelectorSelected(bestModelSelector);
 
 		} else if (typeOfIteration == "ExecutionScheduleBuilder") {
@@ -121,7 +121,7 @@ struct sem<
 
 			std::string executionScheduleBuilder = boost::get < std::string
 					> (boost::fusion::at_c < 2 > (source));
-			std::cerr << executionScheduleBuilder << "\n" << std::endl;
+			DBGLOG(DBG, executionScheduleBuilder << "\n");
 			mgr.ctxData.setExecutionScheduleBuilderSelected(
 					executionScheduleBuilder);
 

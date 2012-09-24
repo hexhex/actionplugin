@@ -24,17 +24,17 @@ ActionPluginModelCallback::~ActionPluginModelCallback() {
 // This function will be called for each AnswerSet
 bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
-	std::cerr << "\nActionPluginModelCallback called" << std::endl;
-	std::cerr << "\nThe Interpretation:" << std::endl;
-	answerSetPtr->interpretation->print(std::cerr);
-	std::cerr << std::endl;
+	DBGLOG(DBG, "\nActionPluginModelCallback called");
+	DBGLOG(DBG, "\nThe Interpretation:");
+	std::stringstream ss;
+	answerSetPtr->interpretation->print(ss);
+	DBGLOG(DBG, ss.str());
 
 	ActionPluginCtxData::LevelsAndWeights levelsAndWeights;
 
 	ctxData.myAuxiliaryPredicateMask.updateMask();
 
-	std::cerr << "\nThe Atoms Of Interpretation with myAuxiliaryPredicateMask:"
-			<< std::endl;
+	DBGLOG(DBG, "\nThe Atoms Of Interpretation with myAuxiliaryPredicateMask:");
 
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
@@ -45,7 +45,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 	for (boost::tie(bit, bit_end) = intr->trueBits(); bit != bit_end; ++bit) {
 
 		const OrdinaryAtom& oatom = registryPtr->ogatoms.getByAddress(*bit);
-		std::cerr << "The atom: " << oatom.text << std::endl;
+		DBGLOG(DBG, "The atom: " << oatom.text);
 
 		const Tuple & tuple = oatom.tuple;
 
@@ -58,8 +58,8 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 			weight = tuple[weight_position].address;
 			level = tuple[level_position].address;
 
-			std::cerr << "Weight: " << weight << std::endl;
-			std::cerr << "Level: " << level << std::endl;
+			DBGLOG(DBG, "Weight: " << weight);
+			DBGLOG(DBG, "Level: " << level);
 
 			if (levelsAndWeights.count(level) == 0)
 				levelsAndWeights.insert(std::pair<int, int>(level, weight));
@@ -106,7 +106,7 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 		int res_is = isABestModel(ctxData.levelsAndWeightsBestModels,
 				levelsAndWeights);
 
-		std::cerr << "res_is " << res_is << std::endl;
+		DBGLOG(DBG, "res_is ");
 
 		if (res_is == 0)
 			;
@@ -129,29 +129,29 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	ctxData.bestModelsContainer.push_back(answerSetPtr);
 
-	std::cerr << "\nThe levelsAndWeightsBestModels:" << std::endl;
-	std::cerr << "Level\tWeight" << std::endl;
+	DBGLOG(DBG, "\nThe levelsAndWeightsBestModels:");
+	DBGLOG(DBG, "Level\tWeight");
 	for (itLAW = ctxData.levelsAndWeightsBestModels.begin();
 			itLAW != ctxData.levelsAndWeightsBestModels.end(); itLAW++) {
-		std::cerr << itLAW->first << '\t' << itLAW->second << std::endl;
+		DBGLOG(DBG, itLAW->first << '\t' << itLAW->second);
 	}
 
-	std::cerr << "\nThe bestModelsContainer:" << std::endl;
+	DBGLOG(DBG, "\nThe bestModelsContainer:");
 	ActionPluginCtxData::BestModelsContainer::iterator itBMC;
 	for (itBMC = ctxData.bestModelsContainer.begin();
 			itBMC != ctxData.bestModelsContainer.end(); itBMC++) {
-		(*itBMC)->interpretation->print(std::cerr);
-		std::cerr << std::endl;
+		std::stringstream ss;
+		(*itBMC)->interpretation->print(ss);
+		DBGLOG(DBG, ss.str());
 	}
 
-	std::cerr << "\nThe notBestModelsContainer:" << std::endl;
+	DBGLOG(DBG, "\nThe notBestModelsContainer:");
 	for (itBMC = ctxData.notBestModelsContainer.begin();
 			itBMC != ctxData.notBestModelsContainer.end(); itBMC++) {
-		(*itBMC)->interpretation->print(std::cerr);
-		std::cerr << std::endl;
+		std::stringstream ss;
+		(*itBMC)->interpretation->print(ss);
+		DBGLOG(DBG, ss.str());
 	}
-
-	std::cerr << std::endl;
 
 	return true;
 
@@ -167,15 +167,10 @@ int ActionPluginModelCallback::isABestModel(
 	// the last level that I've seen
 	int lastLevelSeen = -1;
 
-	std::cerr << "starting\t" << levelsAndWeights.size() << "\t"
-			<< levelsAndWeightsBestModels.size() << std::endl;
-
 	//if there is a level in levelsAndWeights that is greater than the highest level of levelsAndWeightsBestModels I have to return
 	if ((*levelsAndWeights.rbegin()).first
 			> (*levelsAndWeightsBestModels.rbegin()).first)
 		return -1;
-
-	std::cerr << "before for" << std::endl;
 
 	ActionPluginCtxData::LevelsAndWeights::reverse_iterator ritLAW;
 	int first, second;
@@ -188,8 +183,6 @@ int ActionPluginModelCallback::isABestModel(
 
 		first = ritLAW->first;
 		second = ritLAW->second;
-
-		std::cerr << "before if:\t" << first << "\t" << second << std::endl;
 
 		//if there is a level in levelsAndWeights that is smallest than the lastLevelSeen and greater than the current level
 		if (lastLevelSeen != -1)

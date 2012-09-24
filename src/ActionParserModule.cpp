@@ -14,8 +14,7 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
-ActionParserModuleSemantics::ActionParserModuleSemantics(
-		ProgramCtx& ctx) :
+ActionParserModuleSemantics::ActionParserModuleSemantics(ProgramCtx& ctx) :
 		HexGrammarSemantics(ctx), ctxData(ctx.getPluginData<ActionPlugin>()) {
 }
 

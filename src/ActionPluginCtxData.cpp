@@ -50,7 +50,7 @@ void ActionPluginCtxData::addAction(const ID & id, const ActionPtr actionPtr) {
 void ActionPluginCtxData::registerPlugin(
 		ActionPluginInterfacePtr actionPluginInterfacePtr, ProgramCtx& ctx) {
 
-	std::cerr << "registerPlugin called" << std::endl;
+	DBGLOG(DBG, "registerPlugin called");
 
 	registerActionsOfPlugin(actionPluginInterfacePtr->createActions(ctx),
 			ctx.registry());
@@ -68,7 +68,7 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 		std::vector<PluginActionBasePtr> pluginActionBasePtrVector,
 		RegistryPtr reg) {
 
-	std::cerr << "\nregisterActionsOfPlugin" << std::endl;
+	DBGLOG(DBG, "\nregisterActionsOfPlugin");
 
 	std::string actionPredicate;
 
@@ -88,17 +88,18 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 				std::pair<std::string, PluginActionBasePtr>(actionPredicate,
 						(*it)));
 
-		std::cerr << "Inserted: " << actionPredicate << std::endl;
+		DBGLOG(DBG, "Inserted: " << actionPredicate);
 
 		ID aux_id = reg->getAuxiliaryConstantSymbol('a', id);
 
-		RawPrinter printer(std::cerr, reg);
+		std::stringstream ss;
+		RawPrinter printer(ss, reg);
 
-		std::cerr << "Id: ";
 		printer.print(id);
-		std::cerr << "\t";
+		ss << "\t";
 		printer.print(aux_id);
-		std::cerr << std::endl;
+
+		DBGLOG(DBG, "Id: " << ss.str());
 
 		ActionPtr actionPtr(new Action(reg->getTermStringByID(id), aux_id));
 		this->addAction(id, actionPtr);
@@ -111,7 +112,7 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 		std::vector<BestModelSelectorPtr> allBestModelSelectors) {
 
-	std::cerr << "\nregisterBestModelSelectorsOfPlugin" << std::endl;
+	DBGLOG(DBG, "\nregisterBestModelSelectorsOfPlugin");
 
 	std::string bestModelSelectorName;
 
@@ -129,7 +130,7 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 				std::pair<std::string, BestModelSelectorPtr>(
 						bestModelSelectorName, (*it)));
 
-		std::cerr << "Inserted: " << bestModelSelectorName << std::endl;
+		DBGLOG(DBG, "Inserted: " << bestModelSelectorName);
 
 	}
 }
@@ -138,7 +139,7 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders) {
 
-	std::cerr << "\nregisterExecutionScheduleBuildersOfPlugin" << std::endl;
+	DBGLOG(DBG, "\nregisterExecutionScheduleBuildersOfPlugin");
 
 	std::string executionScheduleBuilderName;
 
@@ -157,7 +158,7 @@ void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 				std::pair<std::string, ExecutionScheduleBuilderPtr>(
 						executionScheduleBuilderName, (*it)));
 
-		std::cerr << "Inserted: " << executionScheduleBuilderName << std::endl;
+		DBGLOG(DBG, "Inserted: " << executionScheduleBuilderName);
 
 	}
 
@@ -178,29 +179,30 @@ void ActionPluginCtxData::createAndInsertContinueAndStopActions(
 	id_continue = reg->storeConstantTerm("acthexContinue");
 	id_stop = reg->storeConstantTerm("acthexStop");
 
-	RawPrinter printer(std::cerr, reg);
+	std::stringstream ss;
+	RawPrinter printer(ss, reg);
 
 	ID aux_id_continue = reg->getAuxiliaryConstantSymbol('a', id_continue);
 	ActionPtr actionPtrContinue(
 			new Action(reg->getTermStringByID(id_continue), aux_id_continue));
 	this->addAction(id_continue, actionPtrContinue);
 
-	std::cerr << "id_continue : ";
 	printer.print(id_continue);
-	std::cerr << ",\t aux_id_continue: ";
+	ss << ",\t aux_id_continue: ";
 	printer.print(aux_id_continue);
-	std::cerr << std::endl;
+
+	DBGLOG(DBG, "id_continue : " << ss.str());
 
 	ID aux_id_stop = reg->getAuxiliaryConstantSymbol('a', id_stop);
 	ActionPtr actionPtrStop(
 			new Action(reg->getTermStringByID(id_stop), aux_id_stop));
 	this->addAction(id_stop, actionPtrStop);
 
-	std::cerr << "id_stop : ";
 	printer.print(id_stop);
-	std::cerr << ",\t aux_id_stop:";
+	ss << ",\t aux_id_stop:";
 	printer.print(aux_id_stop);
-	std::cerr << std::endl;
+
+	DBGLOG(DBG, "id_stop : " << ss.str());
 
 }
 
@@ -217,7 +219,10 @@ void ActionPluginCtxData::addNumberIterations(const unsigned int number,
 		iterationFromBuiltInConstant = true;
 
 	} else if (numberIterations != -1)
-		throw PluginError("Duplicate values for acthexNumberIterations");
+		if (numberIterations == number)
+			return;
+		else
+			throw PluginError("Duplicate values for acthexNumberIterations");
 
 	if (number == 0)
 		iterationType = INFINITE;
@@ -242,7 +247,10 @@ void ActionPluginCtxData::addDurationIterations(unsigned int duration,
 		iterationFromBuiltInConstant = true;
 
 	} else if (!timeDuration.is_not_a_date_time())
-		throw PluginError("Duplicate values for acthexDurationIterations");
+		if (timeDuration.seconds() == duration)
+			return;
+		else
+			throw PluginError("Duplicate values for acthexDurationIterations");
 
 	if (duration == 0)
 		iterationType = INFINITE;
@@ -274,20 +282,29 @@ void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionSched
 }
 
 // Set the bestModelSelectorSelected
-void ActionPluginCtxData::setBestModelSelectorSelected(const std::string bestModelSelector) {
+void ActionPluginCtxData::setBestModelSelectorSelected(
+		const std::string bestModelSelector) {
 
-	if(bestModelSelectorSelected != "default")
-		throw PluginError("Duplicate values for acthexBestModelSelector");
+	if (bestModelSelectorSelected != "default")
+		if (bestModelSelectorSelected == bestModelSelector)
+			return;
+		else
+			throw PluginError("Duplicate values for acthexBestModelSelector");
 
 	bestModelSelectorSelected = bestModelSelector;
 
 }
 
 //Set the executionScheduleBuilderSelected
-void ActionPluginCtxData::setExecutionScheduleBuilderSelected(const std::string executionScheduleBuilder) {
+void ActionPluginCtxData::setExecutionScheduleBuilderSelected(
+		const std::string executionScheduleBuilder) {
 
-	if(executionScheduleBuilder != "default")
-		throw PluginError("Duplicate values for acthexExecutionScheduleBuilder");
+	if (executionScheduleBuilder != "default")
+		if (executionScheduleBuilderSelected == executionScheduleBuilder)
+			return;
+		else
+			throw PluginError(
+					"Duplicate values for acthexExecutionScheduleBuilder");
 
 	executionScheduleBuilderSelected = executionScheduleBuilder;
 

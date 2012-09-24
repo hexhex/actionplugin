@@ -12,6 +12,18 @@
 
 DLVHEX_NAMESPACE_BEGIN
 
+BoolMatrixActionPlugin::Environment::Environment() {
+	name = "EnvironmentOfBoolMatrixActionPlugin";
+
+	currentRows = 4;
+	currentColumns = 9;
+	createMatrix();
+
+	dimensionAlreadySet = false;
+	highestRowWithAdd = 0;
+
+}
+
 BoolMatrixActionPlugin::Environment::~Environment() {
 	destroyMatrix();
 }
@@ -65,9 +77,8 @@ void BoolMatrixActionPlugin::Environment::print(string black_char,
 	if (black_char.size() != 1 || white_char.size() != 1)
 		throw PluginError("Wrong input argument type (in print)");
 
-	std::cout << std::endl;
 	int c = system("clear");
-	std::cout << "Print" << std::endl;
+	DBGLOG(PLUGIN, "Print");
 	for (unsigned int i = 0; i < currentRows; i++) {
 		for (unsigned int j = 0; j < currentColumns; j++)
 			if (values[i][j])
@@ -81,22 +92,21 @@ void BoolMatrixActionPlugin::Environment::print(string black_char,
 void BoolMatrixActionPlugin::Environment::add(unsigned int row,
 		unsigned int column) {
 	values[row][column] = true;
-	std::cout << "Added " << row << " " << column << "; ";
+	DBGLOG(PLUGIN, "Added " << row << " " << column << "; ");
 	if (row > highestRowWithAdd)
 		highestRowWithAdd = row;
 }
 
 void BoolMatrixActionPlugin::Environment::setDimension(unsigned int rows,
 		unsigned int columns) {
-	if (rows < 3 || columns < 3) {
-		std::cout << "Cannot set a dimension under 3 x 3" << std::endl;
-		return;
-	}
+	if (rows < 3 || columns < 3)
+		throw PluginError("Cannot set a dimension under 3 x 3");
+
 	if (rows == currentRows || columns == currentColumns) {
-		std::cout << "The new dimension is the same as before" << std::endl;
+		DBGLOG(PLUGIN, "The new dimension is the same as before");
 		return;
 	}
-	std::cout << "New dimension " << rows << " " << columns << std::endl;
+	DBGLOG(PLUGIN, "New dimension " << rows << " " << columns);
 	destroyMatrix();
 	currentRows = rows;
 	currentColumns = columns;
@@ -116,8 +126,8 @@ void BoolMatrixActionPlugin::Environment::createMatrix() {
 
 void BoolMatrixActionPlugin::Environment::destroyMatrix() {
 	for (unsigned int i = 0; i < currentRows; i++)
-		delete values[i];
-	delete values;
+		delete[] values[i];
+	delete[] values;
 }
 
 bool BoolMatrixActionPlugin::Environment::haveToSetDimension() const {
@@ -240,10 +250,10 @@ void BoolMatrixActionPlugin::BoolMatrixActionAtomHaveToSetDimension::retrieve(
 	Tuple out;
 
 	if (environment.haveToSetDimension()) {
-		std::cerr << "\n *** dimensionAlreadySet is FALSE *** \n" << std::endl;
+		DBGLOG(PLUGIN, "\n *** dimensionAlreadySet is FALSE *** \n");
 		answer.get().push_back(out);
 	} else
-		std::cerr << "\n *** dimensionAlreadySet is TRUE *** \n" << std::endl;
+		DBGLOG(PLUGIN, "\n *** dimensionAlreadySet is TRUE *** \n");
 
 }
 

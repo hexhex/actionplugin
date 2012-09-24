@@ -20,7 +20,7 @@ ActionPluginInterface::~ActionPluginInterface() {
 // Used to activate the Plugin only if "--action-enable" option is selected
 void ActionPluginInterface::processOptions(
 		std::list<const char*>& pluginOptions, ProgramCtx& ctx) {
-	std::cerr << "processOptions of ActionPluginInterface" << std::endl;
+	DBGLOG(DBG, "processOptions of ActionPluginInterface");
 
 	ActionPluginCtxData& ctxData = ctx.getPluginData<ActionPlugin>();
 

@@ -40,8 +40,9 @@ protected:
 	bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
 	bool checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>&,
 			const std::set<Tuple>&) const;
-	// Utility function that prints a Tuple on standard error
-	void printTuple(const Tuple& tuple, const RegistryPtr registryPtr);
+	// Utility function that prints a Tuple on the specified ostream
+	void printTuple(std::ostream& output, const Tuple& tuple,
+			const RegistryPtr registryPtr);
 
 	ProgramCtx& programCtx;
 	ActionPluginCtxData& ctxData;
