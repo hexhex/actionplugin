@@ -23,24 +23,40 @@ public:
 	ActionPluginFinalCallback(ProgramCtx&);
 	virtual ~ActionPluginFinalCallback() {
 	}
+	/**
+	 * @brief Best Model Selector, Execution Schedule Builder, Execute Actions on Environment
+	 */
 	virtual void operator()();
 protected:
-	// function that fill the multimap (passed as parameter)
-	// with Precedence attribute and Action Tuple
-	// checking the Action Option attribute
+	/**
+	 * @brief fills the multimap (passed as parameter) with Precedence attribute and Action Tuple checking the Action Option attribute
+	 */
 	void executionModeController(std::multimap<int, Tuple>&);
-	// function that check if the order of execution of Actions
-	// in the List, based on their Precedence attribute, is correct
-	// and if in the List there are all the Actions
+	/**
+	 * @brief checks if the order of execution of Actions in the List, based on their Precedence attribute, is correct and if in the List there are all the Actions
+	 */
 	bool checkIfTheListIsCorrect(const std::multimap<int, Tuple>&,
 			const std::list<std::set<Tuple> >&);
-	// Utility functions
-	bool isPresentInAllAnswerset(const Tuple&);
-	bool isPresentInAllTheBestModelsAnswerset(const Tuple&);
+	/**
+	 * @brief if the Tuple passed as parameter is present in all AnswerSets
+	 */
+	bool isPresentInAllAnswerSets(const Tuple&);
+	/**
+	 * @brief if the Tuple passed as parameter is present in all AnswerSets that are BestModels
+	 */
+	bool isPresentInAllTheBestModelsAnswerSets(const Tuple&);
+	/**
+	 * @brief if the Tuple passed as the second parameter is present in the AnswerSets passed as first parameter
+	 */
 	bool thisAnswerSetContainsThisAction(const AnswerSetPtr&, const Tuple&);
+	/**
+	 * @brief check if the order of execution of Actions in the List, based on their Precedence attribute, is correct and if in the List there are all the Actions
+	 */
 	bool checkIfThisSetsOfTupleContainsTheSameElements(const std::set<Tuple>&,
 			const std::set<Tuple>&) const;
-	// Utility function that prints a Tuple on the specified ostream
+	/**
+	 * @brief utility function that prints a Tuple on the specified ostream
+	 */
 	void printTuple(std::ostream& output, const Tuple& tuple,
 			const RegistryPtr registryPtr);
 

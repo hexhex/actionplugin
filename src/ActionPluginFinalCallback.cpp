@@ -26,6 +26,9 @@ ActionPluginFinalCallback::ActionPluginFinalCallback(ProgramCtx& ctx) :
 				ctx.registry()) {
 }
 
+/**
+ * @brief Best Model Selector, Execution Schedule Builder, Execute Actions on Environment
+ */
 void ActionPluginFinalCallback::operator()() {
 	DBGLOG(DBG, "\nActionPluginFinalCallback called");
 
@@ -62,7 +65,7 @@ void ActionPluginFinalCallback::operator()() {
 	DBGLOG(DBG, "\nCall the executionScheduleBuilder");
 	std::list < std::set<Tuple> > listOfExecution;
 	ctxData.nameExecutionScheduleBuilderMap[ctxData.executionScheduleBuilderSelected]->rewrite(
-			multimapOfExecution, listOfExecution);
+			multimapOfExecution, listOfExecution, (*(ctxData.iteratorBestModel))->interpretation);
 
 	DBGLOG(DBG, "\nThe ListOfExecution:");
 	std::list<std::set<Tuple> >::iterator itLOE;
@@ -175,9 +178,9 @@ void ActionPluginFinalCallback::operator()() {
 
 }
 
-// function that fill the multimap (passed as parameter)
-// with Precedence attribute and Action Tuple
-// checking the Action Option attribute
+/**
+ * @brief function that fill the multimap (passed as parameter) with Precedence attribute and Action Tuple checking the Action Option attribute
+ */
 void ActionPluginFinalCallback::executionModeController(
 		std::multimap<int, Tuple>& multimapOfExecution) {
 
@@ -215,7 +218,7 @@ void ActionPluginFinalCallback::executionModeController(
 			if (id_actionOption == ctxData.id_brave)
 				;
 			else if (id_actionOption == ctxData.id_cautious)
-				if (!isPresentInAllAnswerset(action_tuple)) {
+				if (!isPresentInAllAnswerSets(action_tuple)) {
 					std::stringstream ss;
 					printTuple(ss, action_tuple, registryPtr);
 					DBGLOG(DBG,
@@ -223,7 +226,7 @@ void ActionPluginFinalCallback::executionModeController(
 									<< ss.str());
 					continue;
 				} else if (id_actionOption == ctxData.id_preferred_cautious)
-					if (!isPresentInAllTheBestModelsAnswerset(action_tuple)) {
+					if (!isPresentInAllTheBestModelsAnswerSets(action_tuple)) {
 						std::stringstream ss;
 						printTuple(ss, action_tuple, registryPtr);
 						DBGLOG(DBG,
@@ -245,10 +248,13 @@ void ActionPluginFinalCallback::executionModeController(
 
 }
 
-bool ActionPluginFinalCallback::isPresentInAllAnswerset(
+/**
+ * @brief if the Tuple passed as parameter is present in all AnswerSets
+ */
+bool ActionPluginFinalCallback::isPresentInAllAnswerSets(
 		const Tuple& action_tuple) {
 
-	if (!isPresentInAllTheBestModelsAnswerset(action_tuple))
+	if (!isPresentInAllTheBestModelsAnswerSets(action_tuple))
 		return false;
 
 	ActionPluginCtxData::BestModelsContainer::const_iterator itBMC;
@@ -261,7 +267,10 @@ bool ActionPluginFinalCallback::isPresentInAllAnswerset(
 
 }
 
-bool ActionPluginFinalCallback::isPresentInAllTheBestModelsAnswerset(
+/**
+ * @brief if the Tuple passed as parameter is present in all AnswerSets that are BestModels
+ */
+bool ActionPluginFinalCallback::isPresentInAllTheBestModelsAnswerSets(
 		const Tuple& action_tuple) {
 
 	ActionPluginCtxData::BestModelsContainer::const_iterator itBMC;
@@ -274,6 +283,9 @@ bool ActionPluginFinalCallback::isPresentInAllTheBestModelsAnswerset(
 
 }
 
+/**
+ * @brief if the Tuple passed as the second parameter is present in the AnswerSets passed as first parameter
+ */
 bool ActionPluginFinalCallback::thisAnswerSetContainsThisAction(
 		const AnswerSetPtr& answerSetPtr, const Tuple& action_tuple) {
 
@@ -306,9 +318,9 @@ bool ActionPluginFinalCallback::thisAnswerSetContainsThisAction(
 
 }
 
-// function that check if the order of execution of Actions
-// in the List, based on their Precedence attribute, is correct
-// and if in the List there are all the Actions
+/**
+ * @brief check if the order of execution of Actions in the List, based on their Precedence attribute, is correct and if in the List there are all the Actions
+ */
 bool ActionPluginFinalCallback::checkIfTheListIsCorrect(
 		const std::multimap<int, Tuple>& multimapOfExecution,
 		const std::list<std::set<Tuple> >& listOfExecution) {
@@ -365,7 +377,9 @@ bool ActionPluginFinalCallback::checkIfThisSetsOfTupleContainsTheSameElements(
 
 }
 
-// Utility function that prints a Tuple on the specified ostream
+/**
+ * @brief utility function that prints a Tuple on the specified ostream
+ */
 void ActionPluginFinalCallback::printTuple(std::ostream& output,
 		const Tuple& tuple, const RegistryPtr registryPtr) {
 	bool first = true;

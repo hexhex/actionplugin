@@ -25,8 +25,9 @@ public:
 public:
 	ActionParserModuleSemantics(ProgramCtx& ctx);
 
-	// use SemanticActionBase to redirect semantic action call into globally
-	// specializable sem<T> struct space
+	/**
+	 * @brief use SemanticActionBase to redirect semantic action call into globally specializable sem<T> struct space
+	 */
 	struct actionPrefixAtom: SemanticActionBase<ActionParserModuleSemantics, ID,
 			actionPrefixAtom> {
 		actionPrefixAtom(ActionParserModuleSemantics& mgr) :
@@ -35,8 +36,9 @@ public:
 	};
 };
 
-// create semantic handler for above semantic action
-// (needs to be in globally specializable struct space)
+/**
+ * @brief create semantic handler for above semantic action (needs to be in globally specializable struct space)
+ */
 template<>
 struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 	void createAtom(RegistryPtr reg, OrdinaryAtom& atom, ID& target) {

@@ -55,18 +55,23 @@ ActionPlugin::~ActionPlugin() {
 
 }
 
-// output help message for this plugin
+/**
+ * @brief output help message for this plugin
+ */
 void ActionPlugin::printUsage(std::ostream& o) const {
 	//    123456789-123456789-123456789-123456789-123456789-123456789-123456789-123456789-
 	o << "     --action-enable   Enable action plugin." << std::endl;
 }
 
-// accepted options: --action-enable
-//					 --num-iterations
-//					 --duration-iterations
-//
-// processes options for this plugin, and removes recognized options from pluginOptions
-// (do not free the pointers, the const char* directly come from argv)
+/**
+ * @brief processes options for this plugin, and removes recognized options from pluginOptions
+ *
+ * (do not free the pointers, the const char* directly come from argv)
+ *
+ * accepted options: --action-enable
+ * 					 --acthexNumberIterations
+ * 					 --acthexDurationIterations
+ */
 void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		ProgramCtx& ctx) {
 
@@ -145,8 +150,11 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 
 }
 
-// create parser modules that extend and the basic hex grammar
-// this parser also stores the query information into the plugin
+/**
+ * @brief creates parser modules for Actions and Built-in Declarations
+ *
+ * extend and the basic hex grammar; this parser also stores the query information into the plugin
+ */
 std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 		ProgramCtx & ctx) {
 	DBGLOG(DBG, "ActionPlugin::createParserModules()");
@@ -168,6 +176,9 @@ std::vector<HexParserModulePtr> ActionPlugin::createParserModules(
 	return ret;
 }
 
+/**
+ * @brief setup CtxData, myAuxiliaryPredicateMask, ModelCallback and FinalCallback
+ */
 void ActionPlugin::setupProgramCtx(ProgramCtx& ctx) {
 
 	ActionPlugin::CtxData& ctxData = ctx.getPluginData<ActionPlugin>();

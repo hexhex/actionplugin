@@ -19,9 +19,20 @@ class ActionPluginModelCallback: public ModelCallback {
 public:
 	ActionPluginModelCallback(ActionPluginCtxData&, const RegistryPtr);
 	virtual ~ActionPluginModelCallback();
-	// This function will be called for each AnswerSet
+	/**
+	 * @brief Filter for Weights and Levels
+	 *
+	 * will be called for each AnswerSet
+	 */
 	virtual bool operator()(AnswerSetPtr);
 protected:
+	/**
+	 * @brief If the AnswerSet with the LevelsAndWeights, passed as the second parameter, is a BestModel
+	 *
+	 * @return 	0 if it's a BestModel like the AnswerSets in bestModelsContainer
+	 * 			-1 if it isn't a BestModel
+	 * 			1 if it's a BestModel and it's better than the AnswerSets in bestModelsContainer
+	 */
 	int isABestModel(ActionPluginCtxData::LevelsAndWeights&,
 			ActionPluginCtxData::LevelsAndWeights&);
 	ActionPluginCtxData& ctxData;

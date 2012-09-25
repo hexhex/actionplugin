@@ -37,7 +37,9 @@ ActionPluginCtxData::~ActionPluginCtxData() {
 	nameExecutionScheduleBuilderMap.clear();
 }
 
-// add Actions to idActionMap and myAuxiliaryPredicateMask
+/**
+ * @brief add Actions to idActionMap and myAuxiliaryPredicateMask
+ */
 void ActionPluginCtxData::addAction(const ID & id, const ActionPtr actionPtr) {
 
 	idActionMap.insert(std::pair<ID, ActionPtr>(id, actionPtr));
@@ -46,7 +48,9 @@ void ActionPluginCtxData::addAction(const ID & id, const ActionPtr actionPtr) {
 
 }
 
-// called by Actions to register themselves
+/**
+ * @brief called by Actions to register themselves
+ */
 void ActionPluginCtxData::registerPlugin(
 		ActionPluginInterfacePtr actionPluginInterfacePtr, ProgramCtx& ctx) {
 
@@ -63,7 +67,9 @@ void ActionPluginCtxData::registerPlugin(
 
 }
 
-// Utility functions used to register Actions of a Plugin
+/**
+ * @brief utility functions used to register Actions of a Plugin
+ */
 void ActionPluginCtxData::registerActionsOfPlugin(
 		std::vector<PluginActionBasePtr> pluginActionBasePtrVector,
 		RegistryPtr reg) {
@@ -108,7 +114,9 @@ void ActionPluginCtxData::registerActionsOfPlugin(
 
 }
 
-// Utility functions used to register BestModelSelectors of a Plugin
+/**
+ * @brief utility functions used to register BestModelSelectors of a Plugin
+ */
 void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 		std::vector<BestModelSelectorPtr> allBestModelSelectors) {
 
@@ -135,7 +143,9 @@ void ActionPluginCtxData::registerBestModelSelectorsOfPlugin(
 	}
 }
 
-// Utility functions used to register ExecutionScheduleBuilders of a Plugin
+/**
+ * @brief utility functions used to register ExecutionScheduleBuilders of a Plugin
+ */
 void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders) {
 
@@ -164,7 +174,9 @@ void ActionPluginCtxData::registerExecutionScheduleBuildersOfPlugin(
 
 }
 
-// makes the plugin ready to execute another iteration
+/**
+ * @brief makes the ActionPlugin ready to execute another iteration
+ */
 void ActionPluginCtxData::clearDataStructures() {
 	levelsAndWeightsBestModels.clear();
 	bestModelsContainer.clear();
@@ -172,7 +184,9 @@ void ActionPluginCtxData::clearDataStructures() {
 	iteratorBestModel = bestModelsContainer.end();
 }
 
-// creates the Actions "#continueIteration" and "#stopIteration"
+/**
+ * @brief creates the Actions "#continueIteration" and "#stopIteration"
+ */
 void ActionPluginCtxData::createAndInsertContinueAndStopActions(
 		RegistryPtr reg) {
 
@@ -206,9 +220,12 @@ void ActionPluginCtxData::createAndInsertContinueAndStopActions(
 
 }
 
-// function that set the Number of Iterations
-// it's called when we find the command line option --acthexNumberIterations
-// or a built in constant #acthexNumberIterations
+/**
+ * @brief sets the Number of Iterations
+ *
+ * it's called when we find the command line option --acthexNumberIterations or a built in constant #acthexNumberIterations
+ */
+//
 void ActionPluginCtxData::addNumberIterations(const unsigned int number,
 		ProgramCtx& ctx, bool fromBuiltInConstant) {
 
@@ -234,9 +251,10 @@ void ActionPluginCtxData::addNumberIterations(const unsigned int number,
 
 }
 
-// function that set the Duration of Iterations
-// it's called when we find the command line option --acthexDurationIterations
-// or a built in constant #acthexDurationIterations
+/**
+ * @brief sets the Duration of Iterations
+ * it's called when we find the command line option --acthexDurationIterations or a built in constant #acthexDurationIterations
+ */
 void ActionPluginCtxData::addDurationIterations(unsigned int duration,
 		bool fromBuiltInConstant) {
 
@@ -262,8 +280,9 @@ void ActionPluginCtxData::addDurationIterations(unsigned int duration,
 
 }
 
-//insert DefaultBestModelSelector in nameBestModelSelectorMap
-// and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
+/**
+ * @brief inserts DefaultBestModelSelector in nameBestModelSelectorMap and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
+ */
 void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder() {
 
 	std::vector<BestModelSelectorPtr> defaultBestModelSelectors;
@@ -281,7 +300,9 @@ void ActionPluginCtxData::insertDefaultBestModelSelectorAndDefaultExecutionSched
 
 }
 
-// Set the bestModelSelectorSelected
+/**
+ * @brief sets the bestModelSelectorSelected
+ */
 void ActionPluginCtxData::setBestModelSelectorSelected(
 		const std::string bestModelSelector) {
 
@@ -295,7 +316,9 @@ void ActionPluginCtxData::setBestModelSelectorSelected(
 
 }
 
-//Set the executionScheduleBuilderSelected
+/**
+ * @brief sets the executionScheduleBuilderSelected
+ */
 void ActionPluginCtxData::setExecutionScheduleBuilderSelected(
 		const std::string executionScheduleBuilder) {
 

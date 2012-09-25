@@ -21,7 +21,11 @@ ActionPluginModelCallback::ActionPluginModelCallback(
 ActionPluginModelCallback::~ActionPluginModelCallback() {
 }
 
-// This function will be called for each AnswerSet
+/**
+ * @brief Filter for Weights and Levels
+ *
+ * will be called for each AnswerSet
+ */
 bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 	DBGLOG(DBG, "\nActionPluginModelCallback called");
@@ -157,9 +161,13 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 
 }
 
-// return 0 if it's a BestModel like the AnswerSets in bestModelsContainer
-// return -1 if it isn't a BestModel
-// return 1 if it's a BestModel and it's better than the AnswerSets in bestModelsContainer
+/**
+ * @brief If the AnswerSet with the LevelsAndWeights, passed as the second parameter, is a BestModel
+ *
+ * @return 	0 if it's a BestModel like the AnswerSets in bestModelsContainer
+ * 			-1 if it isn't a BestModel
+ * 			1 if it's a BestModel and it's better than the AnswerSets in bestModelsContainer
+ */
 int ActionPluginModelCallback::isABestModel(
 		ActionPluginCtxData::LevelsAndWeights& levelsAndWeightsBestModels,
 		ActionPluginCtxData::LevelsAndWeights& levelsAndWeights) {

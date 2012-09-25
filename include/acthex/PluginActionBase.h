@@ -27,12 +27,16 @@ public:
 		return predicate;
 	}
 
-	// The function that will be called by the FinalCallback to execute the Actions
+	/**
+	 * @brief The function that will be called by the FinalCallback to execute the Actions
+	 */
 	virtual void execute(ProgramCtx& ctx,
 			const InterpretationConstPtr interpretationConstPtr,
 			const Tuple& tuple) = 0;
 protected:
-	// a string that will be used to identify it
+	/**
+	 * @brief a string that will be used to identify it
+	 */
 	std::string predicate;
 };
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;

@@ -18,7 +18,8 @@ public:
 			ExecutionScheduleBuilder(name) {
 	}
 	virtual void rewrite(const std::multimap<int, Tuple>& multimapOfExecution,
-			std::list<std::set<Tuple> >& listOfExecution) {
+			std::list<std::set<Tuple> >& listOfExecution,
+			const InterpretationConstPtr interpretationConstPtr) {
 
 		if (multimapOfExecution.empty())
 			return;

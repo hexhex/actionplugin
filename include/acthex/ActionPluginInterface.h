@@ -28,7 +28,9 @@ public:
 	}
 	virtual ~ActionPluginInterface();
 
-	// stored in ProgramCtx, accessed using getPluginEnvironment<ActionAtom>()
+	/**
+	 * @brief stored in ProgramCtx, accessed using getPluginEnvironment<ActionAtom>()
+	 */
 	class Environment: public PluginEnvironment {
 	public:
 		Environment();
@@ -39,10 +41,14 @@ public:
 
 	// CRTP pattern
 	template<class UserPlugin>
-	// Base class to implement an External Atom
+	/**
+	 * @brief Base class to implement an External Atom
+	 */
 	class PluginActionAtom: public PluginAtom {
 	public:
-		// the Environment of this Plugin
+		/**
+		 * @brief the Environment of this Plugin
+		 */
 		typedef typename UserPlugin::Environment Environment;
 
 		PluginActionAtom(std::string name) :
@@ -51,31 +57,41 @@ public:
 			prop.usesEnvironment = true;
 		}
 
-		// The function that will be called by dlvhex to evaluate the External Atom
+		/**
+		 * @brief The function that will be called by dlvhex to evaluate the External Atom
+		 */
 		void retrieve(const Query& query, Answer& answer) {
 			const typename UserPlugin::Environment& environment =
 					query.ctx->getPluginEnvironment<UserPlugin>();
 			retrieve(environment, query, answer);
 		}
 	protected:
-		// The function that must be overridden by the creator of the External Atom to execute the own code
+		/**
+		 * @brief The function that must be overridden by the creator of the External Atom to execute the own code
+		 */
 		virtual void retrieve(const typename UserPlugin::Environment&,
 				const Query&, Answer&) = 0;
 	};
 
 	// CRTP pattern
 	template<class UserPlugin>
-	// Base class to implement an Action
+	/**
+	 * @brief Base class to implement an Action
+	 */
 	class PluginAction: public PluginActionBase {
 	public:
-		// the Environment of this Plugin
+		/**
+		 * @brief the Environment of this Plugin
+		 */
 		typedef typename UserPlugin::Environment Environment;
 
 		PluginAction(const std::string& predicate) :
 				PluginActionBase(predicate) {
 		}
 
-		// The function that will be called by the FinalCallback to execute the Actions
+		/**
+		 * @brief The function that will be called by the FinalCallback to execute the Actions
+		 */
 		void execute(ProgramCtx& ctx,
 				const InterpretationConstPtr interpretationConstPtr,
 				const Tuple& tuple) {
@@ -84,7 +100,9 @@ public:
 			execute(environment, ctx.registry(), tuple, interpretationConstPtr);
 		}
 	protected:
-		// The function that must be overridden by the creator of the Action to execute the own code
+		/**
+		 * @brief The function that must be overridden by the creator of the Action to execute the own code
+		 */
 		virtual void execute(typename UserPlugin::Environment&,
 				const RegistryPtr, const Tuple&,
 				const InterpretationConstPtr) = 0;
@@ -126,31 +144,41 @@ public:
 		return allPluginAtoms;
 	}
 
-	// Publish Actions to ActionPlugin
+	/**
+	 * @brief Publish Actions to ActionPlugin
+	 */
 	virtual std::vector<PluginActionBasePtr> createActions(
 			ProgramCtx& ctx) const {
 		std::vector<PluginActionBasePtr> allPluginActions;
 		return allPluginActions;
 	}
 
-	// Will be called by ActionPlugin to collect the BestModelSelectors
+	/**
+	 * @brief Will be called by ActionPlugin to collect the BestModelSelectors
+	 */
 	virtual std::vector<BestModelSelectorPtr> getAllBestModelSelectors() const {
 		std::vector<BestModelSelectorPtr> allBestModelSelectors;
 		return allBestModelSelectors;
 	}
 
-	// Will be called by ActionPlugin to collect the ExecutionScheduleBuilders
+	/**
+	 * @brief Will be called by ActionPlugin to collect the ExecutionScheduleBuilders
+	 */
 	virtual std::vector<ExecutionScheduleBuilderPtr> getAllExecutionScheduleBuilders() const {
 		std::vector<ExecutionScheduleBuilderPtr> allExecutionScheduleBuilders;
 		return allExecutionScheduleBuilders;
 	}
 
-	// Used to activate the Plugin only if "--action-enable" option is selected
+	/**
+	 * @brief Used to activate the Plugin only if "--action-enable" option is selected
+	 */
 	virtual void processOptions(std::list<const char*>& pluginOptions,
 			ProgramCtx& ctx);
 
 protected:
-	// Must be overridden by the Plugins to instantiate themselves
+	/**
+	 * @brief Must be overridden by the Plugins to instantiate themselves
+	 */
 	virtual ActionPluginInterfacePtr create(ProgramCtx& ctx) {
 		throw PluginError("ERROR you haven't overridden create() function");
 	}

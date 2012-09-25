@@ -23,9 +23,13 @@ public:
 	std::string getPredicate() const;
 
 protected:
-	// The string of the ID of this Action
+	/**
+	 * @brief  The string of the ID of this Action
+	 */
 	std::string predicate;
-	// An auxiliary id for this Action taken from the Registry
+	/**
+	 * @brief  An auxiliary id for this Action taken from the Registry
+	 */
 	dlvhex::ID aux_id;
 };
 typedef boost::shared_ptr<Action> ActionPtr;

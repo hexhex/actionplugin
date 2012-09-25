@@ -27,8 +27,9 @@ public:
 public:
 	BuiltInDeclarationsParserModuleSemantics(ProgramCtx& ctx);
 
-	// use SemanticActionBase to redirect semantic action call into globally
-	// specializable sem<T> struct space
+	/**
+	 * @brief use SemanticActionBase to redirect semantic action call into globally specializable sem<T> struct space
+	 */
 	struct builtInDeclarationsPrefixAtom: SemanticActionBase<
 			BuiltInDeclarationsParserModuleSemantics, ID,
 			builtInDeclarationsPrefixAtom> {
@@ -39,8 +40,9 @@ public:
 	};
 };
 
-// create semantic handler for above semantic action
-// (needs to be in globally specializable struct space)
+/**
+ * @brief create semantic handler for above semantic action (needs to be in globally specializable struct space)
+ */
 template<>
 struct sem<
 		BuiltInDeclarationsParserModuleSemantics::builtInDeclarationsPrefixAtom> {
@@ -182,7 +184,7 @@ struct BuiltInDeclarationsParserModuleGrammar: BuiltInDeclarationsParserModuleGr
 };
 typedef boost::shared_ptr<BuiltInDeclarationsParserModuleGrammar> BuiltInDeclarationsParserModuleGrammarPtr;
 
-// moduletype = HexParserModule::HEADATOM
+// moduletype = HexParserModule::TOPLEVEL
 template<enum HexParserModule::Type moduletype>
 class BuiltInDeclarationsParserModule: public HexParserModule {
 public:

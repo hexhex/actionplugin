@@ -33,126 +33,191 @@ enum IterationType {
 	DEFAULT, INFINITE, FIXED
 };
 
-// stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
+/**
+ * @brief stored in ProgramCtx, accessed using getPluginData<ActionPlugin>()
+ */
 class ActionPluginCtxData: public PluginData {
 public:
-	// whether plugin is enabled
+	/**
+	 * @brief whether plugin is enabled
+	 */
 	bool enabled;
 
-	// for fast detection whether an ID is this plugin's responsitility to display
+	/**
+	 * @brief for fast detection whether an ID is this plugin's responsitility to display
+	 */
 	PredicateMask myAuxiliaryPredicateMask;
 
-	// ids stored in Registry that represent the action options
+	/**
+	 * @brief ids stored in Registry that represent the action options
+	 */
 	ID id_brave;
 	ID id_cautious;
 	ID id_preferred_cautious;
 
-	// ids stored in Registry that represent the default values for precedence, weight and level
+	/**
+	 * @brief ids stored in Registry that represent the default values for precedence, weight and level
+	 */
 	ID id_default_precedence;
 	ID id_default_weight_with_level;
 	ID id_default_weight_without_level;
 	ID id_default_level_with_weight;
 	ID id_default_level_without_weight;
 
-	// a map that stores for each ID the corresponding action
+
+	/**
+	 * @brief a map that stores for each ID the corresponding action
+	 */
 	typedef std::map<ID, ActionPtr> IDActionMap;
 	IDActionMap idActionMap;
 
 	typedef std::map<int, int> LevelsAndWeights;
-	// a map that contains for each level the weight
+	/**
+	 * @brief a map that contains for each level the weight
+	 */
 	LevelsAndWeights levelsAndWeightsBestModels;
 
 	typedef std::list<AnswerSetPtr> BestModelsContainer;
-	// the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
+	/**
+	 * @brief the AnswerSets that are Best Models (which have, as weight for each level, the value stored in levelsAndWeightsBestModels)
+	 */
 	BestModelsContainer bestModelsContainer;
 
-	// the AnswerSets that aren't Best Models
+	/**
+	 * @brief the AnswerSets that aren't Best Models
+	 */
 	BestModelsContainer notBestModelsContainer;
 
-	// an iterator that identifies the position of the BestModel in BestModelsContainer
+	/**
+	 * @brief an iterator that identifies the position of the BestModel in BestModelsContainer
+	 */
 	BestModelsContainer::const_iterator iteratorBestModel;
 
 	ActionPluginCtxData();
 
 	virtual ~ActionPluginCtxData();
 
-	// add Actions to idActionMap and myAuxiliaryPredicateMask
+	/**
+	 * @brief add Actions to idActionMap and myAuxiliaryPredicateMask
+	 */
 	void addAction(const ID &, const ActionPtr);
 
 	typedef std::map<std::string, PluginActionBasePtr> NamePluginActionBaseMap;
-	// a map that contains the name and a pointer to the corresponding Action
+	/**
+	 * @brief a map that contains the name and a pointer to the corresponding Action
+	 */
 	NamePluginActionBaseMap namePluginActionBaseMap;
 
-	// called by Actions to register themselves
+	/**
+	 * @brief called by Actions to register themselves
+	 */
 	void registerPlugin(ActionPluginInterfacePtr, ProgramCtx&);
 
-	// makes the plugin ready to execute another iteration
+	/**
+	 * @brief makes the ActionPlugin ready to execute another iteration
+	 */
 	void clearDataStructures();
 
-	// the type of Iteration (an enum)
+	/**
+	 * @brief the type of Iteration (an enum)
+	 */
 	IterationType iterationType;
 
-	// if we have to execute another Iteration
+	/**
+	 * @brief if we have to execute another Iteration
+	 */
 	bool continueIteration;
 
-	// if we have to stop the Iterations
+	/**
+	 * @brief if we have to stop the Iterations
+	 */
 	bool stopIteration;
 
-	// ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
+	/**
+	 * @brief ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
+	 */
 	ID id_continue;
 	ID id_stop;
 
-	// creates the Actions "#continueIteration" and "#stopIteration"
+	/**
+	 * @brief creates the Actions "#continueIteration" and "#stopIteration"
+	 */
 	void createAndInsertContinueAndStopActions(RegistryPtr);
 
-	// a integer that specify the number of Iterations
-	// will be used only if both (number and time) are specified
+	/**
+	 * @brief a integer that specify the number of Iterations; will be used only if both (number and time) are specified
+	 */
 	int numberIterations;
 
-	// the time after which the Iterations must stop
+	/**
+	 * @brief the time after which the Iterations must stop
+	 */
 	boost::posix_time::time_duration timeDuration;
 
-	// the time when the ActionPlugin starts
+	/**
+	 * @brief the time when the ActionPlugin starts
+	 */
 	boost::posix_time::ptime startingTime;
 
 	typedef std::map<std::string, BestModelSelectorPtr> NameBestModelSelectorMap;
-	// a map that contains the name and a pointer to the corresponding BestModelSelector
+	/**
+	 * @brief a map that contains the name and a pointer to the corresponding BestModelSelector
+	 */
 	NameBestModelSelectorMap nameBestModelSelectorMap;
 
 	typedef std::map<std::string, ExecutionScheduleBuilderPtr> NameExecutionScheduleBuilderMap;
-	// a map that contains the name and a pointer to the corresponding ExecutionScheduleBuilder
+	/**
+	 * @brief a map that contains the name and a pointer to the corresponding ExecutionScheduleBuilder
+	 */
 	NameExecutionScheduleBuilderMap nameExecutionScheduleBuilderMap;
 
-	// function that set the Number of Iterations
-	// it's called when we find the command line option --acthexNumberIterations
-	// or a built in constant #acthexNumberIterations
+	/**
+	 * @brief sets the Number of Iterations
+	 *
+	 * it's called when we find the command line option --acthexNumberIterations or a built in constant #acthexNumberIterations
+	 */
 	void addNumberIterations(const unsigned int, ProgramCtx&, bool);
-	// function that set the Duration of Iterations
-	// it's called when we find the command line option --acthexDurationIterations
-	// or a built in constant #acthexDurationIterations
+	/**
+	 * @brief sets the Duration of Iterations
+	 *
+	 * it's called when we find the command line option --acthexDurationIterations or a built in constant #acthexDurationIterations
+	 */
 	void addDurationIterations(unsigned int, bool);
 
-	// if we changed the value of Iteration from Built-in Constant
+	/**
+	 * @brief if we changed the value of Iteration from Built-in Constant
+	 */
 	bool iterationFromBuiltInConstant;
 
-	//insert DefaultBestModelSelector in nameBestModelSelectorMap
-	// and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
+	/**
+	 * @brief inserts DefaultBestModelSelector in nameBestModelSelectorMap and DefaultExecutionScheduleBuilder in nameExecutionScheduleBuilderMap
+	 */
 	void insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
-	// The name of BestModelSelector that will be used to select the BestModelSelector from NameBestModelSelectorMap
+	/**
+	 * @brief the name of BestModelSelector that will be used to select the BestModelSelector from NameBestModelSelectorMap
+	 */
 	std::string bestModelSelectorSelected;
 
-	// The name of ExecutionScheduleBuilder that will be used to select the ExecutionScheduleBuilder from NameExecutionScheduleBuilderMap
+	/**
+	 * @brief the name of ExecutionScheduleBuilder that will be used to select the ExecutionScheduleBuilder from NameExecutionScheduleBuilderMap
+	 */
 	std::string executionScheduleBuilderSelected;
 
-	// Set the bestModelSelectorSelected
+	/**
+	 * @brief sets the bestModelSelectorSelected
+	 */
 	void setBestModelSelectorSelected(const std::string);
 
-	//Set the executionScheduleBuilderSelected
+	/**
+	 * @brief sets the executionScheduleBuilderSelected
+	 */
 	void setExecutionScheduleBuilderSelected(const std::string);
 
 private:
-	// Utility functions used to register all parts of a Plugin of the ActionPlugin
+	/**
+	 * @brief Utility functions used to register all parts of a Plugin of the ActionPlugin
+	 */
 	void registerActionsOfPlugin(std::vector<PluginActionBasePtr>, RegistryPtr);
 	void registerBestModelSelectorsOfPlugin(std::vector<BestModelSelectorPtr>);
 	void registerExecutionScheduleBuildersOfPlugin(

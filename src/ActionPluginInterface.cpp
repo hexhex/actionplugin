@@ -17,7 +17,9 @@ DLVHEX_NAMESPACE_BEGIN
 ActionPluginInterface::~ActionPluginInterface() {
 }
 
-// Used to activate the Plugin only if "--action-enable" option is selected
+/**
+ * @brief used to activate the Plugin only if "--action-enable" option is selected
+ */
 void ActionPluginInterface::processOptions(
 		std::list<const char*>& pluginOptions, ProgramCtx& ctx) {
 	DBGLOG(DBG, "processOptions of ActionPluginInterface");

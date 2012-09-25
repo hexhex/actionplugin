@@ -48,21 +48,33 @@ public:
 	ActionPlugin();
 	virtual ~ActionPlugin();
 
-	// output help message for this plugin
+	/**
+	 * @brief output help message for this plugin
+	 */
 	virtual void printUsage(std::ostream& o) const;
 
-	// accepted options: --action-enable
-	//					 --num-iterations
-	//					 --duration-iterations
-	//
-	// processes options for this plugin, and removes recognized options from pluginOptions
-	// (do not free the pointers, the const char* directly come from argv)
+	/**
+	 * @brief processes options for this plugin, and removes recognized options from pluginOptions
+	 *
+	 * (do not free the pointers, the const char* directly come from argv)
+	 *
+	 * accepted options: --action-enable
+	 * 					 --acthexNumberIterations
+	 * 					 --acthexDurationIterations
+	 */
 	virtual void processOptions(std::list<const char*>& pluginOptions,
 			ProgramCtx&);
 
-	// create parser modules that extend and the basic hex grammar
+	/**
+	 * @brief creates parser modules for Actions and Built-in Declarations
+	 *
+	 * extend and the basic hex grammar; this parser also stores the query information into the plugin
+	 */
 	virtual std::vector<HexParserModulePtr> createParserModules(ProgramCtx&);
 
+	/**
+	 * @brief setup CtxData, myAuxiliaryPredicateMask, ModelCallback and FinalCallback
+	 */
 	virtual void setupProgramCtx(ProgramCtx&);
 
 };
