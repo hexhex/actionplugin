@@ -1,10 +1,8 @@
-dlvhex-stringplugin NEWS -- history of user-visible changes.
+dlvhex-actionplugin NEWS -- history of user-visible changes.
 
-* Version 2.0.0 (March 2012)
+* Version 2.0.0
 
-** Adapt to dlvhex 2.0.0.
-
-
-* Version 0.3.0
-
-** Adapt to new dlvhex API.
+** Adapted to dlvhex 2.0.0.
+** Introduced an Environment that can be read by the External Atoms and can be read and modified by the Action Atoms.
+** Introduced the possibility to iterate the process of evaluation/execution of Action Atoms.
+** Introduced the possibility to personalize the Selection of BestModel and the Execution Schedule.
