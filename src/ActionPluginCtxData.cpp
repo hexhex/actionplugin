@@ -38,6 +38,32 @@ ActionPluginCtxData::~ActionPluginCtxData() {
 }
 
 /**
+ * @brief store, in the Registry constant Terms for id_brave, id_cautious, id_preferred_cautious
+ */
+void ActionPluginCtxData::storeConstantTermsForActionOptions(RegistryPtr reg) {
+
+	id_brave = reg->storeConstantTerm("b");
+	id_cautious = reg->storeConstantTerm("c");
+	id_preferred_cautious = reg->storeConstantTerm("c_p");
+
+}
+/**
+ * @brief initialize id_default_precedence, id_default_weight_with_level, id_default_weight_without_level, id_default_level_with_weight and id_default_level_without_weight
+ */
+void ActionPluginCtxData::initializeDefaultValuesForPrecedenceWeightAndLevel() {
+
+	// so this kind of actions will be executed first (indeed will be put ​​in the first set)
+	id_default_precedence = ID::termFromInteger(0);
+	// because the action atom without weight and level don't have to influence the selection of BestModels
+	id_default_weight_without_level = ID::termFromInteger(0);
+	id_default_level_without_weight = ID::termFromInteger(0);
+	// so the user can avoid specifying one of them if he want that it value is set at 1
+	id_default_weight_with_level = ID::termFromInteger(1);
+	id_default_level_with_weight = ID::termFromInteger(1);
+
+}
+
+/**
  * @brief add Actions to idActionMap and myAuxiliaryPredicateMask
  */
 void ActionPluginCtxData::addAction(const ID & id, const ActionPtr actionPtr) {

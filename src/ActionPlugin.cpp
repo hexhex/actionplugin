@@ -130,20 +130,12 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 
 		RegistryPtr reg = ctx.registry();
 
-		ctxData.id_brave = reg->storeConstantTerm("b");
-		ctxData.id_cautious = reg->storeConstantTerm("c");
-		ctxData.id_preferred_cautious = reg->storeConstantTerm("c_p");
+		ctxData.storeConstantTermsForActionOptions(reg);
 
-		// so this kind of actions will be executed first (indeed will be put ​​in the first set)
-		ctxData.id_default_precedence = ID::termFromInteger(0);
-		// because the action atom without weight and level don't have to influence the selection of BestModels
-		ctxData.id_default_weight_without_level = ID::termFromInteger(0);
-		ctxData.id_default_level_without_weight = ID::termFromInteger(0);
-		// so the user can avoid specifying one of them if he want that it value is set at 1
-		ctxData.id_default_weight_with_level = ID::termFromInteger(1);
-		ctxData.id_default_level_with_weight = ID::termFromInteger(1);
+		ctxData.initializeDefaultValuesForPrecedenceWeightAndLevel();
 
 		ctxData.createAndInsertContinueAndStopActions(reg);
+
 		ctxData.insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
 	}

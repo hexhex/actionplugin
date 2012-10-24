@@ -189,9 +189,9 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
-				ss << mgr.ctxData.id_default_weight_with_level;
+				ss << mgr.ctxData.getIDDefaultWeightWithLevel();
 			else
-				ss << mgr.ctxData.id_default_weight_without_level;
+				ss << mgr.ctxData.getIDDefaultWeightWithoutLevel();
 
 			ss << ',';
 
@@ -202,12 +202,12 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 0
 					> (boost::fusion::at_c < 4 > (source).get()))
-				ss << mgr.ctxData.id_default_level_with_weight;
+				ss << mgr.ctxData.getIDDefaultLevelWithWeight();
 			else
-				ss << mgr.ctxData.id_default_level_without_weight;
+				ss << mgr.ctxData.getIDDefaultLevelWithoutWeight();
 		} else {
-			ss << mgr.ctxData.id_default_weight_without_level;
-			ss << mgr.ctxData.id_default_level_without_weight;
+			ss << mgr.ctxData.getIDDefaultWeightWithoutLevel();
+			ss << mgr.ctxData.getIDDefaultLevelWithoutWeight();
 		}
 
 		ss << ')';
@@ -232,11 +232,11 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 		}
 
 		if (boost::fusion::at_c < 2 > (source) == "b")
-			tuple.push_back(mgr.ctxData.id_brave);
+			tuple.push_back(mgr.ctxData.getIDBrave());
 		else if (boost::fusion::at_c < 2 > (source) == "c")
-			tuple.push_back(mgr.ctxData.id_cautious);
+			tuple.push_back(mgr.ctxData.getIDCautious());
 		else if (boost::fusion::at_c < 2 > (source) == "c_p")
-			tuple.push_back(mgr.ctxData.id_preferred_cautious);
+			tuple.push_back(mgr.ctxData.getIDPreferredCautious());
 		else {
 			assert(true);
 		}
@@ -244,7 +244,7 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 		if (!!boost::fusion::at_c < 3 > (source))
 			tuple.push_back(boost::fusion::at_c < 3 > (source).get());
 		else
-			tuple.push_back(mgr.ctxData.id_default_precedence);
+			tuple.push_back(mgr.ctxData.getIDDefaultPrecedence());
 
 		if (!!boost::fusion::at_c < 4 > (source)) {
 
@@ -255,9 +255,9 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
-				tuple.push_back(mgr.ctxData.id_default_weight_with_level);
+				tuple.push_back(mgr.ctxData.getIDDefaultWeightWithLevel());
 			else
-				tuple.push_back(mgr.ctxData.id_default_weight_without_level);
+				tuple.push_back(mgr.ctxData.getIDDefaultWeightWithoutLevel());
 
 			if (!!boost::fusion::at_c < 1
 					> (boost::fusion::at_c < 4 > (source).get()))
@@ -266,13 +266,13 @@ struct sem<ActionParserModuleSemantics::actionPrefixAtom> {
 								> (boost::fusion::at_c < 4 > (source).get()).get());
 			else if (!!boost::fusion::at_c < 0
 					> (boost::fusion::at_c < 4 > (source).get()))
-				tuple.push_back(mgr.ctxData.id_default_level_with_weight);
+				tuple.push_back(mgr.ctxData.getIDDefaultLevelWithWeight());
 			else
-				tuple.push_back(mgr.ctxData.id_default_level_without_weight);
+				tuple.push_back(mgr.ctxData.getIDDefaultLevelWithoutWeight());
 
 		} else {
-			tuple.push_back(mgr.ctxData.id_default_weight_without_level);
-			tuple.push_back(mgr.ctxData.id_default_level_without_weight);
+			tuple.push_back(mgr.ctxData.getIDDefaultWeightWithoutLevel());
+			tuple.push_back(mgr.ctxData.getIDDefaultLevelWithoutWeight());
 		}
 
 		createAtom(reg, oatom, target);

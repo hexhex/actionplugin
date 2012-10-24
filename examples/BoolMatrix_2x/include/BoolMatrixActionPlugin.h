@@ -25,6 +25,7 @@ public:
 		void createImage(string);
 		void print(string, string);
 		void add(unsigned int, unsigned int);
+		void remove(unsigned int, unsigned int);
 		void setDimension(unsigned int, unsigned int);
 		void createMatrix();
 		void destroyMatrix();
@@ -72,6 +73,15 @@ public:
 			BoolMatrixActionPlugin> {
 	public:
 		BoolMatrixActionAtomHighestRowWithAdd();
+	private:
+		virtual void retrieve(const Environment& environment,
+				const Query& query, Answer& answer);
+	};
+
+	class BoolMatrixActionAtomGetValue: public PluginActionAtom<
+			BoolMatrixActionPlugin> {
+	public:
+		BoolMatrixActionAtomGetValue();
 	private:
 		virtual void retrieve(const Environment& environment,
 				const Query& query, Answer& answer);

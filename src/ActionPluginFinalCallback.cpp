@@ -33,10 +33,10 @@ void ActionPluginFinalCallback::operator()() {
 	DBGLOG(DBG, "\nActionPluginFinalCallback called");
 
 	if (ctxData.nameBestModelSelectorMap.count(
-			ctxData.bestModelSelectorSelected) == 0)
+			ctxData.getBestModelSelectorSelected()) == 0)
 		throw PluginError("The BestModelSelector chosen doesn't exist");
 
-	ctxData.nameBestModelSelectorMap[ctxData.bestModelSelectorSelected]->getBestModel(
+	ctxData.nameBestModelSelectorMap[ctxData.getBestModelSelectorSelected()]->getBestModel(
 			ctxData.iteratorBestModel, ctxData.bestModelsContainer);
 
 	std::stringstream ss;
@@ -59,12 +59,12 @@ void ActionPluginFinalCallback::operator()() {
 	}
 
 	if (ctxData.nameExecutionScheduleBuilderMap.count(
-			ctxData.executionScheduleBuilderSelected) == 0)
+			ctxData.getExecutionScheduleBuilderSelected()) == 0)
 		throw PluginError("The ExecutionScheduleBuilder chosen doesn't exist");
 
 	DBGLOG(DBG, "\nCall the executionScheduleBuilder");
 	std::list < std::set<Tuple> > listOfExecution;
-	ctxData.nameExecutionScheduleBuilderMap[ctxData.executionScheduleBuilderSelected]->rewrite(
+	ctxData.nameExecutionScheduleBuilderMap[ctxData.getExecutionScheduleBuilderSelected()]->rewrite(
 			multimapOfExecution, listOfExecution, (*(ctxData.iteratorBestModel))->interpretation);
 
 	DBGLOG(DBG, "\nThe ListOfExecution:");
@@ -103,10 +103,10 @@ void ActionPluginFinalCallback::operator()() {
 
 			const Tuple& tempTuple = (*itLOEs);
 
-			if (*tempTuple.begin() == ctxData.id_continue) {
+			if (*tempTuple.begin() == ctxData.getIDContinue()) {
 				ctxData.continueIteration = true;
 				continue;
-			} else if (*tempTuple.begin() == ctxData.id_stop) {
+			} else if (*tempTuple.begin() == ctxData.getIDStop()) {
 				ctxData.stopIteration = true;
 				continue;
 			}
@@ -141,23 +141,23 @@ void ActionPluginFinalCallback::operator()() {
 	}
 
 	DBGLOG(DBG, "\nCheck Iteration");
-	if (ctxData.iterationType == DEFAULT && ctxData.continueIteration)
+	if (ctxData.getIterationType() == DEFAULT && ctxData.continueIteration)
 		programCtx.config.setOption("RepeatEvaluation", 1);
-	else if (ctxData.iterationType != DEFAULT && ctxData.stopIteration)
+	else if (ctxData.getIterationType() != DEFAULT && ctxData.stopIteration)
 		programCtx.config.setOption("RepeatEvaluation", 0);
-	else if (ctxData.iterationType == INFINITE)
+	else if (ctxData.getIterationType() == INFINITE)
 		programCtx.config.setOption("RepeatEvaluation", 1);
-	else if (ctxData.iterationType == FIXED) {
-		if (!ctxData.timeDuration.is_not_a_date_time()) {
+	else if (ctxData.getIterationType() == FIXED) {
+		if (!ctxData.getTimeDuration().is_not_a_date_time()) {
 			boost::posix_time::time_duration diff =
 					boost::posix_time::second_clock::local_time()
-							- ctxData.startingTime;
-			if (diff > ctxData.timeDuration)
+							- ctxData.getStartingTime();
+			if (diff > ctxData.getTimeDuration())
 				programCtx.config.setOption("RepeatEvaluation", 0);
-			else if (ctxData.numberIterations != -1) {
+			else if (ctxData.getNumberIterations() != -1) {
 				programCtx.config.setOption("RepeatEvaluation",
-						ctxData.numberIterations);
-				ctxData.numberIterations--;
+						ctxData.getNumberIterations());
+				ctxData.decreaseNumberIterations();
 			} else
 				programCtx.config.setOption("RepeatEvaluation", 1);
 		}
@@ -215,9 +215,9 @@ void ActionPluginFinalCallback::executionModeController(
 							<< registryPtr->getTermStringByID(id_actionOption));
 			DBGLOG(DBG, "Precedence: " << precedence);
 
-			if (id_actionOption == ctxData.id_brave)
+			if (id_actionOption == ctxData.getIDBrave())
 				;
-			else if (id_actionOption == ctxData.id_cautious)
+			else if (id_actionOption == ctxData.getIDCautious())
 				if (!isPresentInAllAnswerSets(action_tuple)) {
 					std::stringstream ss;
 					printTuple(ss, action_tuple, registryPtr);
@@ -225,7 +225,7 @@ void ActionPluginFinalCallback::executionModeController(
 							"This action atom isn't present in all AnswerSet: "
 									<< ss.str());
 					continue;
-				} else if (id_actionOption == ctxData.id_preferred_cautious)
+				} else if (id_actionOption == ctxData.getIDPreferredCautious())
 					if (!isPresentInAllTheBestModelsAnswerSets(action_tuple)) {
 						std::stringstream ss;
 						printTuple(ss, action_tuple, registryPtr);

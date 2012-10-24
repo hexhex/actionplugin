@@ -48,22 +48,42 @@ public:
 	 */
 	PredicateMask myAuxiliaryPredicateMask;
 
-	/**
-	 * @brief ids stored in Registry that represent the action options
-	 */
-	ID id_brave;
-	ID id_cautious;
-	ID id_preferred_cautious;
+	inline const ID& getIDBrave() const { return id_brave; }
+	inline const ID& getIDCautious() const { return id_cautious; }
+	inline const ID& getIDPreferredCautious() const { return id_preferred_cautious; }
+
+	inline const ID& getIDDefaultPrecedence() const { return id_default_precedence; }
+	inline const ID& getIDDefaultWeightWithLevel() const { return id_default_weight_with_level; }
+	inline const ID& getIDDefaultWeightWithoutLevel() const { return id_default_weight_without_level; }
+	inline const ID& getIDDefaultLevelWithWeight() const { return id_default_level_with_weight; }
+	inline const ID& getIDDefaultLevelWithoutWeight() const { return id_default_level_without_weight; }
+
+	inline const IterationType& getIterationType() const { return iterationType; }
+
+	inline const ID& getIDContinue() const { return id_continue; }
+	inline const ID& getIDStop() const { return id_stop; }
+
+	inline const boost::posix_time::time_duration& getTimeDuration() const { return timeDuration; }
+
+	inline int getNumberIterations() const { return numberIterations; }
+
+	inline void decreaseNumberIterations() { numberIterations--; }
+
+	inline const boost::posix_time::ptime& getStartingTime() const { return startingTime; }
+
+	inline const std::string& getBestModelSelectorSelected() const { return bestModelSelectorSelected; }
+
+	inline const std::string& getExecutionScheduleBuilderSelected() const { return executionScheduleBuilderSelected; }
 
 	/**
-	 * @brief ids stored in Registry that represent the default values for precedence, weight and level
+	 * @brief store, in the Registry constant Terms for id_brave, id_cautious, id_preferred_cautious
 	 */
-	ID id_default_precedence;
-	ID id_default_weight_with_level;
-	ID id_default_weight_without_level;
-	ID id_default_level_with_weight;
-	ID id_default_level_without_weight;
+	void storeConstantTermsForActionOptions(RegistryPtr);
 
+	/**
+	 * @brief initialize id_default_precedence, id_default_weight_with_level, id_default_weight_without_level, id_default_level_with_weight and id_default_level_without_weight
+	 */
+	void initializeDefaultValuesForPrecedenceWeightAndLevel();
 
 	/**
 	 * @brief a map that stores for each ID the corresponding action
@@ -119,11 +139,6 @@ public:
 	void clearDataStructures();
 
 	/**
-	 * @brief the type of Iteration (an enum)
-	 */
-	IterationType iterationType;
-
-	/**
 	 * @brief if we have to execute another Iteration
 	 */
 	bool continueIteration;
@@ -134,30 +149,9 @@ public:
 	bool stopIteration;
 
 	/**
-	 * @brief ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
-	 */
-	ID id_continue;
-	ID id_stop;
-
-	/**
 	 * @brief creates the Actions "#continueIteration" and "#stopIteration"
 	 */
 	void createAndInsertContinueAndStopActions(RegistryPtr);
-
-	/**
-	 * @brief a integer that specify the number of Iterations; will be used only if both (number and time) are specified
-	 */
-	int numberIterations;
-
-	/**
-	 * @brief the time after which the Iterations must stop
-	 */
-	boost::posix_time::time_duration timeDuration;
-
-	/**
-	 * @brief the time when the ActionPlugin starts
-	 */
-	boost::posix_time::ptime startingTime;
 
 	typedef std::map<std::string, BestModelSelectorPtr> NameBestModelSelectorMap;
 	/**
@@ -195,6 +189,60 @@ public:
 	void insertDefaultBestModelSelectorAndDefaultExecutionScheduleBuilder();
 
 	/**
+	 * @brief sets the bestModelSelectorSelected
+	 */
+	void setBestModelSelectorSelected(const std::string);
+
+	/**
+	 * @brief sets the executionScheduleBuilderSelected
+	 */
+	void setExecutionScheduleBuilderSelected(const std::string);
+
+protected:
+
+	/**
+	 * @brief ids stored in Registry that represent the action options
+	 */
+	ID id_brave;
+	ID id_cautious;
+	ID id_preferred_cautious;
+
+	/**
+	 * @brief ids stored in Registry that represent the default values for precedence, weight and level
+	 */
+	ID id_default_precedence;
+	ID id_default_weight_with_level;
+	ID id_default_weight_without_level;
+	ID id_default_level_with_weight;
+	ID id_default_level_without_weight;
+
+	/**
+	 * @brief the type of Iteration (an enum)
+	 */
+	IterationType iterationType;
+
+	/**
+	 * @brief ids stored in Registry that represent the Actions "#continueIteration" and "#stopIteration"
+	 */
+	ID id_continue;
+	ID id_stop;
+
+	/**
+	 * @brief the time after which the Iterations must stop
+	 */
+	boost::posix_time::time_duration timeDuration;
+
+	/**
+	 * @brief a integer that specify the number of Iterations; will be used only if both (number and time) are specified
+	 */
+	int numberIterations;
+
+	/**
+	 * @brief the time when the ActionPlugin starts
+	 */
+	boost::posix_time::ptime startingTime;
+
+	/**
 	 * @brief the name of BestModelSelector that will be used to select the BestModelSelector from NameBestModelSelectorMap
 	 */
 	std::string bestModelSelectorSelected;
@@ -205,23 +253,13 @@ public:
 	std::string executionScheduleBuilderSelected;
 
 	/**
-	 * @brief sets the bestModelSelectorSelected
-	 */
-	void setBestModelSelectorSelected(const std::string);
-
-	/**
-	 * @brief sets the executionScheduleBuilderSelected
-	 */
-	void setExecutionScheduleBuilderSelected(const std::string);
-
-private:
-	/**
 	 * @brief Utility functions used to register all parts of a Plugin of the ActionPlugin
 	 */
 	void registerActionsOfPlugin(std::vector<PluginActionBasePtr>, RegistryPtr);
 	void registerBestModelSelectorsOfPlugin(std::vector<BestModelSelectorPtr>);
 	void registerExecutionScheduleBuildersOfPlugin(
 			std::vector<ExecutionScheduleBuilderPtr>);
+
 };
 
 DLVHEX_NAMESPACE_END

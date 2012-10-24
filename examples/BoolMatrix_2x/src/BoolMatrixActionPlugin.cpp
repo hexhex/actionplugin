@@ -91,10 +91,20 @@ void BoolMatrixActionPlugin::Environment::print(string black_char,
 
 void BoolMatrixActionPlugin::Environment::add(unsigned int row,
 		unsigned int column) {
+	if (row >= currentRows || column >= currentColumns)
+		throw PluginError("Wrong input argument type (in add)");
 	values[row][column] = true;
 	DBGLOG(PLUGIN, "Added " << row << " " << column << "; ");
 	if (row > highestRowWithAdd)
 		highestRowWithAdd = row;
+}
+
+void BoolMatrixActionPlugin::Environment::remove(unsigned int row,
+		unsigned int column) {
+	if (row >= currentRows || column >= currentColumns)
+		throw PluginError("Wrong input argument type (in remove)");
+	values[row][column] = false;
+	DBGLOG(PLUGIN, "Removed " << row << " " << column << "; ");
 }
 
 void BoolMatrixActionPlugin::Environment::setDimension(unsigned int rows,
@@ -286,6 +296,35 @@ void BoolMatrixActionPlugin::BoolMatrixActionAtomHighestRowWithAdd::retrieve(
 
 }
 
+BoolMatrixActionPlugin::BoolMatrixActionAtomGetValue::BoolMatrixActionAtomGetValue() :
+		PluginActionAtom("getValue") {
+	addInputConstant();
+	addInputConstant();
+	setOutputArity(0);
+}
+
+void BoolMatrixActionPlugin::BoolMatrixActionAtomGetValue::retrieve(
+		const Environment& environment, const Query& query, Answer& answer) {
+
+	Registry &registry = *getRegistry();
+
+	if (query.input.size() != 2)
+		throw PluginError("Wrong input argument type (arity in retrieve)");
+
+	ID id1 = query.input[0];
+	ID id2 = query.input[1];
+
+	if (id1.address >= environment.getCurrentRows()
+			|| id2.address >= environment.getCurrentColumns())
+		return;
+
+	Tuple out;
+
+	if (environment.getValue(id1.address, id2.address))
+		answer.get().push_back(out);
+
+}
+
 BoolMatrixActionPlugin::BoolMatrixAction::BoolMatrixAction() :
 		PluginAction("boolMatrix") {
 
@@ -313,6 +352,8 @@ void BoolMatrixActionPlugin::BoolMatrixAction::execute(Environment& environment,
 		environment.setDimension(parms[1].address, parms[2].address);
 	else if (registry.getTermStringByID(parms[0]) == "draw")
 		environment.createImage(registry.getTermStringByID(parms[1]) + ".tga");
+	else if (registry.getTermStringByID(parms[0]) == "remove")
+		environment.remove(parms[1].address, parms[2].address);
 
 }
 
@@ -327,6 +368,9 @@ std::vector<PluginAtomPtr> BoolMatrixActionPlugin::createAtoms(
 					PluginPtrDeleter<PluginAtom>()));
 	ret.push_back(
 			PluginAtomPtr(new BoolMatrixActionAtomHighestRowWithAdd,
+					PluginPtrDeleter<PluginAtom>()));
+	ret.push_back(
+			PluginAtomPtr(new BoolMatrixActionAtomGetValue,
 					PluginPtrDeleter<PluginAtom>()));
 	return ret;
 }
