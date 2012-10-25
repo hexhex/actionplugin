@@ -1,4 +1,0 @@
-evening.
-fuel(low).
-#robot[turnAlarm,on]{c,2} :- evening.
-#robot[move,left]{b,1} v #robot[move,right]{b,1} :- fuel(low).
