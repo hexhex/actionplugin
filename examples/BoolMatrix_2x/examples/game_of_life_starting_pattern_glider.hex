@@ -1,0 +1,5 @@
+#boolMatrix[add, 5, 16]{b, 10} :- haveToSetDimension.
+#boolMatrix[add, 6, 17]{b, 10} :- haveToSetDimension.
+#boolMatrix[add, 7, 15]{b, 10} :- haveToSetDimension.
+#boolMatrix[add, 7, 16]{b, 10} :- haveToSetDimension.
+#boolMatrix[add, 7, 17]{b, 10} :- haveToSetDimension.
