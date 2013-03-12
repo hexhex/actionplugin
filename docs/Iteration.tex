@@ -48,12 +48,11 @@
 					or \verb|#acthexDurationIterations=DURATION.| (built-in constant)
 
 				\verb|DURATION| must be a time duration (expressed in seconds) after which the iterations must end (0 expresses that the iterations must continue indefinitely); obviously at the end of the current iteration (we verify at the end of each iteration if the time is over).
-%represented in a string in this format ``h[h][:mm][:ss][.fff]''; accepted delimiters are ``\-:,.''
 		\end{itemize}
 
 		If \verb|acthexNumberIterations| and \verb|acthexDurationIterations| are specified both from command line options or both with built-in constant, they must be considered in OR (the program will end when it made ​​the specified number of iterations or when the specified time has passed).
 
-		If \verb|acthexNumberIterations| and \verb|acthexDurationIterations| are specified more than once from command line options or more than once with built-in constant, the program will throw an error if the values that are specified are different.
+		If \verb|acthexNumberIterations| or \verb|acthexDurationIterations| are specified more than once from command line options or more than once with built-in constant, the program will throw an error if the values that are specified are different.
 
 		\vspace*{1em}
 
