@@ -198,6 +198,11 @@ public:
 	 */
 	void setExecutionScheduleBuilderSelected(const std::string);
 
+	/**
+	 * @brief increase the value of iteration in the UtilitiesPlugin Environment
+	 */
+	void increaseIteration(ProgramCtx& ctx);
+
 protected:
 
 	/**
@@ -257,8 +262,7 @@ protected:
 	 */
 	void registerActionsOfPlugin(std::vector<PluginActionBasePtr>, RegistryPtr);
 	void registerBestModelSelectorsOfPlugin(std::vector<BestModelSelectorPtr>);
-	void registerExecutionScheduleBuildersOfPlugin(
-			std::vector<ExecutionScheduleBuilderPtr>);
+	void registerExecutionScheduleBuildersOfPlugin(std::vector<ExecutionScheduleBuilderPtr>);
 
 };
 

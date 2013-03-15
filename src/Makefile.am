@@ -18,7 +18,8 @@ libdlvhex_action_la_SOURCES = \
 		ExecutionScheduleBuilder.cpp \
 		ActionPluginCtxData.cpp \
 		ActionParserModule.cpp \
-		BuiltInDeclarationsParserModule.cpp
+		BuiltInDeclarationsParserModule.cpp \
+		UtilitiesActionPlugin.cpp
 
 # for more information on `-version-info' see
 # <http://www.gnu.org/software/libtool/manual.html#Versioning>, and
