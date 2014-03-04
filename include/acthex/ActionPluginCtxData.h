@@ -20,7 +20,7 @@ DLVHEX_NAMESPACE_BEGIN
 //Forward declarations
 class ActionPluginInterface;
 typedef boost::shared_ptr<ActionPluginInterface> ActionPluginInterfacePtr;
-#warning could we put PluginActionBase in ActionPluginInterface?
+WARNING("could we put PluginActionBase in ActionPluginInterface?")
 class PluginActionBase;
 typedef boost::shared_ptr<PluginActionBase> PluginActionBasePtr;
 class BestModelSelector;

@@ -56,7 +56,7 @@ protected:
 
 	ActionPluginInterfacePtr create(ProgramCtx& ctx) {
 		DBGLOG(PLUGIN, "create in IterationActionAtom");
-#warning a trick, maybe we should find a way remove it
+WARNING("a trick, maybe we should find a way remove it")
 		ctx.getPluginEnvironment<UtilitiesActionPlugin>();
 		DBGLOG(PLUGIN, "getPluginEnvironment done");
 		return boost::shared_ptr < UtilitiesActionPlugin

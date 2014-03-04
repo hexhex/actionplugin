@@ -97,7 +97,7 @@ struct sem<
 //			std::cerr << duration << "\n" << std::endl;
 //			mgr.ctxData.addDurationIterations(duration, true);
 
-#warning Duration specified in seconds
+WARNING("Duration specified in seconds")
 			if (boost::fusion::at_c < 2 > (source).which() == 1)
 				throw PluginError("Built-in Declaration not found");
 

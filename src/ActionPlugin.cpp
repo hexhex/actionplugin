@@ -102,7 +102,7 @@ void ActionPlugin::processOptions(std::list<const char*>& pluginOptions,
 		} else if (option.find("--acthexDurationIterations=")
 				!= std::string::npos) {
 			const std::string string_of_duration = option.substr(27);
-#warning Duration specified in seconds
+WARNING("Duration specified in seconds")
 			unsigned int duration;
 			try {
 				duration = boost::lexical_cast<unsigned int>(
@@ -204,6 +204,8 @@ DLVHEX_NAMESPACE_END
 IMPLEMENT_PLUGINABIVERSIONFUNCTION
 
 // return plain C type s.t. all compilers and linkers will like this code
-extern "C" void * PLUGINIMPORTFUNCTION() {
+extern "C"
+DLVHEX_PLUGINEXPORT
+void * PLUGINIMPORTFUNCTION() {
 return reinterpret_cast<void*>(& DLVHEX_NAMESPACE theActionPlugin);
 }
