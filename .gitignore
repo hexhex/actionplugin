@@ -1,2 +1,24 @@
 build*
 configure
+
+# Stefano
+.directory
+*.lo
+*.la
+*.m4
+.deps
+.libs
+Makefile
+Makefile.in
+.project
+COPYING
+INSTALL
+config.*
+autom4te.cache
+depcomp
+include/stamp-h1
+install-sh
+less
+libtool
+ltmain.sh
+missing

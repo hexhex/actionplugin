@@ -16,6 +16,9 @@
 
 #include <boost/date_time/posix_time/time_parsers.hpp>
 
+//#include "../examples/Utilities/include/UtilitiesActionPlugin.h"
+#include "acthex/UtilitiesActionPlugin.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
 ActionPluginCtxData::ActionPluginCtxData() :
@@ -357,6 +360,14 @@ void ActionPluginCtxData::setExecutionScheduleBuilderSelected(
 
 	executionScheduleBuilderSelected = executionScheduleBuilder;
 
+}
+
+/**
+ * @brief increase the value of iteration in the UtilitiesPlugin Environment
+ */
+void ActionPluginCtxData::increaseIteration(ProgramCtx& ctx) {
+	//typename UtilitiesActionPlugin::Environment& environment = ctx.getPluginEnvironment<UtilitiesActionPlugin>();
+	ctx.getPluginEnvironment<UtilitiesActionPlugin>().increaseIteration();
 }
 
 DLVHEX_NAMESPACE_END

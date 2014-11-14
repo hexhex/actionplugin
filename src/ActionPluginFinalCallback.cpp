@@ -165,6 +165,9 @@ void ActionPluginFinalCallback::operator()() {
 
 	if (programCtx.config.getOption("RepeatEvaluation") > 0) {
 
+		DBGLOG(DBG, "\nIncrease iteration in the UtilitiesPlugin");
+		ctxData.increaseIteration(programCtx);
+
 		DBGLOG(DBG, "\nClear data structures");
 		ctxData.clearDataStructures();
 

@@ -78,6 +78,10 @@ AC_CONFIG_FILES([
            examples/BoolMatrix_2x/src/Makefile
            examples/BoolMatrix_2x/include/Makefile
            examples/BoolMatrix_2x/examples/Makefile
+           examples/Utilities/Makefile
+           examples/Utilities/src/Makefile
+           examples/Utilities/include/Makefile
+           examples/Utilities/examples/Makefile
 ])
 
 AC_OUTPUT

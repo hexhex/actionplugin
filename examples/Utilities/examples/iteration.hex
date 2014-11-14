@@ -1,0 +1,2 @@
+iteration(X) :- &iteration[](X).
+#iterationActionAtom[print]{b,1}.

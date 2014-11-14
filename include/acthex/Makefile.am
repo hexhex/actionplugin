@@ -13,4 +13,6 @@ ACTIONHEADERS = \
 	DefaultBestModelSelector.h \
 	DefaultExecutionScheduleBuilder.h
 
+noinst_HEADERS = UtilitiesActionPlugin.h
+
 pkginclude_HEADERS = $(ACTIONHEADERS)

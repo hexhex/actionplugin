@@ -1,3 +1,4 @@
 SUBDIRS = \
-          BoolMatrix_2x/
+          BoolMatrix_2x/ \
+          Utilities/
 
