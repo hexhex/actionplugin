@@ -1,5 +1,5 @@
 AC_PREREQ([2.61])
-AC_INIT([acthex],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
+AC_INIT([dlvhex2-actionplugin],[2.0.0],[dlvhex-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR([src/ActionPlugin.cpp])
 AC_CONFIG_HEADERS([include/config.h])
 
