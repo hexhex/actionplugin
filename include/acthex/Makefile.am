@@ -15,4 +15,5 @@ ACTIONHEADERS = \
 
 noinst_HEADERS = UtilitiesActionPlugin.h
 
+pkgincludedir=$(includedir)/acthex
 pkginclude_HEADERS = $(ACTIONHEADERS)
