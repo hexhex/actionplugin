@@ -11,6 +11,9 @@
 #endif // HAVE_CONFIG_H
 #include "acthex/ActionPluginModelCallback.h"
 
+#define DLVHEX_BENCHMARK
+#include "dlvhex2/Benchmarking.h"
+
 DLVHEX_NAMESPACE_BEGIN
 
 ActionPluginModelCallback::ActionPluginModelCallback(
@@ -27,18 +30,25 @@ ActionPluginModelCallback::~ActionPluginModelCallback() {
  * will be called for each AnswerSet
  */
 bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
+  DLVHEX_BENCHMARK_REGISTER_AND_SCOPE(sid, "ActionPluginModelCallback:()");
 
-	DBGLOG(DBG, "\nActionPluginModelCallback called");
-	DBGLOG(DBG, "\nThe Interpretation:");
-	std::stringstream ss;
-	answerSetPtr->interpretation->print(ss);
-	DBGLOG(DBG, ss.str());
+  DBGLOG(DBG, "\nActionPluginModelCallback called");
+  DBGLOG(DBG, "\nThe Interpretation:");
+  if( Logger::Instance().shallPrint(Logger::DBG) ) {
+    // only print if debug logging is active! (printing is a very expensive operation)
+    std::stringstream ss;
+    answerSetPtr->interpretation->print(ss);
+    DBGLOG(DBG, ss.str());
+  }
 
 	ActionPluginCtxData::LevelsAndWeights levelsAndWeights;
 
 	ctxData.myAuxiliaryPredicateMask.updateMask();
 
 	DBGLOG(DBG, "\nThe Atoms Of Interpretation with myAuxiliaryPredicateMask:");
+
+  {
+  DLVHEX_BENCHMARK_REGISTER_AND_SCOPE(sid, "ActionPluginMCb:extract w/lvl");
 
 	// used to have only the Action Atoms
 	InterpretationPtr intr = InterpretationPtr(new Interpretation(registryPtr));
@@ -73,7 +83,6 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 		} else
 			throw PluginError(
 					"In ModelCallback Weight and/or Level aren't Integer term");
-
 	}
 
 	// eliminates eventual levels with weight 0 in levelsAndWeights
@@ -130,35 +139,41 @@ bool ActionPluginModelCallback::operator()(dlvhex::AnswerSetPtr answerSetPtr) {
 					"In ModelCallback, there was an error when operator() called isABestModel");
 
 	}
+  }
 
 	ctxData.bestModelsContainer.push_back(answerSetPtr);
 
-	DBGLOG(DBG, "\nThe levelsAndWeightsBestModels:");
-	DBGLOG(DBG, "Level\tWeight");
-	for (itLAW = ctxData.levelsAndWeightsBestModels.begin();
-			itLAW != ctxData.levelsAndWeightsBestModels.end(); itLAW++) {
-		DBGLOG(DBG, itLAW->first << '\t' << itLAW->second);
-	}
+  if( Logger::Instance().shallPrint(Logger::DBG) ) {
+    // only do all this if debug logging is active! (printing is a very expensive operation)
+    // (everything within DBGLOG is handled correctly, but we have to handle the loops explicitly!)
 
-	DBGLOG(DBG, "\nThe bestModelsContainer:");
-	ActionPluginCtxData::BestModelsContainer::iterator itBMC;
-	for (itBMC = ctxData.bestModelsContainer.begin();
-			itBMC != ctxData.bestModelsContainer.end(); itBMC++) {
-		std::stringstream ss;
-		(*itBMC)->interpretation->print(ss);
-		DBGLOG(DBG, ss.str());
-	}
+    DBGLOG(DBG, "\nThe levelsAndWeightsBestModels:");
+    DBGLOG(DBG, "Level\tWeight");
+    ActionPluginCtxData::LevelsAndWeights::iterator itLAW;
+    for (itLAW = ctxData.levelsAndWeightsBestModels.begin();
+        itLAW != ctxData.levelsAndWeightsBestModels.end(); itLAW++) {
+      DBGLOG(DBG, itLAW->first << '\t' << itLAW->second);
+    }
 
-	DBGLOG(DBG, "\nThe notBestModelsContainer:");
-	for (itBMC = ctxData.notBestModelsContainer.begin();
-			itBMC != ctxData.notBestModelsContainer.end(); itBMC++) {
-		std::stringstream ss;
-		(*itBMC)->interpretation->print(ss);
-		DBGLOG(DBG, ss.str());
-	}
+    DBGLOG(DBG, "\nThe bestModelsContainer:");
+    ActionPluginCtxData::BestModelsContainer::iterator itBMC;
+    for (itBMC = ctxData.bestModelsContainer.begin();
+        itBMC != ctxData.bestModelsContainer.end(); itBMC++) {
+      std::stringstream ss;
+      (*itBMC)->interpretation->print(ss);
+      DBGLOG(DBG, ss.str());
+    }
+
+    DBGLOG(DBG, "\nThe notBestModelsContainer:");
+    for (itBMC = ctxData.notBestModelsContainer.begin();
+        itBMC != ctxData.notBestModelsContainer.end(); itBMC++) {
+      std::stringstream ss;
+      (*itBMC)->interpretation->print(ss);
+      DBGLOG(DBG, ss.str());
+    }
+  }
 
 	return true;
-
 }
 
 /**
