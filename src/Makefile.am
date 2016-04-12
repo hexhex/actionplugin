@@ -25,7 +25,8 @@ libdlvhex_action_la_SOURCES = \
 # <http://www.gnu.org/software/libtool/manual.html#Versioning>, and
 # the USENIX paper `Library Interface Versioning in Solaris and Linux'
 # <http://www.usenix.org/publications/library/proceedings/als00/2000papers/papers/full_papers/browndavid/browndavid.pdf>
-libdlvhex_action_la_LDFLAGS = -version-info 2:0:0
+# libdlvhex_action_la_LDFLAGS = -version-info 2:0:0
+libdlvhex_action_la_LDFLAGS = -avoid-version -module
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
